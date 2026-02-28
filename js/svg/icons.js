@@ -24,8 +24,8 @@ window.Icons = {
 
   questionMark: function () {
     return '<svg viewBox="0 0 32 32" width="32" height="32">' +
-      '<circle cx="16" cy="16" r="14" fill="var(--theme-primary, #00b894)" opacity="0.2"/>' +
-      '<text x="16" y="22" text-anchor="middle" font-size="20" font-weight="bold" fill="var(--theme-primary, #00b894)">?</text>' +
+      '<circle cx="16" cy="16" r="14" fill="rgba(255,255,255,0.25)"/>' +
+      '<text x="16" y="22" text-anchor="middle" font-size="20" font-weight="bold" fill="#fff">?</text>' +
       '</svg>';
   }
 };

@@ -9,7 +9,13 @@ window.Engine = (function () {
     matching: MatchingGame,
     maze: MazeGame,
     counting: CountingGame,
-    coloring: ColoringGame
+    coloring: ColoringGame,
+    catcher: CatcherGame,
+    runner: RunnerGame,
+    simon: SimonGame,
+    spotdiff: SpotDiffGame,
+    sorting: SortingGame,
+    tracer: TracerGame
   };
 
   function startLevel(levelData) {
@@ -78,6 +84,24 @@ window.Engine = (function () {
           break;
         case 'coloring':
           progressEl.textContent = '0/' + config.regionCount;
+          break;
+        case 'catcher':
+          progressEl.textContent = '0/' + config.catchGoal;
+          break;
+        case 'runner':
+          progressEl.textContent = '0/' + config.totalCollectibles;
+          break;
+        case 'simon':
+          progressEl.textContent = '0/' + config.rounds;
+          break;
+        case 'spotdiff':
+          progressEl.textContent = '0/' + config.totalDifferences;
+          break;
+        case 'sorting':
+          progressEl.textContent = '0/' + config.items.length;
+          break;
+        case 'tracer':
+          progressEl.textContent = '0%';
           break;
       }
     }

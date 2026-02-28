@@ -96,7 +96,7 @@ window.LevelData = {
     {
       id: 'dino-4',
       name: { es: 'Brachiosaurus', en: 'Brachiosaurus', ca: 'Brachiosaurus' },
-      gameType: 'maze',
+      gameType: 'runner',
       illustration: function () { return DinoSVG.brachiosaurus(); },
       keyFact: { es: 'El Brachiosaurus era tan alto como un edificio de 4 pisos!', en: 'Brachiosaurus was as tall as a 4-story building!', ca: 'El Brachiosaurus era tan alt com un edifici de 4 pisos!' },
       learnFacts: [
@@ -105,10 +105,13 @@ window.LevelData = {
         { es: 'Sus patas delanteras eran mas largas que las traseras', en: 'Its front legs were longer than its back legs', ca: 'Les seves potes davanteres eren mes llargues que les del darrere' }
       ],
       config: {
-        grid: [[0,0,1,1,1,1,0],[1,0,1,0,0,0,0],[1,0,0,0,1,1,0],[1,1,1,0,1,0,0],[0,0,0,0,1,0,1],[0,1,1,0,0,0,1],[0,0,1,1,1,0,0]],
-        start: { r: 0, c: 0 }, goal: { r: 0, c: 6 },
-        playerEmoji: '🦕', goalEmoji: '🌿', wallColor: '#2d8a4e',
-        collectibles: [{ r: 1, c: 3, emoji: '🍃' }, { r: 4, c: 0, emoji: '🌱' }, { r: 6, c: 1, emoji: '🍃' }]
+        character: '🦕',
+        obstacles: ['🪨', '🌴', '🦴'],
+        collectible: '⭐',
+        totalCollectibles: 8,
+        groundColor: '#2d8a4e',
+        skyColor: '#e8f8f5',
+        label: { es: '!Corre por la jungla!', en: 'Run through the jungle!', ca: 'Corre per la jungla!' }
       }
     },
     {
@@ -125,10 +128,10 @@ window.LevelData = {
       config: {
         gridClass: 'grid-2x4',
         pairs: [
-          { id: 'size', labelA: { es: '🦃 Tamano de pavo', en: '🦃 Turkey-sized', ca: '🦃 Mida de gall dindi' }, labelB: { es: '📏 60 cm de alto', en: '📏 2 feet tall', ca: '📏 60 cm d\'alt' } },
-          { id: 'claw', labelA: { es: '🔪 Garra curva', en: '🔪 Sickle claw', ca: '🔪 Urpa corba' }, labelB: { es: '🦶 Arma en el dedo', en: '🦶 Big toe weapon', ca: '🦶 Arma al dit' } },
-          { id: 'speed', labelA: { es: '💨 Muy rapido', en: '💨 Very fast', ca: '💨 Molt rapid' }, labelB: { es: '🏃 Corria a 60 km/h', en: '🏃 40 mph runner', ca: '🏃 Corria a 60 km/h' } },
-          { id: 'feather', labelA: { es: '🪶 Tenia plumas', en: '🪶 Had feathers', ca: '🪶 Tenia plomes' }, labelB: { es: '🐦 Pariente de las aves', en: '🐦 Bird relative', ca: '🐦 Parent dels ocells' } }
+          { id: 'size', labelA: { es: '🦃 Tamano de pavo', en: '🦃 Turkey-sized', ca: '🦃 Mida de gall dindi' }, labelB: { es: '🦃 Muy pequeno', en: '🦃 Very small', ca: '🦃 Molt petit' } },
+          { id: 'claw', labelA: { es: '🔪 Garra curva', en: '🔪 Sickle claw', ca: '🔪 Urpa corba' }, labelB: { es: '🔪 Arma en el dedo', en: '🔪 Toe weapon', ca: '🔪 Arma al dit' } },
+          { id: 'speed', labelA: { es: '💨 Muy rapido', en: '💨 Very fast', ca: '💨 Molt rapid' }, labelB: { es: '💨 60 km/h', en: '💨 40 mph', ca: '💨 60 km/h' } },
+          { id: 'feather', labelA: { es: '🪶 Tenia plumas', en: '🪶 Had feathers', ca: '🪶 Tenia plomes' }, labelB: { es: '🪶 Como un pajaro', en: '🪶 Like a bird', ca: '🪶 Com un ocell' } }
         ],
         facts: [
           { es: 'El Velociraptor era pequenito!', en: 'Velociraptor was tiny!', ca: 'El Velociraptor era petit!' },
@@ -157,7 +160,7 @@ window.LevelData = {
     {
       id: 'dino-7',
       name: { es: 'Parasaurolophus', en: 'Parasaurolophus', ca: 'Parasaurolophus' },
-      gameType: 'quiz',
+      gameType: 'simon',
       illustration: function () { return DinoSVG.parasaurolophus(); },
       keyFact: { es: 'El Parasaurolophus usaba su cresta como una trompeta para hacer sonidos!', en: 'Parasaurolophus used its crest like a trumpet to make sounds!', ca: 'El Parasaurolophus usava la seva cresta com una trompeta per fer sons!' },
       learnFacts: [
@@ -166,19 +169,16 @@ window.LevelData = {
         { es: 'Caminaba sobre 2 y 4 patas', en: 'It walked on both 2 and 4 legs', ca: 'Caminava sobre 2 i 4 potes' }
       ],
       config: {
-        questions: [
-          { question: { es: 'Que tiene el Parasaurolophus en la cabeza?', en: "What is on Parasaurolophus' head?", ca: 'Que te el Parasaurolophus al cap?' }, answers: [{ es: 'Cuernos', en: 'Horns', ca: 'Banyes' }, { es: 'Una cresta larga', en: 'A long crest', ca: 'Una cresta llarga' }, { es: 'Plumas', en: 'Feathers', ca: 'Plomes' }], correct: 1, fact: { es: 'Una cresta hueca como un tubo!', en: 'A hollow crest like a tube!', ca: 'Una cresta buida com un tub!' } },
-          { question: { es: 'Para que usaba la cresta?', en: 'What did it use the crest for?', ca: 'Per a que usava la cresta?' }, answers: [{ es: 'Cavar', en: 'Digging', ca: 'Cavar' }, { es: 'Hacer sonidos', en: 'Making sounds', ca: 'Fer sons' }, { es: 'Nadar', en: 'Swimming', ca: 'Nedar' }], correct: 1, fact: { es: 'Podia tocar la trompeta con su cresta!', en: 'It could trumpet through its crest!', ca: 'Podia tocar la trompeta amb la seva cresta!' } },
-          { question: { es: 'A que instrumento se parece el sonido de la cresta?', en: 'What instrument does the crest sound like?', ca: 'A quin instrument s\'assembla el so de la cresta?' }, answers: [{ es: 'Tambor', en: 'Drum', ca: 'Tambor' }, { es: 'Trombon', en: 'Trombone', ca: 'Trombo' }, { es: 'Guitarra', en: 'Guitar', ca: 'Guitarra' }], correct: 1, fact: { es: 'Sonidos graves como un trombon!', en: 'Deep trombone-like sounds!', ca: 'Sons greus com un trombo!' } },
-          { question: { es: 'Que comia el Parasaurolophus?', en: 'What did Parasaurolophus eat?', ca: 'Que menjava el Parasaurolophus?' }, answers: [{ es: 'Carne', en: 'Meat', ca: 'Carn' }, { es: 'Plantas', en: 'Plants', ca: 'Plantes' }, { es: 'Rocas', en: 'Rocks', ca: 'Roques' }], correct: 1, fact: { es: 'Un tranquilo herbivoro!', en: 'A gentle plant-eater!', ca: 'Un tranquil herbivor!' } },
-          { question: { es: 'Como caminaba?', en: 'How did it walk?', ca: 'Com caminava?' }, answers: [{ es: 'Siempre a 4 patas', en: 'Always on 4 legs', ca: 'Sempre a 4 potes' }, { es: 'A 2 o 4 patas', en: 'On 2 or 4 legs', ca: 'A 2 o 4 potes' }, { es: 'Podia volar', en: 'It could fly', ca: 'Podia volar' }], correct: 1, fact: { es: 'Podia caminar de ambas formas!', en: 'It could walk both ways!', ca: 'Podia caminar de les dues maneres!' } }
-        ]
+        colors: ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f'],
+        rounds: 4,
+        playSpeed: 600,
+        label: { es: '!Repite la melodia de la cresta!', en: 'Repeat the crest melody!', ca: 'Repeteix la melodia de la cresta!' }
       }
     },
     {
       id: 'dino-8',
       name: { es: 'Spinosaurus', en: 'Spinosaurus', ca: 'Spinosaurus' },
-      gameType: 'dragdrop',
+      gameType: 'catcher',
       illustration: function () { return DinoSVG.spinosaurus(); },
       keyFact: { es: 'El Spinosaurus era mas grande que el T-Rex y le encantaba comer peces!', en: 'Spinosaurus was bigger than T-Rex and loved to eat fish!', ca: 'L\'Spinosaurus era mes gran que el T-Rex i li encantava menjar peixos!' },
       learnFacts: [
@@ -187,26 +187,13 @@ window.LevelData = {
         { es: 'Pasaba mucho tiempo en el agua pescando', en: 'It spent lots of time in water catching fish', ca: 'Passava molt de temps a l\'aigua pescant' }
       ],
       config: {
-        pieces: [
-          { id: 'fish1', outlineSVG: '<ellipse cx="80" cy="160" rx="20" ry="10" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="18" ry="9" fill="#3498db"/><polygon points="46,25 55,18 55,32" fill="#3498db"/>' },
-          { id: 'fish2', outlineSVG: '<ellipse cx="140" cy="170" rx="20" ry="10" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="18" ry="9" fill="#2ecc71"/><polygon points="46,25 55,18 55,32" fill="#2ecc71"/>' },
-          { id: 'fish3', outlineSVG: '<ellipse cx="200" cy="155" rx="20" ry="10" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="18" ry="9" fill="#e74c3c"/><polygon points="46,25 55,18 55,32" fill="#e74c3c"/>' },
-          { id: 'fish4', outlineSVG: '<ellipse cx="50" cy="180" rx="20" ry="10" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="18" ry="9" fill="#f39c12"/><polygon points="46,25 55,18 55,32" fill="#f39c12"/>' },
-          { id: 'fish5', outlineSVG: '<ellipse cx="170" cy="185" rx="20" ry="10" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="18" ry="9" fill="#9b59b6"/><polygon points="46,25 55,18 55,32" fill="#9b59b6"/>' },
-          { id: 'fish6', outlineSVG: '<ellipse cx="110" cy="195" rx="20" ry="10" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="18" ry="9" fill="#1abc9c"/><polygon points="46,25 55,18 55,32" fill="#1abc9c"/>' },
-          { id: 'fish7', outlineSVG: '<ellipse cx="240" cy="175" rx="20" ry="10" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="18" ry="9" fill="#e84393"/><polygon points="46,25 55,18 55,32" fill="#e84393"/>' },
-          { id: 'fish8', outlineSVG: '<ellipse cx="260" cy="195" rx="20" ry="10" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="18" ry="9" fill="#00cec9"/><polygon points="46,25 55,18 55,32" fill="#00cec9"/>' }
-        ],
-        facts: [
-          { es: 'Nam, un pez azul!', en: 'Yum, a blue fish!', ca: 'Nyam, un peix blau!' },
-          { es: 'Uno verde tambien!', en: 'A green one too!', ca: 'Un de verd tambe!' },
-          { es: 'Pez rojo — picante!', en: 'Red fish — spicy!', ca: 'Peix vermell — picant!' },
-          { es: 'Pez dorado — elegante!', en: 'Golden fish — fancy!', ca: 'Peix daurat — elegant!' },
-          { es: 'Pez morado!', en: 'Purple fish!', ca: 'Peix morat!' },
-          { es: 'Pez turquesa!', en: 'Teal fish!', ca: 'Peix turquesa!' },
-          { es: 'Pez rosa!', en: 'Pink fish!', ca: 'Peix rosa!' },
-          { es: 'Barriga llena!', en: 'All full up!', ca: 'Panxa plena!' }
-        ]
+        goodItems: ['🐟', '🐠', '🐡'],
+        badItems: ['🪨', '🪵'],
+        catchGoal: 10,
+        speed: 2,
+        spawnRate: 1200,
+        goodLabel: { es: '!Atrapa los peces!', en: 'Catch the fish!', ca: 'Atrapa els peixos!' },
+        badLabel: { es: '!Evita las rocas!', en: 'Avoid the rocks!', ca: 'Evita les roques!' }
       }
     },
     {
@@ -230,7 +217,7 @@ window.LevelData = {
     {
       id: 'dino-10',
       name: { es: 'Diplodocus', en: 'Diplodocus', ca: 'Diplodocus' },
-      gameType: 'counting',
+      gameType: 'sorting',
       illustration: function () { return DinoSVG.diplodocus(); },
       keyFact: { es: 'El Diplodocus media tanto como 3 autobuses escolares y tenia una cola como un latigo!', en: 'Diplodocus was as long as 3 school buses and had a whip tail!', ca: 'El Diplodocus feia tant com 3 autobusos escolars i tenia una cua com un fuet!' },
       learnFacts: [
@@ -239,32 +226,25 @@ window.LevelData = {
         { es: 'Su cola podia chasquear como un latigo', en: 'Its tail could crack like a whip', ca: 'La seva cua podia petar com un fuet' }
       ],
       config: {
-        scenes: [
-          {
-            question: { es: 'Cuantos Diplodocus hay en la manada?', en: 'How many Diplodocuses in the herd?', ca: 'Quants Diplodocus hi ha al ramat?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#e8f8f5"/><ellipse cx="60" cy="140" rx="30" ry="18" fill="#7A8B5A"/><path d="M40 135 Q30 105 25 85" stroke="#8a9c6a" stroke-width="6" fill="none"/><ellipse cx="150" cy="135" rx="35" ry="20" fill="#7A8B5A"/><path d="M125 130 Q115 95 110 75" stroke="#8a9c6a" stroke-width="7" fill="none"/><ellipse cx="250" cy="140" rx="30" ry="18" fill="#7A8B5A"/><path d="M230 135 Q220 105 215 85" stroke="#8a9c6a" stroke-width="6" fill="none"/></svg>',
-            answers: [2, 3, 4], correct: 3, fact: { es: 'Tres amigos de cuello largo!', en: 'Three long-necked friends!', ca: 'Tres amics de coll llarg!' }
-          },
-          {
-            question: { es: 'Cuantos huevos hay en el nido?', en: 'How many eggs in the nest?', ca: 'Quants ous hi ha al niu?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#e8f8f5"/><ellipse cx="150" cy="150" rx="80" ry="30" fill="#8B7355"/><ellipse cx="110" cy="130" rx="18" ry="22" fill="#f5f0e1"/><ellipse cx="150" cy="125" rx="18" ry="22" fill="#f5f0e1"/><ellipse cx="190" cy="130" rx="18" ry="22" fill="#f5f0e1"/><ellipse cx="130" cy="118" rx="18" ry="22" fill="#f5f0e1"/><ellipse cx="170" cy="118" rx="18" ry="22" fill="#f5f0e1"/><ellipse cx="150" cy="108" rx="18" ry="22" fill="#f5f0e1"/></svg>',
-            answers: [5, 6, 7], correct: 6, fact: { es: 'Seis huevos — gran familia!', en: 'Six eggs — big family!', ca: 'Sis ous — gran familia!' }
-          },
-          {
-            question: { es: 'Cuantos arboles para merendar?', en: 'How many trees for snacking?', ca: 'Quants arbres per berenar?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#e8f8f5"/><rect x="35" y="80" width="8" height="70" fill="#8B7355"/><circle cx="39" cy="60" r="25" fill="#27ae60"/><rect x="95" y="70" width="8" height="80" fill="#8B7355"/><circle cx="99" cy="50" r="28" fill="#2ecc71"/><rect x="165" y="80" width="8" height="70" fill="#8B7355"/><circle cx="169" cy="60" r="25" fill="#27ae60"/><rect x="235" y="75" width="8" height="75" fill="#8B7355"/><circle cx="239" cy="55" r="27" fill="#2ecc71"/></svg>',
-            answers: [3, 4, 5], correct: 4, fact: { es: 'Cuatro arboles deliciosos!', en: 'Four yummy trees!', ca: 'Quatre arbres deliciosos!' }
-          },
-          {
-            question: { es: 'Cuantas huellas hay en el suelo?', en: 'How many footprints on the ground?', ca: 'Quantes petjades hi ha al terra?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#e8dcc8"/><ellipse cx="50" cy="60" rx="15" ry="20" fill="#c4a77d"/><ellipse cx="120" cy="100" rx="15" ry="20" fill="#c4a77d"/><ellipse cx="80" cy="150" rx="15" ry="20" fill="#c4a77d"/><ellipse cx="180" cy="50" rx="15" ry="20" fill="#c4a77d"/><ellipse cx="220" cy="130" rx="15" ry="20" fill="#c4a77d"/><ellipse cx="260" cy="70" rx="15" ry="20" fill="#c4a77d"/><ellipse cx="160" cy="170" rx="15" ry="20" fill="#c4a77d"/></svg>',
-            answers: [6, 7, 8], correct: 7, fact: { es: 'Siete huellas gigantes!', en: 'Seven giant footprints!', ca: 'Set petjades gegants!' }
-          },
-          {
-            question: { es: 'Cuantos autobuses de largo mide el Diplodocus?', en: 'How many school buses long is Diplodocus?', ca: 'Quants autobusos de llarg fa el Diplodocus?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#e8f8f5"/><rect x="20" y="110" width="75" height="35" rx="5" fill="#f1c40f"/><circle cx="35" cy="152" r="8" fill="#2d3436"/><circle cx="80" cy="152" r="8" fill="#2d3436"/><rect x="112" y="110" width="75" height="35" rx="5" fill="#f1c40f"/><circle cx="127" cy="152" r="8" fill="#2d3436"/><circle cx="172" cy="152" r="8" fill="#2d3436"/><rect x="204" y="110" width="75" height="35" rx="5" fill="#f1c40f"/><circle cx="219" cy="152" r="8" fill="#2d3436"/><circle cx="264" cy="152" r="8" fill="#2d3436"/><path d="M30 100 Q150 40 270 100" stroke="#7A8B5A" stroke-width="8" fill="none"/></svg>',
-            answers: [2, 3, 4], correct: 3, fact: { es: 'Tan largo como 3 autobuses!', en: 'As long as 3 school buses!', ca: 'Tan llarg com 3 autobusos!' }
-          }
+        categories: [
+          { id: 'herb', label: { es: 'Herbivoro', en: 'Herbivore', ca: 'Herbivor' }, color: '#2ecc71' },
+          { id: 'carn', label: { es: 'Carnivoro', en: 'Carnivore', ca: 'Carnivor' }, color: '#e74c3c' }
+        ],
+        items: [
+          { id: 's1', label: { es: 'Diplodocus', en: 'Diplodocus', ca: 'Diplodocus' }, emoji: '🦕', category: 'herb' },
+          { id: 's2', label: { es: 'T-Rex', en: 'T-Rex', ca: 'T-Rex' }, emoji: '🦖', category: 'carn' },
+          { id: 's3', label: { es: 'Triceratops', en: 'Triceratops', ca: 'Triceratops' }, emoji: '🦕', category: 'herb' },
+          { id: 's4', label: { es: 'Velociraptor', en: 'Velociraptor', ca: 'Velociraptor' }, emoji: '🦖', category: 'carn' },
+          { id: 's5', label: { es: 'Stegosaurus', en: 'Stegosaurus', ca: 'Stegosaurus' }, emoji: '🦕', category: 'herb' },
+          { id: 's6', label: { es: 'Spinosaurus', en: 'Spinosaurus', ca: 'Spinosaurus' }, emoji: '🦖', category: 'carn' }
+        ],
+        facts: [
+          { es: 'Diplodocus comia plantas!', en: 'Diplodocus ate plants!', ca: 'Diplodocus menjava plantes!' },
+          { es: 'T-Rex era carnivoro!', en: 'T-Rex was a meat-eater!', ca: 'T-Rex era carnivor!' },
+          { es: 'Triceratops comia helechos!', en: 'Triceratops ate ferns!', ca: 'Triceratops menjava falgueres!' },
+          { es: 'Velociraptor cazaba presas!', en: 'Velociraptor hunted prey!', ca: 'Velociraptor cacava preses!' },
+          { es: 'Stegosaurus era herbivoro!', en: 'Stegosaurus was a plant-eater!', ca: 'Stegosaurus era herbivor!' },
+          { es: 'Spinosaurus comia peces!', en: 'Spinosaurus ate fish!', ca: 'Spinosaurus menjava peixos!' }
         ]
       }
     }
@@ -306,16 +286,16 @@ window.LevelData = {
       config: {
         gridClass: 'grid-2x4',
         pairs: [
-          { id: 'name', labelA: { es: '🦈 Megalodon', en: '🦈 Megalodon', ca: '🦈 Megalodon' }, labelB: { es: '🦷 "Diente grande"', en: '🦷 "Big Tooth"', ca: '🦷 "Dent gran"' } },
-          { id: 'size', labelA: { es: '📏 18 metros', en: '📏 60 feet', ca: '📏 18 metres' }, labelB: { es: '🐋 Tiburon enorme', en: '🐋 Huge shark', ca: '🐋 Tauró enorme' } },
-          { id: 'truck', labelA: { es: '🚛 Monster truck', en: '🚛 Monster truck', ca: '🚛 Monster truck' }, labelB: { es: '🦈 Diseno de tiburon', en: '🦈 Shark design', ca: '🦈 Disseny de tauró' } },
-          { id: 'power', labelA: { es: '💪 1500 CV', en: '💪 1500 HP', ca: '💪 1500 CV' }, labelB: { es: '⚡ Super rapido', en: '⚡ Super fast', ca: '⚡ Super rapid' } }
+          { id: 'name', labelA: { es: '🦈 Megalodon', en: '🦈 Megalodon', ca: '🦈 Megalodon' }, labelB: { es: '🦈 Tiburon gigante', en: '🦈 Giant shark', ca: '🦈 Tauró gegant' } },
+          { id: 'tooth', labelA: { es: '🦷 Diente', en: '🦷 Tooth', ca: '🦷 Dent' }, labelB: { es: '🦷 Grande', en: '🦷 Big', ca: '🦷 Gran' } },
+          { id: 'truck', labelA: { es: '🚛 Monster truck', en: '🚛 Monster truck', ca: '🚛 Monster truck' }, labelB: { es: '🚛 Ruedas enormes', en: '🚛 Huge wheels', ca: '🚛 Rodes enormes' } },
+          { id: 'power', labelA: { es: '⚡ Super potente', en: '⚡ Super powerful', ca: '⚡ Super potent' }, labelB: { es: '⚡ 1500 caballos', en: '⚡ 1500 horsepower', ca: '⚡ 1500 cavalls' } }
         ],
         facts: [
-          { es: 'Diente grande de verdad!', en: 'Big tooth indeed!', ca: 'Dent gran de debo!' },
-          { es: 'Tiburon prehistorico gigante!', en: 'Giant prehistoric shark!', ca: 'Tauró prehistoric gegant!' },
-          { es: 'El diseno mas genial!', en: 'Coolest truck design!', ca: 'El disseny mes genial!' },
-          { es: 'Muchisima potencia!', en: 'So much power!', ca: 'Moltissima potencia!' }
+          { es: 'Megalodon era un tiburon gigante!', en: 'Megalodon was a giant shark!', ca: 'Megalodon era un tauró gegant!' },
+          { es: 'Megalodon significa "diente grande"!', en: 'Megalodon means "big tooth"!', ca: 'Megalodon significa "dent gran"!' },
+          { es: 'Tiene ruedas enormes de monster truck!', en: 'It has huge monster truck wheels!', ca: 'Te rodes enormes de monster truck!' },
+          { es: '1500 caballos de fuerza!', en: '1500 horsepower!', ca: '1500 cavalls de forca!' }
         ]
       }
     },
@@ -368,7 +348,7 @@ window.LevelData = {
     {
       id: 'truck-5',
       name: { es: 'Blue Thunder', en: 'Blue Thunder', ca: 'Blue Thunder' },
-      gameType: 'counting',
+      gameType: 'catcher',
       illustration: function () { return TruckSVG.bluethunder(); },
       keyFact: { es: 'Blue Thunder tiene un diseno de rayo y es super ruidoso!', en: 'Blue Thunder has a lightning bolt design and is super loud!', ca: 'Blue Thunder te un disseny de llamp i es super sorollos!' },
       learnFacts: [
@@ -377,39 +357,19 @@ window.LevelData = {
         { es: 'El motor es increiblemente potente', en: 'The engine is incredibly powerful', ca: 'El motor es increiblement potent' }
       ],
       config: {
-        scenes: [
-          {
-            question: { es: 'Cuantos rayos tiene el camion?', en: 'How many bolts on the truck?', ca: 'Quants llamps te el camio?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#ffeaa7"/><rect x="60" y="60" width="180" height="70" rx="10" fill="#3498db"/><polygon points="100,70 95,95 115,90 105,120 125,85 108,90 115,70" fill="#f1c40f"/><polygon points="170,65 165,90 185,85 175,115 195,80 178,85 185,65" fill="#f1c40f"/><polygon points="135,75 130,100 150,95 140,125 160,90 143,95 150,75" fill="#f1c40f"/></svg>',
-            answers: [2, 3, 4], correct: 3, fact: { es: 'Tres rayos electricos!', en: 'Three lightning bolts!', ca: 'Tres llamps electrics!' }
-          },
-          {
-            question: { es: 'Cuantos neumaticos en total?', en: 'How many tires total?', ca: 'Quants pneumatics en total?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#ffeaa7"/><circle cx="60" cy="140" r="25" fill="#2d3436"/><circle cx="60" cy="140" r="10" fill="#888"/><circle cx="140" cy="140" r="25" fill="#2d3436"/><circle cx="140" cy="140" r="10" fill="#888"/><circle cx="220" cy="140" r="25" fill="#2d3436"/><circle cx="220" cy="140" r="10" fill="#888"/><rect x="35" y="70" width="210" height="50" rx="8" fill="#3498db"/></svg>',
-            answers: [3, 4, 6], correct: 3, fact: { es: 'Tres neumaticos grandes! (Normalmente 4, pero esta es una vista lateral!)', en: 'Three big tires! (Usually 4, but this is a side view!)', ca: 'Tres pneumatics grans! (Normalment 4, pero es una vista lateral!)' }
-          },
-          {
-            question: { es: 'Cuantos fans animando?', en: 'How many fans cheering?', ca: 'Quants fans animant?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#ffeaa7"/><circle cx="40" cy="50" r="15" fill="#fab1a0"/><circle cx="90" cy="45" r="15" fill="#dfe6e9"/><circle cx="140" cy="50" r="15" fill="#a29bfe"/><circle cx="190" cy="45" r="15" fill="#81ecec"/><circle cx="240" cy="50" r="15" fill="#ffeaa7" stroke="#e17055" stroke-width="1"/><circle cx="270" cy="55" r="15" fill="#55efc4"/><rect x="50" y="120" width="200" height="60" rx="8" fill="#3498db"/></svg>',
-            answers: [5, 6, 7], correct: 6, fact: { es: 'Seis fans enloquecidos!', en: 'Six fans going wild!', ca: 'Sis fans entusiasmats!' }
-          },
-          {
-            question: { es: 'Cuantos coches aplasto el camion?', en: 'How many cars did the truck crush?', ca: 'Quants cotxes va aixafar el camio?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#ffeaa7"/><rect x="20" y="140" width="50" height="25" rx="5" fill="#e74c3c" transform="rotate(-5 45 152)"/><rect x="80" y="145" width="50" height="25" rx="5" fill="#3498db" transform="rotate(3 105 157)"/><rect x="140" y="140" width="50" height="25" rx="5" fill="#27ae60" transform="rotate(-8 165 152)"/><rect x="200" y="145" width="50" height="25" rx="5" fill="#f39c12" transform="rotate(5 225 157)"/><rect x="100" y="80" width="100" height="45" rx="8" fill="#2980b9"/></svg>',
-            answers: [3, 4, 5], correct: 4, fact: { es: 'Cuatro coches aplastados!', en: 'Four cars flattened!', ca: 'Quatre cotxes aixafats!' }
-          },
-          {
-            question: { es: 'Cuantos tubos de escape?', en: 'How many exhaust pipes?', ca: 'Quants tubs d\'escapament?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#ffeaa7"/><rect x="60" y="80" width="180" height="60" rx="8" fill="#3498db"/><rect x="195" y="60" width="12" height="25" rx="3" fill="#636e72"/><rect x="215" y="55" width="12" height="30" rx="3" fill="#636e72"/><circle cx="201" cy="55" r="8" fill="#b2bec3"/><circle cx="221" cy="50" r="8" fill="#b2bec3"/></svg>',
-            answers: [1, 2, 3], correct: 2, fact: { es: 'Dos tubos de escape enormes!', en: 'Two big exhaust pipes!', ca: 'Dos tubs d\'escapament enormes!' }
-          }
-        ]
+        goodItems: ['⚡', '⚡', '🏆'],
+        badItems: ['🛢️', '💨'],
+        catchGoal: 10,
+        speed: 2.5,
+        spawnRate: 1100,
+        goodLabel: { es: '!Atrapa los rayos!', en: 'Catch the bolts!', ca: 'Atrapa els llamps!' },
+        badLabel: { es: '!Evita el aceite!', en: 'Avoid the oil!', ca: 'Evita l\'oli!' }
       }
     },
     {
       id: 'truck-6',
       name: { es: 'Zombie', en: 'Zombie', ca: 'Zombie' },
-      gameType: 'maze',
+      gameType: 'runner',
       illustration: function () { return TruckSVG.zombie(); },
       keyFact: { es: 'Zombie es el maestro del derrape y hace donuts increibles!', en: 'Zombie is the master of drifting and does amazing donuts!', ca: 'Zombie es el mestre del derrapatge i fa donuts increibles!' },
       learnFacts: [
@@ -418,16 +378,19 @@ window.LevelData = {
         { es: 'El piloto hace trucos increibles', en: 'The driver does incredible tricks', ca: 'El pilot fa trucs increibles' }
       ],
       config: {
-        grid: [[0,0,1,0,0,0,0],[0,1,1,0,1,1,0],[0,0,0,0,0,1,0],[1,1,0,1,0,0,0],[0,0,0,1,0,1,1],[0,1,0,0,0,0,0],[0,1,1,1,1,0,0]],
-        start: { r: 0, c: 0 }, goal: { r: 6, c: 6 },
-        playerEmoji: '🧟', goalEmoji: '🏆', wallColor: '#636e72',
-        collectibles: [{ r: 2, c: 2, emoji: '⭐' }, { r: 3, c: 4, emoji: '🔧' }, { r: 5, c: 3, emoji: '⭐' }]
+        character: '🧟',
+        obstacles: ['🪦', '💀', '🕸️'],
+        collectible: '⭐',
+        totalCollectibles: 8,
+        groundColor: '#636e72',
+        skyColor: '#a29bfe',
+        label: { es: '!Corre por el cementerio!', en: 'Run through the graveyard!', ca: 'Corre pel cementiri!' }
       }
     },
     {
       id: 'truck-7',
       name: { es: 'Monster Mutt Dalmatian', en: 'Monster Mutt Dalmatian', ca: 'Monster Mutt Dalmatian' },
-      gameType: 'quiz',
+      gameType: 'spotdiff',
       illustration: function () { return TruckSVG.monstermutt(); },
       keyFact: { es: 'Monster Mutt Dalmatian tiene orejas que rebotan y una cola que se mueve!', en: 'Monster Mutt Dalmatian has bouncing ears and a wagging tail!', ca: 'Monster Mutt Dalmatian te orelles que reboten i una cua que es mou!' },
       learnFacts: [
@@ -436,19 +399,21 @@ window.LevelData = {
         { es: 'Los dalmatas son famosos por ir en camiones de bomberos', en: 'Dalmatians are famous for riding on fire trucks', ca: 'Els dalmatas son famosos per anar en camions de bombers' }
       ],
       config: {
-        questions: [
-          { question: { es: 'A que animal se parece Monster Mutt?', en: 'What animal does Monster Mutt look like?', ca: 'A quin animal s\'assembla Monster Mutt?' }, answers: [{ es: 'Gato', en: 'Cat', ca: 'Gat' }, { es: 'Perro dalmata', en: 'Dalmatian dog', ca: 'Gos dalmata' }, { es: 'Caballo', en: 'Horse', ca: 'Cavall' }], correct: 1, fact: { es: 'Un camion cachorro con manchas!', en: 'A spotted puppy truck!', ca: 'Un camio cadell amb taques!' } },
-          { question: { es: 'Que se mueve cuando conduce?', en: 'What moves when the truck drives?', ca: 'Que es mou quan condueix?' }, answers: [{ es: 'Sus orejas rebotan!', en: 'Its ears bounce!', ca: 'Les seves orelles reboten!' }, { es: 'Las ventanas', en: 'Its windows', ca: 'Les finestres' }, { es: 'Nada', en: 'Nothing', ca: 'Res' }], correct: 0, fact: { es: 'Orejas rebotando por todos lados!', en: 'Floppy bouncing ears!', ca: 'Orelles rebotant per tot arreu!' } },
-          { question: { es: 'En que camiones van los dalmatas de verdad?', en: 'What kind of real trucks do Dalmatians ride?', ca: 'En quins camions van els dalmatas de debo?' }, answers: [{ es: 'Camiones de helados', en: 'Ice cream trucks', ca: 'Camions de gelats' }, { es: 'Camiones de bomberos', en: 'Fire trucks', ca: 'Camions de bombers' }, { es: 'Camiones de correo', en: 'Mail trucks', ca: 'Camions de correu' }], correct: 1, fact: { es: 'Los dalmatas son perros de bomberos!', en: 'Dalmatians are firehouse dogs!', ca: 'Els dalmatas son gossos de bombers!' } },
-          { question: { es: 'Que patron tiene el camion?', en: 'What pattern does the truck have?', ca: 'Quin patro te el camio?' }, answers: [{ es: 'Rayas', en: 'Stripes', ca: 'Ratlles' }, { es: 'Manchas', en: 'Spots', ca: 'Taques' }, { es: 'Estrellas', en: 'Stars', ca: 'Estrelles' }], correct: 1, fact: { es: 'Manchas negras sobre blanco!', en: 'Black spots on white!', ca: 'Taques negres sobre blanc!' } },
-          { question: { es: 'Que mas se mueve en el camion?', en: 'What else moves on the truck?', ca: 'Que mes es mou al camio?' }, answers: [{ es: 'La cola se mueve!', en: 'Its tail wags!', ca: 'La cua es mou!' }, { es: 'El techo se abre', en: 'The roof opens', ca: 'El sostre s\'obre' }, { es: 'Salen alas', en: 'Wings pop out', ca: 'Surten ales' }], correct: 0, fact: { es: 'Una cola moviéndose — que mono!', en: 'A wagging tail — so cute!', ca: 'Una cua movent-se — que bonic!' } }
-        ]
+        baseSVG: '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" fill="#ffeaa7"/><rect x="40" y="70" width="120" height="50" rx="8" fill="#ecf0f1"/><rect x="55" y="48" width="80" height="30" rx="6" fill="#ecf0f1"/><circle cx="65" cy="55" r="4" fill="#2d3436"/><circle cx="85" cy="58" r="3" fill="#2d3436"/><circle cx="110" cy="55" r="4" fill="#2d3436"/><circle cx="75" cy="66" r="5" fill="white"/><circle cx="115" cy="66" r="5" fill="white"/><circle cx="95" cy="74" r="4" fill="#2d3436"/><circle cx="65" cy="135" r="20" fill="#444"/><circle cx="135" cy="135" r="20" fill="#444"/></svg>',
+        modifiedSVG: '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" fill="#ffeaa7"/><rect x="40" y="70" width="120" height="50" rx="8" fill="#ecf0f1"/><rect x="55" y="48" width="80" height="30" rx="6" fill="#ecf0f1"/><circle cx="65" cy="55" r="4" fill="#e74c3c"/><circle cx="85" cy="58" r="3" fill="#2d3436"/><circle cx="110" cy="55" r="6" fill="#2d3436"/><circle cx="75" cy="66" r="5" fill="white"/><circle cx="115" cy="66" r="5" fill="#3498db"/><circle cx="95" cy="74" r="4" fill="#2d3436"/><circle cx="65" cy="135" r="20" fill="#444"/><circle cx="135" cy="135" r="20" fill="#e74c3c"/></svg>',
+        differences: [
+          { id: 'd1', cx: 65, cy: 55, radius: 15, description: { es: 'Mancha de otro color!', en: 'Different colored spot!', ca: 'Taca d\'un altre color!' } },
+          { id: 'd2', cx: 110, cy: 55, radius: 15, description: { es: 'Mancha mas grande!', en: 'Bigger spot!', ca: 'Taca mes gran!' } },
+          { id: 'd3', cx: 115, cy: 66, radius: 15, description: { es: 'Ojo de otro color!', en: 'Different eye color!', ca: 'Ull d\'un altre color!' } },
+          { id: 'd4', cx: 135, cy: 135, radius: 20, description: { es: 'Rueda de otro color!', en: 'Different tire color!', ca: 'Roda d\'un altre color!' } }
+        ],
+        totalDifferences: 4
       }
     },
     {
       id: 'truck-8',
       name: { es: 'Dragon', en: 'Dragon', ca: 'Dragon' },
-      gameType: 'dragdrop',
+      gameType: 'simon',
       illustration: function () { return TruckSVG.dragon(); },
       keyFact: { es: 'Dragon lanza FUEGO DE VERDAD y tiene alas a los lados!', en: 'Dragon shoots REAL fire and has wings on the side!', ca: 'Dragon llanca FOC DE DEBO i te ales als costats!' },
       learnFacts: [
@@ -457,32 +422,16 @@ window.LevelData = {
         { es: 'Tiene alas grandes a los lados', en: 'It has big wings on the sides', ca: 'Te ales grans als costats' }
       ],
       config: {
-        pieces: [
-          { id: 'body', outlineSVG: '<rect x="55" y="60" width="160" height="55" rx="8" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<rect x="5" y="10" width="50" height="30" rx="5" fill="#27ae60"/>' },
-          { id: 'head', outlineSVG: '<rect x="55" y="30" width="90" height="40" rx="6" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<rect x="5" y="8" width="50" height="30" rx="5" fill="#2ecc71"/>' },
-          { id: 'eye1', outlineSVG: '<circle cx="82" cy="48" r="8" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<circle cx="30" cy="25" r="12" fill="#f1c40f"/><circle cx="30" cy="25" r="5" fill="#e74c3c"/>' },
-          { id: 'eye2', outlineSVG: '<circle cx="128" cy="48" r="8" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<circle cx="30" cy="25" r="12" fill="#f1c40f"/><circle cx="30" cy="25" r="5" fill="#e74c3c"/>' },
-          { id: 'wing1', outlineSVG: '<path d="M60 60 Q40 30 55 25" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<path d="M30 40 Q10 10 25 5" fill="#2ecc71" stroke="none"/>' },
-          { id: 'wing2', outlineSVG: '<path d="M210 60 Q230 30 215 25" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<path d="M30 40 Q50 10 35 5" fill="#2ecc71" stroke="none"/>' },
-          { id: 'fire', outlineSVG: '<polygon points="215,65 245,55 215,80" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<polygon points="10,25 50,15 10,40" fill="#e74c3c"/><polygon points="10,28 45,20 10,38" fill="#f39c12"/>' },
-          { id: 'wheels', outlineSVG: '<circle cx="100" cy="140" r="25" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<circle cx="30" cy="25" r="20" fill="#444"/><circle cx="30" cy="25" r="8" fill="#888"/>' }
-        ],
-        facts: [
-          { es: 'Carroceria fuerte!', en: 'Strong body!', ca: 'Carrosseria forta!' },
-          { es: 'Cabeza de dragon!', en: 'Dragon head!', ca: 'Cap de draco!' },
-          { es: 'Ojo de fuego!', en: 'Fiery eye!', ca: 'Ull de foc!' },
-          { es: 'Otro ojo de fuego!', en: 'Another fiery eye!', ca: 'Un altre ull de foc!' },
-          { es: 'Ala izquierda!', en: 'Left wing!', ca: 'Ala esquerra!' },
-          { es: 'Ala derecha!', en: 'Right wing!', ca: 'Ala dreta!' },
-          { es: 'Fuego de verdad!', en: 'Real fire!', ca: 'Foc de debo!' },
-          { es: 'Ruedas gigantes!', en: 'Giant wheels!', ca: 'Rodes gegants!' }
-        ]
+        colors: ['#e74c3c', '#f39c12', '#2ecc71', '#3498db'],
+        rounds: 5,
+        playSpeed: 550,
+        label: { es: '!Repite el patron de fuego!', en: 'Repeat the fire pattern!', ca: 'Repeteix el patro de foc!' }
       }
     },
     {
       id: 'truck-9',
       name: { es: 'Earthshaker', en: 'Earthshaker', ca: 'Earthshaker' },
-      gameType: 'matching',
+      gameType: 'sorting',
       illustration: function () { return TruckSVG.earthshaker(); },
       keyFact: { es: 'Earthshaker es tan pesado que el suelo tiembla cuando aterriza!', en: 'Earthshaker is so heavy that the ground shakes when it lands!', ca: 'Earthshaker es tan pesat que el terra tremola quan aterra!' },
       learnFacts: [
@@ -491,27 +440,32 @@ window.LevelData = {
         { es: 'Tiene neumaticos enormes para aplastar coches', en: 'It has massive tires for crushing cars', ca: 'Te pneumatics enormes per aixafar cotxes' }
       ],
       config: {
-        gridClass: 'grid-2x5',
-        pairs: [
-          { id: 'weight', labelA: { es: '⚖️ 4500 kg', en: '⚖️ 10,000 lbs', ca: '⚖️ 4500 kg' }, labelB: { es: '🐘 Pesado como un elefante', en: '🐘 Heavy as elephant', ca: '🐘 Pesat com un elefant' } },
-          { id: 'tires', labelA: { es: '🛞 Neumaticos de 168 cm', en: '🛞 66-inch tires', ca: '🛞 Pneumatics de 168 cm' }, labelB: { es: '📏 Casi 2 metros!', en: '📏 Nearly 6 feet!', ca: '📏 Quasi 2 metres!' } },
-          { id: 'shake', labelA: { es: '🌍 La tierra tiembla!', en: '🌍 Earth shakes!', ca: '🌍 La terra tremola!' }, labelB: { es: '💥 Aterrizajes enormes!', en: '💥 Big landings!', ca: '💥 Aterratges enormes!' } },
-          { id: 'engine', labelA: { es: '⚡ 1500 CV', en: '⚡ 1500 HP', ca: '⚡ 1500 CV' }, labelB: { es: '🔥 Super motor', en: '🔥 Super engine', ca: '🔥 Super motor' } },
-          { id: 'jump', labelA: { es: '🦘 Saltos enormes', en: '🦘 Huge jumps', ca: '🦘 Salts enormes' }, labelB: { es: '✈️ 10 metros en el aire!', en: '✈️ 30ft in the air!', ca: '✈️ 10 metres a l\'aire!' } }
+        categories: [
+          { id: 'big', label: { es: 'Grandes', en: 'Big', ca: 'Grans' }, color: '#e74c3c' },
+          { id: 'small', label: { es: 'Pequenos', en: 'Small', ca: 'Petits' }, color: '#3498db' }
+        ],
+        items: [
+          { id: 'i1', label: { es: 'Earthshaker', en: 'Earthshaker', ca: 'Earthshaker' }, emoji: '🚛', category: 'big' },
+          { id: 'i2', label: { es: 'Megalodon', en: 'Megalodon', ca: 'Megalodon' }, emoji: '🦈', category: 'big' },
+          { id: 'i3', label: { es: 'Coche', en: 'Car', ca: 'Cotxe' }, emoji: '🚗', category: 'small' },
+          { id: 'i4', label: { es: 'Grave Digger', en: 'Grave Digger', ca: 'Grave Digger' }, emoji: '🚛', category: 'big' },
+          { id: 'i5', label: { es: 'Bicicleta', en: 'Bicycle', ca: 'Bicicleta' }, emoji: '🚲', category: 'small' },
+          { id: 'i6', label: { es: 'Patinete', en: 'Scooter', ca: 'Patinet' }, emoji: '🛴', category: 'small' }
         ],
         facts: [
-          { es: 'Increiblemente pesado!', en: 'So incredibly heavy!', ca: 'Increiblement pesat!' },
-          { es: 'Neumaticos enormes!', en: 'Massive tires!', ca: 'Pneumatics enormes!' },
-          { es: 'Siente temblar el suelo!', en: 'Feel the ground shake!', ca: 'Sent tremolar el terra!' },
-          { es: 'Motor potentisimo!', en: 'Powerful engine!', ca: 'Motor potentissim!' },
-          { es: 'Saltos increibles!', en: 'Amazing jumps!', ca: 'Salts increibles!' }
+          { es: 'Earthshaker es enorme!', en: 'Earthshaker is huge!', ca: 'Earthshaker es enorme!' },
+          { es: 'Megalodon es gigante!', en: 'Megalodon is giant!', ca: 'Megalodon es gegant!' },
+          { es: 'Un coche es mucho mas pequeno!', en: 'A car is much smaller!', ca: 'Un cotxe es molt mes petit!' },
+          { es: 'Grave Digger es masivo!', en: 'Grave Digger is massive!', ca: 'Grave Digger es massiu!' },
+          { es: 'Una bici es diminuta!', en: 'A bike is tiny!', ca: 'Una bici es diminuta!' },
+          { es: 'Un patinete es pequenito!', en: 'A scooter is so small!', ca: 'Un patinet es petit!' }
         ]
       }
     },
     {
       id: 'truck-10',
       name: { es: 'TODOS LOS TRUCKS', en: 'ALL TRUCKS', ca: 'TOTS ELS TRUCKS' },
-      gameType: 'coloring',
+      gameType: 'tracer',
       illustration: function () { return TruckSVG.stadium(); },
       keyFact: { es: 'Completaste TODOS los niveles! Eres un CAMPEON de Dinos y Trucks!', en: 'You completed ALL the levels! You are a Dino & Truck CHAMPION!', ca: 'Has completat TOTS els nivells! Ets un CAMPIO de Dinos i Trucks!' },
       learnFacts: [
@@ -520,36 +474,13 @@ window.LevelData = {
         { es: 'Es hora del gran final — colorea TODOS los trucks!', en: 'Time for the grand finale — color ALL the trucks!', ca: 'Es hora del gran final — pinta TOTS els trucks!' }
       ],
       config: {
-        regionCount: 20,
-        palette: ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6', '#e84393', '#00cec9'],
-        svgContent: function () {
-          return '<svg viewBox="0 0 400 350" xmlns="http://www.w3.org/2000/svg">' +
-            '<rect x="0" y="0" width="400" height="350" fill="#f0f4ff"/>' +
-            '<rect x="0" y="240" width="400" height="110" fill="#c4a77d"/>' +
-            '<ellipse cx="200" cy="240" rx="195" ry="25" fill="#8B7355"/>' +
-            '<text x="200" y="30" text-anchor="middle" font-size="16" fill="#e17055" font-weight="bold" font-family="sans-serif">' + t('stadiumTitle') + '</text>' +
-            '<rect class="coloring-region" data-region="t1-body" x="10" y="60" width="60" height="25" rx="4" fill="#ecf0f1"/>' +
-            '<circle class="coloring-region" data-region="t1-w" cx="25" cy="95" r="10" fill="#ecf0f1"/>' +
-            '<rect class="coloring-region" data-region="t2-body" x="90" y="55" width="60" height="25" rx="4" fill="#ecf0f1"/>' +
-            '<circle class="coloring-region" data-region="t2-w" cx="105" cy="90" r="10" fill="#ecf0f1"/>' +
-            '<rect class="coloring-region" data-region="t3-body" x="170" y="60" width="60" height="25" rx="4" fill="#ecf0f1"/>' +
-            '<circle class="coloring-region" data-region="t3-w" cx="185" cy="95" r="10" fill="#ecf0f1"/>' +
-            '<rect class="coloring-region" data-region="t4-body" x="250" y="55" width="60" height="25" rx="4" fill="#ecf0f1"/>' +
-            '<circle class="coloring-region" data-region="t4-w" cx="265" cy="90" r="10" fill="#ecf0f1"/>' +
-            '<rect class="coloring-region" data-region="t5-body" x="330" y="60" width="60" height="25" rx="4" fill="#ecf0f1"/>' +
-            '<circle class="coloring-region" data-region="t5-w" cx="345" cy="95" r="10" fill="#ecf0f1"/>' +
-            '<rect class="coloring-region" data-region="t6-body" x="30" y="140" width="60" height="25" rx="4" fill="#ecf0f1"/>' +
-            '<circle class="coloring-region" data-region="t6-w" cx="45" cy="175" r="10" fill="#ecf0f1"/>' +
-            '<rect class="coloring-region" data-region="t7-body" x="110" y="135" width="60" height="25" rx="4" fill="#ecf0f1"/>' +
-            '<circle class="coloring-region" data-region="t7-w" cx="125" cy="170" r="10" fill="#ecf0f1"/>' +
-            '<rect class="coloring-region" data-region="t8-body" x="190" y="140" width="60" height="25" rx="4" fill="#ecf0f1"/>' +
-            '<circle class="coloring-region" data-region="t8-w" cx="205" cy="175" r="10" fill="#ecf0f1"/>' +
-            '<rect class="coloring-region" data-region="t9-body" x="270" y="135" width="60" height="25" rx="4" fill="#ecf0f1"/>' +
-            '<circle class="coloring-region" data-region="t9-w" cx="285" cy="170" r="10" fill="#ecf0f1"/>' +
-            '<rect class="coloring-region" data-region="t10-body" x="155" y="200" width="90" height="30" rx="6" fill="#ecf0f1"/>' +
-            '<circle class="coloring-region" data-region="t10-w" cx="175" cy="235" r="12" fill="#ecf0f1"/>' +
-            '</svg>';
-        }
+        tracePath: 'M 30 250 L 30 180 Q 30 140 60 120 L 100 100 Q 130 85 150 50 Q 170 15 190 50 L 210 85 Q 230 100 260 100 L 270 100 Q 290 100 290 120 L 290 150 Q 290 170 270 170 L 240 170 Q 220 170 220 190 L 220 250',
+        viewBox: '0 0 320 300',
+        shapeLabel: { es: 'Trofeo', en: 'Trophy', ca: 'Trofeu' },
+        strokeColor: '#f1c40f',
+        guideColor: '#dfe6e9',
+        strokeWidth: 24,
+        completionThreshold: 0.75
       }
     }
   ]

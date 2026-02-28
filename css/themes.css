@@ -94,3 +94,20 @@
 [data-theme="truck"] .learn-fact {
   border-left: 4px solid #e17055;
 }
+
+/* ===== World Map Theme Colors ===== */
+[data-theme="dino"] #screen-worldmap {
+  background: linear-gradient(180deg, #74b9ff, #e8f8f5);
+}
+
+[data-theme="truck"] #screen-worldmap {
+  background: linear-gradient(180deg, #2c3e50, #e17055);
+}
+
+[data-theme="dino"] .worldmap-checkpoint.unlocked .checkpoint-marker {
+  border-color: #00b894;
+}
+
+[data-theme="truck"] .worldmap-checkpoint.unlocked .checkpoint-marker {
+  border-color: #e17055;
+}

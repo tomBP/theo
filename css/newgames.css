@@ -1,0 +1,75 @@
+/* ===== New Game Shared Styles ===== */
+
+/* Catcher Game */
+.catcher-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* Runner Game */
+.runner-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Simon Game */
+.simon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Spot Difference Game */
+.spotdiff-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Sorting Game */
+.sorting-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+}
+
+/* Tracer Game */
+.tracer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Shared game button styles */
+.game-btn-action {
+  font-family: var(--font-title);
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius-medium);
+  background: var(--theme-gradient, linear-gradient(135deg, #00b894, #6c5ce7));
+  color: var(--color-white);
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  touch-action: manipulation;
+  min-height: 48px;
+}
+
+.game-btn-action:active {
+  transform: scale(0.95);
+}

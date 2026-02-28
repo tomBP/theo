@@ -1,0 +1,493 @@
+/* ===== World Map Screen ===== */
+
+/* Viewport: full-screen container with overflow hidden */
+.worldmap-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.worldmap-viewport:active {
+  cursor: grabbing;
+}
+
+/* Scene: wide container holding all parallax layers */
+.worldmap-scene {
+  position: relative;
+  width: 3200px;
+  height: 100%;
+  will-change: transform;
+}
+
+/* Back button overlay */
+.worldmap-back {
+  position: absolute;
+  top: calc(12px + var(--safe-top, 0px));
+  left: 12px;
+  z-index: 30;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--color-text);
+  touch-action: manipulation;
+  transition: transform var(--transition-fast);
+}
+
+.worldmap-back:active {
+  transform: scale(0.9);
+}
+
+/* Title overlay */
+.worldmap-title {
+  position: absolute;
+  top: calc(16px + var(--safe-top, 0px));
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-title);
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  color: var(--color-white);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 25;
+  pointer-events: none;
+}
+
+/* ===== Parallax Layers ===== */
+.parallax-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Far layer: sky / distant background */
+.parallax-far {
+  width: 1600px;
+  z-index: 1;
+}
+
+[data-theme="dino"] .parallax-far {
+  background:
+    linear-gradient(180deg,
+      #87CEEB 0%,
+      #b3e0f2 40%,
+      #d4edda 60%,
+      #a8d5a2 80%,
+      #7db87d 100%
+    );
+}
+
+[data-theme="truck"] .parallax-far {
+  background:
+    linear-gradient(180deg,
+      #ff9a56 0%,
+      #ffb347 25%,
+      #ffd194 50%,
+      #e8c38a 70%,
+      #c4956a 100%
+    );
+}
+
+/* Mid layer: hills / mid-ground elements */
+.parallax-mid {
+  width: 2400px;
+  z-index: 2;
+}
+
+[data-theme="dino"] .parallax-mid {
+  background:
+    radial-gradient(ellipse 300px 120px at 200px 85%, #5a9e5a 0%, transparent 100%),
+    radial-gradient(ellipse 250px 100px at 500px 80%, #4a8e4a 0%, transparent 100%),
+    radial-gradient(ellipse 350px 130px at 900px 82%, #5a9e5a 0%, transparent 100%),
+    radial-gradient(ellipse 280px 110px at 1300px 78%, #4a8e4a 0%, transparent 100%),
+    radial-gradient(ellipse 320px 120px at 1700px 83%, #5a9e5a 0%, transparent 100%),
+    radial-gradient(ellipse 260px 105px at 2100px 80%, #4a8e4a 0%, transparent 100%),
+    transparent;
+}
+
+[data-theme="truck"] .parallax-mid {
+  background:
+    radial-gradient(ellipse 300px 100px at 200px 85%, #d4956a 0%, transparent 100%),
+    radial-gradient(ellipse 250px 90px at 500px 80%, #c4855a 0%, transparent 100%),
+    radial-gradient(ellipse 350px 110px at 900px 82%, #d4956a 0%, transparent 100%),
+    radial-gradient(ellipse 280px 95px at 1300px 78%, #c4855a 0%, transparent 100%),
+    radial-gradient(ellipse 320px 105px at 1700px 83%, #d4956a 0%, transparent 100%),
+    radial-gradient(ellipse 260px 90px at 2100px 80%, #c4855a 0%, transparent 100%),
+    transparent;
+}
+
+/* Near layer: the main ground plane containing path */
+.parallax-near {
+  width: 3200px;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+/* ===== SVG Path Overlay ===== */
+.worldmap-path {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.worldmap-path-stroke {
+  fill: none;
+  stroke-width: 28;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+[data-theme="dino"] .worldmap-path-stroke {
+  stroke: #8B6914;
+}
+
+[data-theme="truck"] .worldmap-path-stroke {
+  stroke: #6b6b6b;
+}
+
+.worldmap-path-outline {
+  fill: none;
+  stroke-width: 36;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.3;
+}
+
+[data-theme="dino"] .worldmap-path-outline {
+  stroke: #5a4510;
+}
+
+[data-theme="truck"] .worldmap-path-outline {
+  stroke: #444444;
+}
+
+/* Path dashes for dino (dirt) */
+[data-theme="dino"] .worldmap-path-detail {
+  fill: none;
+  stroke: #a07820;
+  stroke-width: 3;
+  stroke-dasharray: 12 20;
+  stroke-linecap: round;
+}
+
+/* Path dashes for truck (road markings) */
+[data-theme="truck"] .worldmap-path-detail {
+  fill: none;
+  stroke: #f1c40f;
+  stroke-width: 3;
+  stroke-dasharray: 18 24;
+  stroke-linecap: round;
+}
+
+/* ===== Checkpoints ===== */
+.worldmap-checkpoint {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.worldmap-checkpoint:active:not(.locked) {
+  transform: translate(-50%, -50%) scale(0.92);
+}
+
+.worldmap-checkpoint-marker {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-title);
+  font-size: 1.2rem;
+  color: var(--color-white);
+  position: relative;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.worldmap-checkpoint-label {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: var(--color-white);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  max-width: 80px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Completed checkpoint */
+.worldmap-checkpoint.completed .worldmap-checkpoint-marker {
+  background: var(--theme-gradient);
+  border: 3px solid var(--color-gold);
+  box-shadow:
+    0 0 12px rgba(249, 202, 36, 0.6),
+    0 0 24px rgba(249, 202, 36, 0.3);
+}
+
+.worldmap-checkpoint.completed .worldmap-checkpoint-label {
+  opacity: 1;
+}
+
+.worldmap-checkpoint.completed .checkpoint-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Unlocked (current) checkpoint */
+.worldmap-checkpoint.unlocked .worldmap-checkpoint-marker {
+  background: var(--theme-gradient);
+  border: 3px solid var(--theme-primary);
+  animation: checkpoint-pulse 1.8s ease-in-out infinite;
+}
+
+.worldmap-checkpoint.unlocked .worldmap-checkpoint-label {
+  opacity: 1;
+}
+
+.worldmap-checkpoint.unlocked {
+  animation: checkpoint-float 2.5s ease-in-out infinite;
+}
+
+/* Locked checkpoint */
+.worldmap-checkpoint.locked {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.worldmap-checkpoint.locked .worldmap-checkpoint-marker {
+  width: 40px;
+  height: 40px;
+  background: #aaa;
+  border: 3px solid #888;
+  opacity: 0.5;
+  font-size: 0.9rem;
+}
+
+.worldmap-checkpoint.locked .worldmap-checkpoint-label {
+  opacity: 0;
+}
+
+/* ===== Character ===== */
+.worldmap-character {
+  position: absolute;
+  z-index: 15;
+  width: 48px;
+  height: 48px;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25));
+  transition: none;
+}
+
+.worldmap-character.idle {
+  animation: character-bounce 1.6s ease-in-out infinite;
+}
+
+.worldmap-character.walking {
+  animation: none;
+}
+
+/* Placeholder circle when WorldMapBG not available */
+.worldmap-character-placeholder {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid var(--color-white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dino"] .worldmap-character-placeholder {
+  background: var(--theme-gradient);
+}
+
+[data-theme="truck"] .worldmap-character-placeholder {
+  background: var(--theme-gradient);
+}
+
+/* ===== Animations ===== */
+@keyframes checkpoint-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 rgba(var(--theme-primary-rgb, 0, 184, 148), 0.4),
+      0 0 8px rgba(var(--theme-primary-rgb, 0, 184, 148), 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 0 10px rgba(var(--theme-primary-rgb, 0, 184, 148), 0),
+      0 0 16px rgba(var(--theme-primary-rgb, 0, 184, 148), 0.1);
+  }
+}
+
+/* Fallback pulse using theme-primary directly */
+[data-theme="dino"] .worldmap-checkpoint.unlocked .worldmap-checkpoint-marker {
+  animation: checkpoint-pulse-dino 1.8s ease-in-out infinite;
+}
+
+[data-theme="truck"] .worldmap-checkpoint.unlocked .worldmap-checkpoint-marker {
+  animation: checkpoint-pulse-truck 1.8s ease-in-out infinite;
+}
+
+@keyframes checkpoint-pulse-dino {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 rgba(0, 184, 148, 0.5),
+      0 0 8px rgba(0, 184, 148, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 12px rgba(0, 184, 148, 0),
+      0 0 20px rgba(0, 184, 148, 0.1);
+  }
+}
+
+@keyframes checkpoint-pulse-truck {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 rgba(225, 112, 85, 0.5),
+      0 0 8px rgba(225, 112, 85, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 12px rgba(225, 112, 85, 0),
+      0 0 20px rgba(225, 112, 85, 0.1);
+  }
+}
+
+@keyframes checkpoint-float {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-6px);
+  }
+}
+
+@keyframes character-bounce {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-8px);
+  }
+}
+
+@keyframes character-walk {
+  0% {
+    transform: translate(-50%, -50%) translateY(0) scaleX(1);
+  }
+  25% {
+    transform: translate(-50%, -50%) translateY(-6px) scaleX(1.05);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(0) scaleX(1);
+  }
+  75% {
+    transform: translate(-50%, -50%) translateY(-6px) scaleX(0.95);
+  }
+  100% {
+    transform: translate(-50%, -50%) translateY(0) scaleX(1);
+  }
+}
+
+/* ===== Scroll Indicator ===== */
+.worldmap-scroll-hint {
+  position: absolute;
+  bottom: calc(24px + var(--safe-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  animation: hint-fade 3s ease-in-out forwards;
+}
+
+.worldmap-scroll-hint-arrow {
+  display: inline-block;
+  animation: hint-arrow-bounce 1s ease-in-out infinite alternate;
+}
+
+@keyframes hint-fade {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+@keyframes hint-arrow-bounce {
+  from { transform: translateX(-3px); }
+  to { transform: translateX(3px); }
+}
+
+/* ===== Responsive ===== */
+
+/* Phone landscape: reduce checkpoint size */
+@media (max-height: 420px) {
+  .worldmap-checkpoint-marker {
+    width: 42px;
+    height: 42px;
+    font-size: 1rem;
+  }
+
+  .worldmap-checkpoint.locked .worldmap-checkpoint-marker {
+    width: 34px;
+    height: 34px;
+  }
+
+  .worldmap-character {
+    width: 40px;
+    height: 40px;
+  }
+
+  .worldmap-character-placeholder {
+    width: 30px;
+    height: 30px;
+  }
+
+  .worldmap-title {
+    font-size: 1rem;
+  }
+}

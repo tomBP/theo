@@ -76,6 +76,42 @@ window.AudioManager = (function () {
     setTimeout(fanfare, 700);
   }
 
+  function walk() {
+    if (!ctx) return;
+    playTone(300, 0.08, 'triangle', 0.1);
+    setTimeout(function () { playTone(350, 0.08, 'triangle', 0.1); }, 150);
+  }
+
+  function jump() {
+    if (!ctx) return;
+    playTone(400, 0.1, 'sine', 0.2);
+    setTimeout(function () { playTone(600, 0.15, 'sine', 0.2); }, 50);
+  }
+
+  function checkpoint() {
+    if (!ctx) return;
+    playTone(523, 0.1, 'sine', 0.3);
+    setTimeout(function () { playTone(659, 0.1, 'sine', 0.3); }, 80);
+    setTimeout(function () { playTone(784, 0.1, 'sine', 0.3); }, 160);
+    setTimeout(function () { playTone(1047, 0.2, 'sine', 0.3); }, 240);
+  }
+
+  function simonPad(index) {
+    if (!ctx) return;
+    var freqs = [262, 330, 392, 523];
+    playTone(freqs[index] || 440, 0.3, 'sine', 0.25);
+  }
+
+  function catchGood() {
+    playTone(700, 0.1, 'sine', 0.2);
+    setTimeout(function () { playTone(900, 0.12, 'sine', 0.2); }, 60);
+  }
+
+  function stumble() {
+    playTone(150, 0.15, 'triangle', 0.15);
+    setTimeout(function () { playTone(120, 0.2, 'triangle', 0.15); }, 100);
+  }
+
   return {
     init: init,
     tap: tap,
@@ -86,6 +122,12 @@ window.AudioManager = (function () {
     match: match,
     collect: collect,
     fanfare: fanfare,
-    celebrate: celebrate
+    celebrate: celebrate,
+    walk: walk,
+    jump: jump,
+    checkpoint: checkpoint,
+    simonPad: simonPad,
+    catchGood: catchGood,
+    stumble: stumble
   };
 })();

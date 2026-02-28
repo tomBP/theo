@@ -9,8 +9,21 @@ window.App = (function () {
       splash: document.getElementById('screen-splash'),
       theme: document.getElementById('screen-theme'),
       levels: document.getElementById('screen-levels'),
+      worldmap: document.getElementById('screen-worldmap'),
       game: document.getElementById('screen-game'),
       celebration: document.getElementById('screen-celebration')
+    };
+
+    // Initialize world map
+    WorldMap.init(document.getElementById('worldmap-container'));
+    WorldMap.onCheckpointTap = function (levelIndex) {
+      launchLevel(levelIndex);
+    };
+    WorldMap.onBack = function () {
+      AudioManager.tap();
+      WorldMap.destroy();
+      showScreen('theme');
+      updateThemeCards();
     };
 
     // Splash screen illustration
@@ -47,6 +60,7 @@ window.App = (function () {
     document.getElementById('btn-back-themes').addEventListener('click', function () {
       AudioManager.tap();
       Engine.cleanup();
+      WorldMap.destroy();
       showScreen('theme');
       updateThemeCards();
     });
@@ -54,8 +68,8 @@ window.App = (function () {
     document.getElementById('btn-back-levels').addEventListener('click', function () {
       AudioManager.tap();
       Engine.cleanup();
-      showScreen('levels');
-      renderLevelGrid();
+      showScreen('worldmap');
+      WorldMap.show(currentTheme);
     });
 
     document.getElementById('btn-next-level').addEventListener('click', function () {
@@ -115,10 +129,8 @@ window.App = (function () {
   function selectTheme(theme) {
     currentTheme = theme;
     document.body.setAttribute('data-theme', theme);
-    document.getElementById('levels-title').textContent =
-      theme === 'dino' ? t('dinosaurs') : t('monsterTrucks');
-    showScreen('levels');
-    renderLevelGrid();
+    showScreen('worldmap');
+    WorldMap.show(theme);
   }
 
   function renderLevelGrid() {
@@ -214,9 +226,9 @@ window.App = (function () {
       showScreen('theme');
       updateThemeCards();
     } else {
-      // Go to next level
-      currentLevelIndex++;
-      launchLevel(currentLevelIndex);
+      // Return to world map, character will auto-walk to next checkpoint
+      showScreen('worldmap');
+      WorldMap.show(currentTheme);
     }
   }
 

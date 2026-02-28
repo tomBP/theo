@@ -113,6 +113,91 @@
       es: 'ESTADIO MONSTER TRUCK',
       en: 'MONSTER TRUCK STADIUM',
       ca: 'ESTADI MONSTER TRUCK'
+    },
+    watchRepeat: {
+      es: '!Observa y repite!',
+      en: 'Watch and repeat!',
+      ca: 'Observa i repeteix!'
+    },
+    catchItems: {
+      es: '!Atrapa los objetos buenos!',
+      en: 'Catch the good items!',
+      ca: 'Atrapa els objectes bons!'
+    },
+    jumpObstacles: {
+      es: '!Salta los obstaculos!',
+      en: 'Jump over obstacles!',
+      ca: 'Salta els obstacles!'
+    },
+    findDifferences: {
+      es: '!Encuentra las diferencias!',
+      en: 'Find the differences!',
+      ca: 'Troba les diferencies!'
+    },
+    sortItems: {
+      es: '!Ordena los elementos!',
+      en: 'Sort the items!',
+      ca: 'Ordena els elements!'
+    },
+    traceShape: {
+      es: '!Traza la forma!',
+      en: 'Trace the shape!',
+      ca: 'Traca la forma!'
+    },
+    round: {
+      es: 'Ronda',
+      en: 'Round',
+      ca: 'Ronda'
+    },
+    found: {
+      es: 'Encontrados',
+      en: 'Found',
+      ca: 'Trobats'
+    },
+    sorted: {
+      es: 'Ordenados',
+      en: 'Sorted',
+      ca: 'Ordenats'
+    },
+    caught: {
+      es: 'Atrapados',
+      en: 'Caught',
+      ca: 'Atrapats'
+    },
+    worldMap: {
+      es: 'MAPA DEL MUNDO',
+      en: 'WORLD MAP',
+      ca: 'MAPA DEL MON'
+    },
+    swipeToExplore: {
+      es: 'Desliza para explorar',
+      en: 'Swipe to explore',
+      ca: 'Llisca per explorar'
+    },
+    herbivore: {
+      es: 'Herbivoro',
+      en: 'Herbivore',
+      ca: 'Herbivor'
+    },
+    carnivore: {
+      es: 'Carnivoro',
+      en: 'Carnivore',
+      ca: 'Carnivor'
+    },
+    bigTrucks: {
+      es: 'Camiones grandes',
+      en: 'Big trucks',
+      ca: 'Camions grans'
+    },
+    smallTrucks: {
+      es: 'Camiones pequenos',
+      en: 'Small trucks',
+      ca: 'Camions petits'
+    },
+    reset: {
+      es: 'Reiniciar',
+      en: 'Reset',
+      ca: 'Reiniciar'
     }
   };
 
