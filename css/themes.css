@@ -1,0 +1,96 @@
+/* ===== Dinosaur Theme ===== */
+.theme-dino,
+[data-theme="dino"] {
+  --theme-primary: #00b894;
+  --theme-secondary: #55efc4;
+  --theme-accent: #6c5ce7;
+  --theme-bg: #e8f8f5;
+  --theme-bg-dark: #00b894;
+  --theme-text: #2d3436;
+  --theme-card-bg: linear-gradient(135deg, #00b894, #55efc4);
+  --theme-gradient: linear-gradient(135deg, #00b894, #6c5ce7);
+}
+
+.theme-dino {
+  background: linear-gradient(135deg, #e8f8f5, #dfe6e9);
+  border-color: #00b894;
+  color: var(--color-text);
+}
+
+/* ===== Monster Truck Theme ===== */
+.theme-truck,
+[data-theme="truck"] {
+  --theme-primary: #e17055;
+  --theme-secondary: #fdcb6e;
+  --theme-accent: #d63031;
+  --theme-bg: #ffeaa7;
+  --theme-bg-dark: #e17055;
+  --theme-text: #2d3436;
+  --theme-card-bg: linear-gradient(135deg, #e17055, #fdcb6e);
+  --theme-gradient: linear-gradient(135deg, #e17055, #d63031);
+}
+
+.theme-truck {
+  background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+  border-color: #e17055;
+  color: var(--color-text);
+}
+
+/* ===== Theme-aware elements ===== */
+[data-theme="dino"] .screen-title {
+  color: #00b894;
+}
+
+[data-theme="truck"] .screen-title {
+  color: #e17055;
+}
+
+[data-theme="dino"] .level-btn .level-number {
+  background: linear-gradient(135deg, #00b894, #55efc4);
+}
+
+[data-theme="truck"] .level-btn .level-number {
+  background: linear-gradient(135deg, #e17055, #fdcb6e);
+}
+
+[data-theme="dino"] .learn-continue,
+[data-theme="dino"] .btn-next-level {
+  background: linear-gradient(135deg, #00b894, #6c5ce7);
+}
+
+[data-theme="truck"] .learn-continue,
+[data-theme="truck"] .btn-next-level {
+  background: linear-gradient(135deg, #e17055, #d63031);
+}
+
+[data-theme="dino"] #screen-game {
+  background: linear-gradient(180deg, #e8f8f5, #dfe6e9);
+}
+
+[data-theme="truck"] #screen-game {
+  background: linear-gradient(180deg, #ffeaa7, #fab1a0);
+}
+
+[data-theme="dino"] #screen-levels {
+  background: linear-gradient(180deg, #e8f8f5, #f0f4ff);
+}
+
+[data-theme="truck"] #screen-levels {
+  background: linear-gradient(180deg, #ffeaa7, #f0f4ff);
+}
+
+[data-theme="dino"] #screen-celebration {
+  background: linear-gradient(180deg, #55efc4, #e8f8f5);
+}
+
+[data-theme="truck"] #screen-celebration {
+  background: linear-gradient(180deg, #fdcb6e, #ffeaa7);
+}
+
+[data-theme="dino"] .learn-fact {
+  border-left: 4px solid #00b894;
+}
+
+[data-theme="truck"] .learn-fact {
+  border-left: 4px solid #e17055;
+}

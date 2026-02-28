@@ -1,0 +1,521 @@
+/* ===== Quiz Game ===== */
+.quiz-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.quiz-illustration {
+  width: clamp(150px, 40vw, 250px);
+  height: clamp(120px, 32vw, 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-question {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+  text-align: center;
+  line-height: 1.4;
+  padding: 12px 16px;
+  background: var(--color-white);
+  border-radius: var(--radius-small);
+  box-shadow: var(--shadow-soft);
+  width: 100%;
+}
+
+.quiz-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.quiz-answer-btn {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  padding: 16px 20px;
+  border: 3px solid #dfe6e9;
+  border-radius: var(--radius-small);
+  background: var(--color-white);
+  cursor: pointer;
+  touch-action: manipulation;
+  min-height: 56px;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.quiz-answer-btn:active {
+  transform: scale(0.97);
+}
+
+.quiz-answer-btn.correct {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: var(--color-white);
+  animation: correct-pop 0.4s ease;
+}
+
+.quiz-answer-btn.wrong {
+  border-color: var(--color-error);
+  opacity: 0.5;
+  animation: wobble 0.5s ease;
+}
+
+@keyframes correct-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.quiz-feedback {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  text-align: center;
+  min-height: 1.5em;
+  color: var(--color-text-light);
+}
+
+/* ===== Drag and Drop ===== */
+.dragdrop-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.dragdrop-outline {
+  position: relative;
+  width: clamp(220px, 60vw, 380px);
+  height: clamp(180px, 50vw, 320px);
+  margin: 0 auto;
+}
+
+.dragdrop-outline svg {
+  width: 100%;
+  height: 100%;
+}
+
+.drop-zone {
+  position: absolute;
+  cursor: pointer;
+  opacity: 0.3;
+  transition: opacity var(--transition-fast);
+}
+
+.drop-zone.filled {
+  opacity: 1;
+}
+
+.drop-zone.highlight {
+  opacity: 0.6;
+  filter: drop-shadow(0 0 8px var(--theme-primary, #00b894));
+}
+
+.dragdrop-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px;
+  width: 100%;
+}
+
+.drag-piece {
+  width: 70px;
+  height: 60px;
+  border-radius: var(--radius-small);
+  background: var(--color-white);
+  box-shadow: var(--shadow-soft);
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  padding: 6px;
+}
+
+.drag-piece:active {
+  cursor: grabbing;
+  transform: scale(1.1);
+  box-shadow: var(--shadow-heavy);
+  z-index: 100;
+}
+
+.drag-piece.dragging {
+  position: fixed;
+  z-index: 1000;
+  transform: scale(1.1);
+  box-shadow: var(--shadow-heavy);
+  pointer-events: none;
+}
+
+.drag-piece.placed {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.dragdrop-fact {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  text-align: center;
+  color: var(--theme-primary, #00b894);
+  min-height: 1.5em;
+  padding: 0 10px;
+}
+
+/* ===== Matching / Memory Cards ===== */
+.matching-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.matching-grid {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+}
+
+.matching-grid.grid-2x4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.matching-grid.grid-2x5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.matching-card {
+  aspect-ratio: 3/4;
+  perspective: 600px;
+  cursor: pointer;
+  touch-action: manipulation;
+  min-height: 60px;
+}
+
+.matching-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+}
+
+.matching-card.flipped .matching-card-inner {
+  transform: rotateY(180deg);
+}
+
+.matching-card-front,
+.matching-card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: var(--radius-small);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.matching-card-front {
+  background: var(--theme-primary, #00b894);
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+}
+
+.matching-card-back {
+  background: var(--color-white);
+  transform: rotateY(180deg);
+  padding: 6px;
+  font-size: clamp(0.65rem, 2vw, 0.85rem);
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+  overflow: hidden;
+}
+
+.matching-card.matched {
+  pointer-events: none;
+}
+
+.matching-card.matched .matching-card-inner {
+  transform: rotateY(180deg);
+}
+
+.matching-card.matched .matching-card-back {
+  border: 3px solid var(--color-success);
+  background: #e8f8f5;
+}
+
+.matching-fact {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  text-align: center;
+  min-height: 1.5em;
+  padding: 0 10px;
+}
+
+/* ===== Maze ===== */
+.maze-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.maze-info {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  text-align: center;
+}
+
+.maze-grid {
+  display: grid;
+  gap: 0;
+  touch-action: none;
+  position: relative;
+}
+
+.maze-cell {
+  width: clamp(36px, 10vw, 50px);
+  height: clamp(36px, 10vw, 50px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+  position: relative;
+  transition: background var(--transition-fast);
+}
+
+.maze-cell.wall {
+  border-radius: 4px;
+}
+
+.maze-cell.path {
+  background: rgba(255,255,255,0.7);
+  border-radius: 4px;
+}
+
+.maze-cell.player {
+  z-index: 5;
+}
+
+.maze-cell.goal {
+  animation: goal-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes goal-pulse {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+.maze-cell.collectible {
+  cursor: pointer;
+}
+
+.maze-cell.collected {
+  opacity: 0.3;
+}
+
+.maze-collectibles-count {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.maze-swipe-hint {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+}
+
+/* ===== Counting ===== */
+.counting-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.counting-scene {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--color-white);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  max-height: 280px;
+}
+
+.counting-scene svg {
+  width: 100%;
+  height: 100%;
+}
+
+.counting-question {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+  text-align: center;
+}
+
+.counting-answers {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.counting-answer-btn {
+  font-family: var(--font-title);
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  width: clamp(64px, 18vw, 80px);
+  height: clamp(64px, 18vw, 80px);
+  border: 3px solid #dfe6e9;
+  border-radius: 50%;
+  background: var(--color-white);
+  cursor: pointer;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-soft);
+}
+
+.counting-answer-btn:active {
+  transform: scale(0.95);
+}
+
+.counting-answer-btn.correct {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: var(--color-white);
+}
+
+.counting-answer-btn.wrong {
+  border-color: var(--color-error);
+  opacity: 0.5;
+  animation: wobble 0.5s ease;
+}
+
+.counting-feedback {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  text-align: center;
+  min-height: 1.5em;
+  color: var(--color-text-light);
+}
+
+/* ===== Coloring ===== */
+.coloring-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+}
+
+.coloring-canvas {
+  flex: 1;
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.coloring-canvas svg {
+  width: 100%;
+  height: 100%;
+  max-height: 50vh;
+}
+
+.coloring-region {
+  cursor: pointer;
+  stroke: #2d3436;
+  stroke-width: 2;
+  transition: fill var(--transition-fast);
+  touch-action: manipulation;
+}
+
+.coloring-region:hover {
+  stroke-width: 3;
+}
+
+.coloring-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  padding: 12px;
+  background: var(--color-white);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-soft);
+  width: 100%;
+  max-width: 450px;
+}
+
+.color-swatch {
+  width: clamp(40px, 10vw, 52px);
+  height: clamp(40px, 10vw, 52px);
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  box-shadow: var(--shadow-soft);
+}
+
+.color-swatch:active {
+  transform: scale(0.9);
+}
+
+.color-swatch.selected {
+  border-color: var(--color-text);
+  transform: scale(1.15);
+  box-shadow: var(--shadow-medium);
+}
+
+.coloring-progress {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+}
+
+.coloring-instruction {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  text-align: center;
+  color: var(--color-text-light);
+}

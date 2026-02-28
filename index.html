@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>La Aventura de Theo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/games.css">
+</head>
+<body>
+
+  <!-- Screen 1: Splash -->
+  <section id="screen-splash" class="screen active">
+    <div class="splash-content">
+      <div class="lang-selector" id="lang-selector">
+        <button class="lang-btn" data-lang="es">ES</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="ca">CA</button>
+      </div>
+      <h1 class="splash-title" id="splash-title"></h1>
+      <div class="splash-illustration" id="splash-illustration"></div>
+      <button class="splash-start" id="btn-start"></button>
+    </div>
+  </section>
+
+  <!-- Screen 2: Theme Select -->
+  <section id="screen-theme" class="screen">
+    <div class="screen-inner">
+      <h2 class="screen-title" id="theme-screen-title"></h2>
+      <div class="theme-cards">
+        <button class="theme-card theme-dino" id="btn-theme-dino">
+          <div class="theme-card-illustration" id="theme-dino-illustration"></div>
+          <h3 id="theme-dino-label"></h3>
+          <div class="theme-stars" id="theme-dino-stars"></div>
+        </button>
+        <button class="theme-card theme-truck" id="btn-theme-truck">
+          <div class="theme-card-illustration" id="theme-truck-illustration"></div>
+          <h3 id="theme-truck-label"></h3>
+          <div class="theme-stars" id="theme-truck-stars"></div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screen 3: Level Select -->
+  <section id="screen-levels" class="screen">
+    <div class="screen-inner">
+      <div class="levels-header">
+        <button class="btn-back" id="btn-back-themes" aria-label="Back">
+          <span class="back-arrow">&larr;</span>
+        </button>
+        <h2 class="screen-title" id="levels-title">DINOSAURS</h2>
+      </div>
+      <div class="levels-grid" id="levels-grid"></div>
+    </div>
+  </section>
+
+  <!-- Screen 4: Game -->
+  <section id="screen-game" class="screen">
+    <div class="game-header">
+      <button class="btn-back" id="btn-back-levels" aria-label="Back">
+        <span class="back-arrow">&larr;</span>
+      </button>
+      <h2 class="game-title" id="game-title"></h2>
+      <div class="game-progress" id="game-progress"></div>
+    </div>
+    <div class="game-area" id="game-area"></div>
+  </section>
+
+  <!-- Screen 5: Celebration -->
+  <section id="screen-celebration" class="screen">
+    <div class="celebration-content">
+      <div class="confetti-container" id="confetti-container"></div>
+      <div class="celebration-stars" id="celebration-stars"></div>
+      <h2 class="celebration-title" id="celebration-title"></h2>
+      <div class="celebration-illustration" id="celebration-illustration"></div>
+      <p class="celebration-fact" id="celebration-fact"></p>
+      <button class="btn-next-level" id="btn-next-level"></button>
+    </div>
+  </section>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/svg/icons.js"></script>
+  <script src="js/svg/dinos.js"></script>
+  <script src="js/svg/trucks.js"></script>
+  <script src="js/games/quiz.js"></script>
+  <script src="js/games/dragdrop.js"></script>
+  <script src="js/games/matching.js"></script>
+  <script src="js/games/maze.js"></script>
+  <script src="js/games/counting.js"></script>
+  <script src="js/games/coloring.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
