@@ -107,7 +107,7 @@ window.RunnerGame = (function () {
     html += '</style>';
     html += '<div class="runner-area" id="runner-area" style="background:' + skyColor + ';">';
     // Background decorations
-    html += theme === 'dino' ? renderDinoBackground() : renderClouds();
+    html += theme === 'dino' ? renderDinoBackground() : theme === 'truck' ? renderTruckBackground() : renderClouds();
     html += '<div class="runner-bg-layer" id="runner-bg"></div>';
     html += '<div class="runner-ground" id="runner-ground" style="background:' + groundColor + ';"><div class="runner-ground-pattern"></div></div>';
     html += '<div class="runner-player" id="runner-player"' + (character.indexOf('<svg') === 0 ? ' style="font-size:0;"' : '') + '>' + character + '</div>';
@@ -170,6 +170,37 @@ window.RunnerGame = (function () {
       html += '<path d="M20 22 Q35 10 38 18 Q32 16 20 22Z" fill="#3d7a2e"/>';
       html += '<path d="M20 20 Q10 2 8 12 Q14 10 20 20Z" fill="#4a8a3e"/>';
       html += '<path d="M20 20 Q30 2 32 12 Q26 10 20 20Z" fill="#4a8a3e"/>';
+      html += '</svg></div>';
+    }
+    return html;
+  }
+
+  function renderTruckBackground() {
+    var html = '';
+    html += renderClouds();
+    // City/industrial building silhouettes
+    var buildings = [
+      { x: '3%', y: '40%', w: 35, h: 70 },
+      { x: '18%', y: '45%', w: 28, h: 55 },
+      { x: '38%', y: '35%', w: 40, h: 80 },
+      { x: '58%', y: '42%', w: 32, h: 60 },
+      { x: '78%', y: '38%', w: 36, h: 72 },
+      { x: '93%', y: '46%', w: 25, h: 50 }
+    ];
+    for (var i = 0; i < buildings.length; i++) {
+      var b = buildings[i];
+      html += '<div class="runner-cloud" style="left:' + b.x + ';top:' + b.y + ';opacity:0.12;">';
+      html += '<svg width="' + b.w + '" height="' + b.h + '" viewBox="0 0 40 80">';
+      html += '<rect x="2" y="5" width="36" height="75" fill="#636e72" rx="2"/>';
+      html += '<rect x="6" y="10" width="6" height="6" fill="#dfe6e9" opacity="0.5"/>';
+      html += '<rect x="16" y="10" width="6" height="6" fill="#dfe6e9" opacity="0.4"/>';
+      html += '<rect x="28" y="10" width="6" height="6" fill="#dfe6e9" opacity="0.5"/>';
+      html += '<rect x="6" y="22" width="6" height="6" fill="#dfe6e9" opacity="0.4"/>';
+      html += '<rect x="16" y="22" width="6" height="6" fill="#dfe6e9" opacity="0.5"/>';
+      html += '<rect x="28" y="22" width="6" height="6" fill="#dfe6e9" opacity="0.3"/>';
+      html += '<rect x="6" y="34" width="6" height="6" fill="#dfe6e9" opacity="0.5"/>';
+      html += '<rect x="16" y="34" width="6" height="6" fill="#dfe6e9" opacity="0.4"/>';
+      html += '<rect x="28" y="34" width="6" height="6" fill="#dfe6e9" opacity="0.5"/>';
       html += '</svg></div>';
     }
     return html;
@@ -362,8 +393,10 @@ window.RunnerGame = (function () {
       case TYPE_BLOCK:
         el.className = 'runner-block';
         if (theme === 'dino') {
-          // Rock/boulder
           el.innerHTML = '<svg width="32" height="36" viewBox="0 0 32 36"><path d="M4 36 L2 20 Q0 12 8 6 L16 2 Q24 0 30 8 L32 16 Q32 28 28 36Z" fill="#8b7355"/><path d="M4 36 L2 20 Q0 12 8 6 L16 2 Q20 4 18 12 L14 24 Q10 32 4 36Z" fill="#a0896c"/><circle cx="12" cy="18" r="2" fill="#7a6548" opacity="0.4"/><circle cx="22" cy="14" r="1.5" fill="#7a6548" opacity="0.3"/><path d="M8 28 L14 24" stroke="#7a6548" stroke-width="0.5" opacity="0.3"/></svg>';
+        } else if (theme === 'truck') {
+          // Oil barrel
+          el.innerHTML = '<svg width="32" height="36" viewBox="0 0 32 36"><rect x="4" y="2" width="24" height="32" rx="3" fill="#2d3436"/><rect x="6" y="4" width="20" height="28" rx="2" fill="#636e72"/><rect x="4" y="8" width="24" height="3" fill="#2d3436"/><rect x="4" y="24" width="24" height="3" fill="#2d3436"/><rect x="10" y="12" width="12" height="10" rx="1" fill="#fdcb6e"/><rect x="14" y="14" width="4" height="6" fill="#2d3436"/></svg>';
         } else {
           el.innerHTML = '<svg width="32" height="36" viewBox="0 0 32 36"><rect x="0" y="0" width="32" height="36" fill="#c0392b" rx="2"/><rect x="2" y="2" width="13" height="16" fill="#e74c3c" rx="1"/><rect x="17" y="2" width="13" height="16" fill="#e74c3c" rx="1"/><rect x="8" y="20" width="16" height="14" fill="#e74c3c" rx="1"/><rect x="0" y="18" width="32" height="2" fill="#a93226"/><rect x="15" y="0" width="2" height="18" fill="#a93226"/></svg>';
         }
@@ -372,8 +405,10 @@ window.RunnerGame = (function () {
         el.className = 'runner-pipe';
         var pw = ent.width, ph = ent.height;
         if (theme === 'dino') {
-          // Volcano vent / stalagmite
           el.innerHTML = '<svg width="' + pw + '" height="' + ph + '" viewBox="0 0 ' + pw + ' ' + ph + '"><path d="M' + (pw*0.1) + ' ' + ph + ' L' + (pw*0.3) + ' 8 Q' + (pw*0.5) + ' 0 ' + (pw*0.7) + ' 8 L' + (pw*0.9) + ' ' + ph + 'Z" fill="#6d5c4a"/><path d="M' + (pw*0.1) + ' ' + ph + ' L' + (pw*0.3) + ' 8 Q' + (pw*0.4) + ' 4 ' + (pw*0.45) + ' 10 L' + (pw*0.35) + ' ' + ph + 'Z" fill="#8b7355" opacity="0.6"/><ellipse cx="' + (pw*0.5) + '" cy="6" rx="' + (pw*0.15) + '" ry="3" fill="#e74c3c" opacity="0.6"/></svg>';
+        } else if (theme === 'truck') {
+          // Traffic cone
+          el.innerHTML = '<svg width="' + pw + '" height="' + ph + '" viewBox="0 0 ' + pw + ' ' + ph + '"><path d="M' + (pw*0.15) + ' ' + ph + ' L' + (pw*0.4) + ' 6 Q' + (pw*0.5) + ' 0 ' + (pw*0.6) + ' 6 L' + (pw*0.85) + ' ' + ph + 'Z" fill="#e17055"/><rect x="' + (pw*0.1) + '" y="' + (ph-6) + '" width="' + (pw*0.8) + '" height="6" rx="2" fill="#d63031"/><rect x="' + (pw*0.3) + '" y="' + (ph*0.3) + '" width="' + (pw*0.4) + '" height="4" fill="white" opacity="0.8"/><rect x="' + (pw*0.25) + '" y="' + (ph*0.6) + '" width="' + (pw*0.5) + '" height="4" fill="white" opacity="0.8"/></svg>';
         } else {
           el.innerHTML = '<svg width="' + pw + '" height="' + ph + '" viewBox="0 0 ' + pw + ' ' + ph + '"><rect x="0" y="0" width="' + pw + '" height="10" fill="#27ae60" rx="2"/><rect x="3" y="10" width="' + (pw - 6) + '" height="' + (ph - 10) + '" fill="#2ecc71"/><rect x="3" y="10" width="4" height="' + (ph - 10) + '" fill="#27ae60" opacity="0.5"/></svg>';
         }
@@ -381,8 +416,10 @@ window.RunnerGame = (function () {
       case TYPE_ENEMY:
         el.className = 'runner-enemy';
         if (theme === 'dino') {
-          // Small raptor enemy
           el.innerHTML = '<svg width="30" height="32" viewBox="0 0 30 32"><g fill="#c0392b"><rect x="10" y="2" width="8" height="6" rx="1"/><rect x="8" y="8" width="6" height="10"/><rect x="14" y="10" width="8" height="6" rx="1"/><rect x="20" y="8" width="4" height="3"/></g><g fill="#a93226"><rect x="8" y="18" width="3" height="8" rx="1"/><rect x="14" y="18" width="3" height="8" rx="1"/></g><rect x="12" y="4" width="2.5" height="2" rx="1" fill="white"/><rect x="13" y="4.5" width="1" height="1" fill="#222"/><rect x="10" y="7" width="4" height="1" fill="#e74c3c"/><rect x="22" y="9" width="3" height="1" fill="#e74c3c"/></svg>';
+        } else if (theme === 'truck') {
+          // Tire obstacle
+          el.innerHTML = '<svg width="30" height="32" viewBox="0 0 30 32"><circle cx="15" cy="16" r="14" fill="#2d3436"/><circle cx="15" cy="16" r="10" fill="#636e72"/><circle cx="15" cy="16" r="5" fill="#2d3436"/><circle cx="15" cy="16" r="2" fill="#dfe6e9"/><path d="M15 6 L15 10" stroke="#2d3436" stroke-width="2"/><path d="M15 22 L15 26" stroke="#2d3436" stroke-width="2"/><path d="M5 16 L9 16" stroke="#2d3436" stroke-width="2"/><path d="M21 16 L25 16" stroke="#2d3436" stroke-width="2"/></svg>';
         } else {
           el.textContent = '👾';
         }
@@ -393,6 +430,8 @@ window.RunnerGame = (function () {
         el.style.height = ent.height + 'px';
         if (theme === 'dino') {
           el.style.background = 'linear-gradient(180deg, #4a3728 0%, #2a1f15 40%, #1a120b 100%)';
+        } else if (theme === 'truck') {
+          el.style.background = 'linear-gradient(180deg, #2d3436 0%, #1a1a2e 50%, #0a0a15 100%)';
         } else {
           el.style.background = 'rgba(0,0,0,0.7)';
         }
@@ -401,9 +440,12 @@ window.RunnerGame = (function () {
       case TYPE_PLATFORM:
         el.className = 'runner-platform';
         if (theme === 'dino') {
-          // Stone/rock platform with moss
           var w = ent.width;
           el.innerHTML = '<svg width="' + w + '" height="12" viewBox="0 0 ' + w + ' 12"><rect x="0" y="2" width="' + w + '" height="10" fill="#8b7355" rx="3"/><rect x="0" y="0" width="' + w + '" height="5" fill="#6d8b5e" rx="3"/><rect x="4" y="6" width="8" height="2" fill="#7a6548" rx="1" opacity="0.4"/><rect x="' + (w-14) + '" y="7" width="6" height="2" fill="#7a6548" rx="1" opacity="0.3"/></svg>';
+        } else if (theme === 'truck') {
+          // Metal ramp/platform
+          var w = ent.width;
+          el.innerHTML = '<svg width="' + w + '" height="12" viewBox="0 0 ' + w + ' 12"><rect x="0" y="0" width="' + w + '" height="12" fill="#636e72" rx="2"/><rect x="0" y="0" width="' + w + '" height="4" fill="#b2bec3" rx="2"/><rect x="4" y="5" width="6" height="2" fill="#dfe6e9" opacity="0.3"/><rect x="' + (w*0.5) + '" y="5" width="6" height="2" fill="#dfe6e9" opacity="0.3"/><rect x="2" y="10" width="' + (w-4) + '" height="2" fill="#2d3436" rx="1"/></svg>';
         } else {
           el.innerHTML = '<svg width="' + ent.width + '" height="12" viewBox="0 0 ' + ent.width + ' 12"><rect x="0" y="0" width="' + ent.width + '" height="12" fill="#8B7355" rx="2"/><rect x="0" y="0" width="' + ent.width + '" height="4" fill="#a0896c" rx="2"/></svg>';
         }

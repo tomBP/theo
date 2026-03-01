@@ -472,15 +472,16 @@ window.LevelData = {
         { es: 'El piloto hace trucos increibles', en: 'The driver does incredible tricks', ca: 'El pilot fa trucs increibles' }
       ],
       config: {
-        character: '🧟',
-        collectible: '⭐',
+        character: '<svg width="40" height="40" viewBox="0 0 40 40"><rect x="2" y="14" width="36" height="14" rx="3" fill="#4a4a4a"/><rect x="4" y="10" width="18" height="8" rx="2" fill="#5a5a5a"/><rect x="6" y="12" width="6" height="5" fill="#7ec8e3" rx="1"/><rect x="14" y="12" width="6" height="5" fill="#7ec8e3" rx="1"/><rect x="24" y="16" width="12" height="10" fill="#3d3d3d" rx="1"/><rect x="2" y="26" width="36" height="3" fill="#2d2d2d"/><circle cx="10" cy="32" r="5" fill="#333"/><circle cx="10" cy="32" r="3" fill="#666"/><circle cx="10" cy="32" r="1.5" fill="#444"/><circle cx="30" cy="32" r="5" fill="#333"/><circle cx="30" cy="32" r="3" fill="#666"/><circle cx="30" cy="32" r="1.5" fill="#444"/><rect x="0" y="18" width="3" height="4" rx="1" fill="#e74c3c"/><rect x="37" y="18" width="3" height="4" rx="1" fill="#f39c12"/><rect x="26" y="18" width="8" height="2" fill="#6ab04c" opacity="0.6"/></svg>',
+        collectible: '🔧',
         totalCollectibles: 10,
         groundColor: '#636e72',
         skyColor: '#a29bfe',
         label: { es: '!Corre por el cementerio!', en: 'Run through the graveyard!', ca: 'Corre pel cementiri!' },
         hasGaps: true,
         hasPlatforms: true,
-        hasDoubleJump: true
+        hasDoubleJump: true,
+        theme: 'truck'
       }
     },
     {
