@@ -18,9 +18,14 @@ window.DragDropGame = (function () {
     var html = '<div class="dragdrop-container">';
     html += '<div class="dragdrop-outline" id="dragdrop-outline">';
     html += '<svg viewBox="0 0 300 250" xmlns="http://www.w3.org/2000/svg">';
+    // Glow filter for outlines
+    html += '<defs><filter id="outlineGlow" x="-20%" y="-20%" width="140%" height="140%">';
+    html += '<feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>';
+    html += '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>';
+    html += '</filter></defs>';
     // Outline shape
     pieces.forEach(function (p) {
-      html += '<g class="drop-zone" id="drop-' + p.id + '" data-id="' + p.id + '">';
+      html += '<g class="drop-zone" id="drop-' + p.id + '" data-id="' + p.id + '" filter="url(#outlineGlow)">';
       html += p.outlineSVG;
       html += '</g>';
     });

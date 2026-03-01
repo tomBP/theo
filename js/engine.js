@@ -41,6 +41,7 @@ window.Engine = (function () {
       html += '<div class="learn-fact">' + L(fact) + '</div>';
     });
     html += '</div>';
+    if (window.AvatarDialog) { html += AvatarDialog.render(levelData.id); }
     html += '<button class="learn-continue" id="learn-continue">' + t('letsGo') + '</button>';
     html += '</div>';
     gameArea.innerHTML = html;

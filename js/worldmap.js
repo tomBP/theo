@@ -48,6 +48,22 @@ window.WorldMap = (function () {
   var walkAnimId = null;
   var isWalking = false;
 
+  // Arrow key walking
+  var arrowKeysDown = {};
+  var ARROW_WALK_SPEED = 4;
+
+  // Coins
+  var coins = [];
+  var coinCount = 0;
+  var coinEls = [];
+
+  // Level prompt
+  var promptEl = null;
+  var promptCheckpointIdx = -1;
+
+  // Dog decorations
+  var dogEls = [];
+
   // Bound event handlers (for cleanup)
   var boundHandlers = {};
 
@@ -89,6 +105,12 @@ window.WorldMap = (function () {
 
     // Position character at the furthest unlocked checkpoint
     positionCharacterAtCurrent();
+
+    // Create coins between checkpoints
+    createCoins();
+
+    // Place dog decorations
+    placeDogs();
 
     // Set up viewport size
     onResize();
@@ -145,6 +167,13 @@ window.WorldMap = (function () {
     isWalking = false;
     pathPoints = [];
     pathD = '';
+    coins = [];
+    coinEls = [];
+    coinCount = 0;
+    dogEls = [];
+    arrowKeysDown = {};
+    promptEl = null;
+    promptCheckpointIdx = -1;
   }
 
   /* ---------- Build DOM ---------- */
@@ -172,17 +201,39 @@ window.WorldMap = (function () {
     // Far layer
     layerFar = document.createElement('div');
     layerFar.className = 'parallax-layer parallax-far';
+    if (window.WorldMapBG) {
+      layerFar.innerHTML = currentTheme === 'dino' ? WorldMapBG.dinoFar() : WorldMapBG.truckFar();
+    }
     viewport.appendChild(layerFar);
 
     // Mid layer
     layerMid = document.createElement('div');
     layerMid.className = 'parallax-layer parallax-mid';
+    if (window.WorldMapBG) {
+      var midSvg = currentTheme === 'dino' ? WorldMapBG.dinoMid() : WorldMapBG.truckMid();
+      var creatureSvg = '';
+      if (currentTheme === 'dino' && typeof WorldMapBG.dinoCreatures === 'function') {
+        creatureSvg = WorldMapBG.dinoCreatures();
+      } else if (currentTheme === 'truck' && typeof WorldMapBG.truckCreatures === 'function') {
+        creatureSvg = WorldMapBG.truckCreatures();
+      }
+      layerMid.innerHTML = midSvg + creatureSvg;
+    }
     viewport.appendChild(layerMid);
 
     // Near layer
     layerNear = document.createElement('div');
     layerNear.className = 'parallax-layer parallax-near';
+    if (window.WorldMapBG) {
+      layerNear.innerHTML = currentTheme === 'dino' ? WorldMapBG.dinoNear() : WorldMapBG.truckNear();
+    }
     viewport.appendChild(layerNear);
+
+    // Coin counter
+    var coinDisplay = document.createElement('div');
+    coinDisplay.className = 'worldmap-coin-display';
+    coinDisplay.innerHTML = '<svg viewBox="0 0 20 20" width="16" height="16"><circle cx="10" cy="10" r="9" fill="#f1c40f" stroke="#e67e22" stroke-width="1.5"/><text x="10" y="14" text-anchor="middle" font-size="10" fill="#e67e22" font-weight="bold">$</text></svg> <span id="worldmap-coin-count">0</span>';
+    viewport.appendChild(coinDisplay);
 
     // Scroll hint
     var hint = document.createElement('div');
@@ -403,6 +454,204 @@ window.WorldMap = (function () {
     if (!characterEl) return;
     characterEl.style.left = characterPos.x + 'px';
     characterEl.style.top = characterPos.y + 'px';
+  }
+
+  /* ---------- Coins ---------- */
+  function createCoins() {
+    coins = [];
+    coinEls = [];
+    coinCount = 0;
+
+    for (var i = 0; i < pathPoints.length - 1; i++) {
+      var p1 = pathPoints[i];
+      var p2 = pathPoints[i + 1];
+      for (var j = 1; j <= 3; j++) {
+        var t = j / 4;
+        var cx = p1.x + (p2.x - p1.x) * t;
+        var cy = p1.y + (p2.y - p1.y) * t - 30; // float above path
+        var coin = { x: cx, y: cy, collected: false, index: coins.length };
+        coins.push(coin);
+
+        var el = document.createElement('div');
+        el.className = 'worldmap-coin';
+        el.innerHTML = '<svg viewBox="0 0 20 20" width="20" height="20"><circle cx="10" cy="10" r="9" fill="#f1c40f" stroke="#e67e22" stroke-width="1.5"/><text x="10" y="14" text-anchor="middle" font-size="10" fill="#e67e22" font-weight="bold">$</text></svg>';
+        el.style.left = cx + 'px';
+        el.style.top = cy + 'px';
+        layerNear.appendChild(el);
+        coinEls.push(el);
+      }
+    }
+  }
+
+  function checkCoinCollision() {
+    for (var i = 0; i < coins.length; i++) {
+      if (coins[i].collected) continue;
+      var dx = characterPos.x - coins[i].x;
+      var dy = characterPos.y - coins[i].y - 30;
+      if (Math.abs(dx) < 30 && Math.abs(dy) < 30) {
+        coins[i].collected = true;
+        coinCount++;
+        if (coinEls[i]) {
+          coinEls[i].classList.add('collected');
+        }
+        if (window.AudioManager) AudioManager.collect();
+        updateCoinDisplay();
+      }
+    }
+  }
+
+  function updateCoinDisplay() {
+    var el = document.getElementById('worldmap-coin-count');
+    if (el) el.textContent = coinCount;
+  }
+
+  /* ---------- Level Prompt ---------- */
+  function checkProximityPrompt() {
+    if (isWalking) { hidePrompt(); return; }
+
+    var levels = window.LevelData ? window.LevelData[currentTheme] : [];
+    var levelIds = levels.map(function (l) { return l.id; });
+    var nearIdx = -1;
+
+    for (var i = 0; i < pathPoints.length; i++) {
+      var dx = Math.abs(characterPos.x - pathPoints[i].x);
+      var dy = Math.abs(characterPos.y - pathPoints[i].y);
+      if (dx < 40 && dy < 40) {
+        var level = levels[i];
+        if (level && GameState.isUnlocked(level.id, levelIds)) {
+          nearIdx = i;
+          break;
+        }
+      }
+    }
+
+    if (nearIdx >= 0 && nearIdx !== promptCheckpointIdx) {
+      showPrompt(nearIdx, levels[nearIdx]);
+    } else if (nearIdx < 0) {
+      hidePrompt();
+    }
+  }
+
+  function showPrompt(idx, level) {
+    hidePrompt();
+    promptCheckpointIdx = idx;
+
+    promptEl = document.createElement('div');
+    promptEl.className = 'worldmap-level-prompt';
+    promptEl.innerHTML = '<div class="prompt-name">' + L(level.name) + '</div>' +
+      '<div class="prompt-enter">' + t('pressEnter') + '</div>';
+    promptEl.style.left = pathPoints[idx].x + 'px';
+    promptEl.style.top = (pathPoints[idx].y - 60) + 'px';
+
+    // Tap/click to enter
+    promptEl.addEventListener('click', function () {
+      if (window.AudioManager) AudioManager.tap();
+      if (api.onCheckpointTap) api.onCheckpointTap(idx);
+    });
+
+    layerNear.appendChild(promptEl);
+  }
+
+  function hidePrompt() {
+    if (promptEl && promptEl.parentNode) {
+      promptEl.parentNode.removeChild(promptEl);
+    }
+    promptEl = null;
+    promptCheckpointIdx = -1;
+  }
+
+  /* ---------- Dog Decorations ---------- */
+  function placeDogs() {
+    dogEls = [];
+    if (!window.AvatarSVG) return;
+
+    // Place Toffee near checkpoint 2 and Lula near checkpoint 7
+    var dogConfigs = [
+      { svgFn: 'toffee', cpIdx: 2, offsetX: 50, offsetY: 25 },
+      { svgFn: 'lula', cpIdx: 7, offsetX: -55, offsetY: 20 }
+    ];
+
+    for (var i = 0; i < dogConfigs.length; i++) {
+      var dc = dogConfigs[i];
+      if (dc.cpIdx >= pathPoints.length) continue;
+      if (typeof window.AvatarSVG[dc.svgFn] !== 'function') continue;
+
+      var el = document.createElement('div');
+      el.className = 'worldmap-dog';
+      el.innerHTML = window.AvatarSVG[dc.svgFn]();
+      el.style.left = (pathPoints[dc.cpIdx].x + dc.offsetX) + 'px';
+      el.style.top = (pathPoints[dc.cpIdx].y + dc.offsetY) + 'px';
+      layerNear.appendChild(el);
+      dogEls.push(el);
+    }
+  }
+
+  /* ---------- Arrow Key Walking ---------- */
+  function updateArrowWalking(dt) {
+    if (isDragging || isWalking) return;
+
+    var moving = false;
+    var dir = 0;
+    if (arrowKeysDown['ArrowRight']) { dir = 1; moving = true; }
+    else if (arrowKeysDown['ArrowLeft']) { dir = -1; moving = true; }
+
+    if (!moving) return;
+
+    // Move character along path
+    var speed = ARROW_WALK_SPEED * (dt || 1);
+    var newX = characterPos.x + dir * speed;
+
+    // Clamp to first and last checkpoint
+    var minX = pathPoints[0].x;
+    var maxX = pathPoints[pathPoints.length - 1].x;
+    newX = Math.max(minX, Math.min(maxX, newX));
+
+    // Interpolate Y from path points
+    var newY = interpolateY(newX);
+
+    characterPos.x = newX;
+    characterPos.y = newY;
+    applyCharacterPosition();
+
+    // Walking animation
+    if (characterEl) {
+      characterEl.classList.remove('idle');
+      characterEl.classList.add('walking');
+      if (dir < 0) {
+        characterEl.style.transform = 'translate(-50%, -50%) scaleX(-1)';
+      } else {
+        characterEl.style.transform = 'translate(-50%, -50%)';
+      }
+    }
+
+    // Auto-scroll to follow
+    centerOnCharacter(true);
+
+    // Check coin collision
+    checkCoinCollision();
+
+    // Check prompt proximity
+    checkProximityPrompt();
+  }
+
+  function stopArrowWalking() {
+    if (characterEl && !isWalking) {
+      characterEl.classList.remove('walking');
+      characterEl.classList.add('idle');
+      characterEl.style.transform = '';
+    }
+  }
+
+  function interpolateY(x) {
+    // Find the two path points that bracket x
+    for (var i = 0; i < pathPoints.length - 1; i++) {
+      if (x >= pathPoints[i].x && x <= pathPoints[i + 1].x) {
+        var t = (x - pathPoints[i].x) / (pathPoints[i + 1].x - pathPoints[i].x);
+        return pathPoints[i].y + (pathPoints[i + 1].y - pathPoints[i].y) * t;
+      }
+    }
+    // Fallback
+    return pathPoints[pathPoints.length - 1].y;
   }
 
   /* ---------- Walk Character to Checkpoint ---------- */
@@ -627,8 +876,16 @@ window.WorldMap = (function () {
     function tick() {
       if (!viewport) return;
 
+      // Arrow key walking
+      var anyArrow = arrowKeysDown['ArrowLeft'] || arrowKeysDown['ArrowRight'];
+      if (anyArrow) {
+        updateArrowWalking(1);
+      } else if (!isWalking && characterEl && characterEl.classList.contains('walking') && !anyArrow) {
+        stopArrowWalking();
+      }
+
       // Apply momentum when not dragging and not walking
-      if (!isDragging && !isWalking) {
+      if (!isDragging && !isWalking && !anyArrow) {
         if (Math.abs(velocity) > MIN_VELOCITY) {
           scrollX += velocity;
           velocity *= FRICTION;
@@ -705,6 +962,26 @@ window.WorldMap = (function () {
       backBtn.addEventListener('click', boundHandlers.backClick);
     }
 
+    // Arrow keys for walking + Enter/Space for checkpoint
+    boundHandlers.keydown = function (e) {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        arrowKeysDown[e.key] = true;
+      }
+      if ((e.key === 'Enter' || e.key === ' ') && promptCheckpointIdx >= 0) {
+        e.preventDefault();
+        if (window.AudioManager) AudioManager.tap();
+        if (api.onCheckpointTap) api.onCheckpointTap(promptCheckpointIdx);
+      }
+    };
+    boundHandlers.keyup = function (e) {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        arrowKeysDown[e.key] = false;
+      }
+    };
+    document.addEventListener('keydown', boundHandlers.keydown);
+    document.addEventListener('keyup', boundHandlers.keyup);
+
     // Resize
     boundHandlers.resize = function () {
       onResize();
@@ -736,10 +1013,14 @@ window.WorldMap = (function () {
       backBtn.removeEventListener('click', boundHandlers.backClick);
     }
 
+    if (boundHandlers.keydown) document.removeEventListener('keydown', boundHandlers.keydown);
+    if (boundHandlers.keyup) document.removeEventListener('keyup', boundHandlers.keyup);
+
     if (boundHandlers.resize) {
       window.removeEventListener('resize', boundHandlers.resize);
     }
 
+    arrowKeysDown = {};
     boundHandlers = {};
   }
 

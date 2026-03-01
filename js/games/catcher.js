@@ -2,7 +2,7 @@
 window.CatcherGame = (function () {
   var container, callback;
   var catcherX, catcherWidth, areaWidth, areaHeight;
-  var items, score, catchGoal, speed, spawnRate;
+  var items, score, catchGoal, speed, spawnRate, baseSpeed, baseSpawnRate;
   var goodSet, badSet, goodLabel, badLabel;
   var rafId, spawnTimer, lastTime;
   var isDragging, dragStartX, catcherStartX;
@@ -10,6 +10,7 @@ window.CatcherGame = (function () {
   var boundMouseDown, boundMouseMove, boundMouseUp;
   var keysDown;
   var destroyed;
+  var lives, maxLives, penalizeMissed;
 
   function start(config, gameArea, onComplete) {
     container = gameArea;
@@ -19,12 +20,17 @@ window.CatcherGame = (function () {
     goodSet = config.goodItems || ['🥚'];
     badSet = config.badItems || ['🪨'];
     catchGoal = config.catchGoal || 10;
-    speed = config.speed || 2;
-    spawnRate = config.spawnRate || 1500;
+    baseSpeed = config.speed || 2;
+    baseSpawnRate = config.spawnRate || 1500;
+    speed = baseSpeed;
+    spawnRate = baseSpawnRate;
     goodLabel = config.goodLabel ? L(config.goodLabel) : '';
     badLabel = config.badLabel ? L(config.badLabel) : '';
+    maxLives = config.lives || 3;
+    penalizeMissed = config.penalizeMissed || false;
 
     score = 0;
+    lives = maxLives;
     items = [];
     isDragging = false;
     keysDown = {};
@@ -45,8 +51,18 @@ window.CatcherGame = (function () {
     html += '.catcher-score{position:absolute;top:10px;left:50%;transform:translateX(-50%);font-family:var(--font-title);font-size:clamp(1.1rem,3.5vw,1.5rem);color:var(--color-white);text-shadow:0 2px 4px rgba(0,0,0,0.3);z-index:20;white-space:nowrap;}';
     html += '.catcher-label{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);font-family:var(--font-body);font-weight:700;font-size:clamp(0.8rem,2.5vw,1rem);color:var(--color-white);text-shadow:0 1px 3px rgba(0,0,0,0.3);z-index:20;text-align:center;white-space:nowrap;opacity:0.9;}';
     html += '.catcher-area.wobble-active{animation:wobble 0.5s ease;}';
+    // Hearts
+    html += '.catcher-hearts{position:absolute;top:10px;left:14px;display:flex;gap:4px;z-index:20;}';
+    html += '.catcher-heart{font-size:1.3rem;transition:all 0.3s ease;}';
+    html += '.catcher-heart.lost{opacity:0.25;transform:scale(0.8);filter:grayscale(1);}';
+    // Reset overlay
+    html += '.catcher-reset-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.55);z-index:30;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;animation:catcher-overlay-in 0.3s ease;}';
+    html += '@keyframes catcher-overlay-in{from{opacity:0;}to{opacity:1;}}';
+    html += '.catcher-reset-text{font-family:var(--font-title);font-size:clamp(1.5rem,5vw,2rem);color:white;text-shadow:0 2px 8px rgba(0,0,0,0.4);}';
+    html += '.catcher-reset-sub{font-family:var(--font-body);font-weight:700;font-size:clamp(0.9rem,3vw,1.1rem);color:rgba(255,255,255,0.9);}';
     html += '</style>';
     html += '<div class="catcher-area" id="catcher-area">';
+    html += '<div class="catcher-hearts" id="catcher-hearts">' + renderHearts() + '</div>';
     html += '<div class="catcher-score" id="catcher-score">0/' + catchGoal + ' ' + goodSet[0] + '</div>';
     if (goodLabel) {
       html += '<div class="catcher-label">' + goodLabel + '</div>';
@@ -62,6 +78,19 @@ window.CatcherGame = (function () {
     }
     catcherX = (areaWidth - catcherWidth) / 2;
     updateCatcherPosition();
+  }
+
+  function renderHearts() {
+    var html = '';
+    for (var i = 0; i < maxLives; i++) {
+      html += '<span class="catcher-heart' + (i >= lives ? ' lost' : '') + '">❤️</span>';
+    }
+    return html;
+  }
+
+  function updateHeartsDisplay() {
+    var el = document.getElementById('catcher-hearts');
+    if (el) el.innerHTML = renderHearts();
   }
 
   function updateCatcherPosition() {
@@ -162,18 +191,20 @@ window.CatcherGame = (function () {
 
   function scheduleSpawn() {
     if (destroyed) return;
+    // Progressive difficulty: spawn faster as score increases
+    var progress = catchGoal > 0 ? score / catchGoal : 0;
+    var currentRate = Math.max(500, spawnRate - progress * spawnRate * 0.5);
     spawnTimer = setTimeout(function () {
       if (destroyed) return;
       spawnItem();
       scheduleSpawn();
-    }, spawnRate + (Math.random() * 400 - 200));
+    }, currentRate + (Math.random() * 300 - 150));
   }
 
   function spawnItem() {
     var area = document.getElementById('catcher-area');
     if (!area || destroyed) return;
 
-    // Recalculate in case of resize
     areaWidth = area.offsetWidth;
     areaHeight = area.offsetHeight;
 
@@ -201,7 +232,7 @@ window.CatcherGame = (function () {
 
   function gameLoop(timestamp) {
     if (destroyed) return;
-    var dt = (timestamp - lastTime) / 16.67; // normalize to ~60fps
+    var dt = (timestamp - lastTime) / 16.67;
     lastTime = timestamp;
 
     // Keyboard movement
@@ -215,8 +246,11 @@ window.CatcherGame = (function () {
       updateCatcherPosition();
     }
 
-    // Update items
-    var fallSpeed = speed * 2.5 * dt;
+    // Progressive speed: increases up to 1.5x as score grows
+    var progress = catchGoal > 0 ? score / catchGoal : 0;
+    var currentSpeed = baseSpeed * (1 + progress * 0.5);
+
+    var fallSpeed = currentSpeed * 2.5 * dt;
     var catcherBottom = areaHeight - 10;
     var catcherTop = catcherBottom - 44;
     var toRemove = [];
@@ -228,14 +262,11 @@ window.CatcherGame = (function () {
       item.el.style.top = item.y + 'px';
       item.el.style.transform = 'rotate(' + item.rotation + 'deg)';
 
-      // Check if caught (item center overlaps catcher)
       var itemCenterX = item.x + 18;
       var itemBottom = item.y + 36;
 
       if (itemBottom >= catcherTop && item.y <= catcherBottom) {
-        // Generous hitbox: item center within catcher width + padding
         if (itemCenterX >= catcherX - 10 && itemCenterX <= catcherX + catcherWidth + 10) {
-          // Caught!
           if (item.isGood) {
             score++;
             AudioManager.correct();
@@ -246,21 +277,32 @@ window.CatcherGame = (function () {
               return;
             }
           } else {
-            AudioManager.wrong();
-            triggerShake();
+            // Bad catch = lose life
+            loseLife();
+            if (lives <= 0) {
+              triggerReset();
+              return;
+            }
           }
           toRemove.push(i);
           continue;
         }
       }
 
-      // Remove if off-screen
+      // Fell off screen
       if (item.y > areaHeight + 50) {
+        // Missing a good item = lose life (if penalizeMissed)
+        if (penalizeMissed && item.isGood) {
+          loseLife();
+          if (lives <= 0) {
+            triggerReset();
+            return;
+          }
+        }
         toRemove.push(i);
       }
     }
 
-    // Remove items (reverse order)
     for (var j = toRemove.length - 1; j >= 0; j--) {
       var idx = toRemove[j];
       if (items[idx].el.parentNode) {
@@ -270,6 +312,59 @@ window.CatcherGame = (function () {
     }
 
     rafId = requestAnimationFrame(gameLoop);
+  }
+
+  function loseLife() {
+    lives--;
+    AudioManager.wrong();
+    triggerShake();
+    updateHeartsDisplay();
+  }
+
+  function triggerReset() {
+    // Stop game loop temporarily
+    if (rafId) cancelAnimationFrame(rafId);
+    clearTimeout(spawnTimer);
+
+    // Remove all items
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].el.parentNode) items[i].el.parentNode.removeChild(items[i].el);
+    }
+    items = [];
+
+    // Show reset overlay
+    var area = document.getElementById('catcher-area');
+    if (!area) return;
+
+    var overlay = document.createElement('div');
+    overlay.className = 'catcher-reset-overlay';
+    overlay.innerHTML = '<div class="catcher-reset-text">' + t('oops') + '</div>' +
+      '<div class="catcher-reset-sub">' + t('tryAgain') + '</div>';
+    area.appendChild(overlay);
+
+    var restartHandler = function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      overlay.removeEventListener('touchstart', restartHandler);
+      overlay.removeEventListener('click', restartHandler);
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      resetGame();
+    };
+    overlay.addEventListener('touchstart', restartHandler, { passive: false });
+    overlay.addEventListener('click', restartHandler);
+  }
+
+  function resetGame() {
+    score = 0;
+    lives = maxLives;
+    items = [];
+    updateScore();
+    updateProgress();
+    updateHeartsDisplay();
+
+    lastTime = performance.now();
+    rafId = requestAnimationFrame(gameLoop);
+    scheduleSpawn();
   }
 
   function updateScore() {
@@ -286,7 +381,6 @@ window.CatcherGame = (function () {
     var area = document.getElementById('catcher-area');
     if (!area) return;
     area.classList.remove('wobble-active');
-    // Force reflow to restart animation
     void area.offsetWidth;
     area.classList.add('wobble-active');
     setTimeout(function () {

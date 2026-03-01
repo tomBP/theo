@@ -35,12 +35,12 @@ window.LevelData = {
       ],
       config: {
         pieces: [
-          { id: 'head', outlineSVG: '<rect x="30" y="40" width="70" height="60" rx="10" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="25" ry="20" fill="#a0896c"/>' },
-          { id: 'horn1', outlineSVG: '<line x1="50" y1="40" x2="40" y2="15" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<polygon points="30,40 25,10 35,10" fill="#c4a77d"/>' },
-          { id: 'horn2', outlineSVG: '<line x1="70" y1="40" x2="65" y2="15" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<polygon points="30,40 25,10 35,10" fill="#c4a77d"/>' },
-          { id: 'body', outlineSVG: '<ellipse cx="170" cy="70" rx="60" ry="35" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="28" ry="20" fill="#8B7355"/>' },
-          { id: 'legs', outlineSVG: '<rect x="130" y="105" width="80" height="30" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<rect x="8" y="10" width="44" height="30" rx="5" fill="#8B7355"/>' },
-          { id: 'tail', outlineSVG: '<path d="M230 65 Q255 60 255 80" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<path d="M10 15 Q40 10 45 30" fill="#8B7355" stroke="none"/>' }
+          { id: 'head', outlineSVG: '<rect x="30" y="40" width="70" height="60" rx="10" fill="none" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="25" ry="20" fill="#a0896c"/>' },
+          { id: 'horn1', outlineSVG: '<line x1="50" y1="40" x2="40" y2="15" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<polygon points="30,40 25,10 35,10" fill="#c4a77d"/>' },
+          { id: 'horn2', outlineSVG: '<line x1="70" y1="40" x2="65" y2="15" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<polygon points="30,40 25,10 35,10" fill="#c4a77d"/>' },
+          { id: 'body', outlineSVG: '<ellipse cx="170" cy="70" rx="60" ry="35" fill="none" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<ellipse cx="30" cy="25" rx="28" ry="20" fill="#8B7355"/>' },
+          { id: 'legs', outlineSVG: '<rect x="130" y="105" width="80" height="30" fill="none" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<rect x="8" y="10" width="44" height="30" rx="5" fill="#8B7355"/>' },
+          { id: 'tail', outlineSVG: '<path d="M230 65 Q255 60 255 80" fill="none" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<path d="M10 15 Q40 10 45 30" fill="#8B7355" stroke="none"/>' }
         ],
         facts: [
           { es: 'El Triceratops tenia una cabeza enorme!', en: 'Triceratops had a huge head!', ca: 'El Triceratops tenia un cap enorme!' },
@@ -106,12 +106,14 @@ window.LevelData = {
       ],
       config: {
         character: '🦕',
-        obstacles: ['🪨', '🌴', '🦴'],
         collectible: '⭐',
-        totalCollectibles: 8,
+        totalCollectibles: 10,
         groundColor: '#2d8a4e',
         skyColor: '#e8f8f5',
-        label: { es: '!Corre por la jungla!', en: 'Run through the jungle!', ca: 'Corre per la jungla!' }
+        label: { es: '!Corre por la jungla!', en: 'Run through the jungle!', ca: 'Corre per la jungla!' },
+        hasGaps: true,
+        hasPlatforms: true,
+        hasDoubleJump: true
       }
     },
     {
@@ -191,9 +193,11 @@ window.LevelData = {
         badItems: ['🪨', '🪵'],
         catchGoal: 10,
         speed: 2,
-        spawnRate: 1200,
+        spawnRate: 1100,
         goodLabel: { es: '!Atrapa los peces!', en: 'Catch the fish!', ca: 'Atrapa els peixos!' },
-        badLabel: { es: '!Evita las rocas!', en: 'Avoid the rocks!', ca: 'Evita les roques!' }
+        badLabel: { es: '!Evita las rocas!', en: 'Avoid the rocks!', ca: 'Evita les roques!' },
+        lives: 3,
+        penalizeMissed: true
       }
     },
     {
@@ -208,10 +212,31 @@ window.LevelData = {
         { es: 'Comia peces recogiendolos del agua', en: 'It ate fish by scooping them up', ca: 'Menjava peixos recollint-los de l\'aigua' }
       ],
       config: {
-        grid: [[0,0,0,1,1,1,1,0],[1,1,0,0,0,1,0,0],[1,0,0,1,0,0,0,1],[1,0,1,1,1,0,1,1],[0,0,0,0,1,0,0,0],[0,1,1,0,0,0,1,0]],
-        start: { r: 0, c: 0 }, goal: { r: 5, c: 7 },
+        grid: [
+          [0,0,0,1,1,1,1,0,0,1,1,0],
+          [1,1,0,0,0,1,0,0,1,1,0,0],
+          [1,0,0,1,0,0,0,1,0,0,0,1],
+          [1,0,1,1,1,0,1,1,0,1,0,0],
+          [0,0,0,0,1,0,0,0,0,1,0,1],
+          [0,1,1,0,0,0,1,0,1,1,0,0],
+          [0,0,1,0,1,0,0,0,0,0,0,1],
+          [1,0,0,0,1,1,0,1,1,0,0,0],
+          [1,0,1,0,0,0,0,0,1,0,1,0],
+          [0,0,1,1,1,0,1,0,0,0,0,0]
+        ],
+        start: { r: 0, c: 0 }, goal: { r: 9, c: 11 },
         playerEmoji: '🦅', goalEmoji: '🪺', wallColor: '#a8d8ea',
-        collectibles: [{ r: 1, c: 3, emoji: '⭐' }, { r: 4, c: 0, emoji: '🐟' }, { r: 2, c: 5, emoji: '⭐' }]
+        collectibles: [
+          { r: 1, c: 3, emoji: '⭐' }, { r: 4, c: 0, emoji: '🐟' },
+          { r: 2, c: 5, emoji: '⭐' }, { r: 6, c: 7, emoji: '⭐' },
+          { r: 8, c: 4, emoji: '🐟' }, { r: 9, c: 9, emoji: '⭐' }
+        ],
+        fogRadius: 3,
+        showTimer: true,
+        enemies: [
+          { emoji: '👻', path: [{ r: 4, c: 5 }, { r: 4, c: 6 }, { r: 4, c: 7 }, { r: 4, c: 8 }] },
+          { emoji: '🦇', path: [{ r: 7, c: 1 }, { r: 7, c: 2 }, { r: 7, c: 3 }] }
+        ]
       }
     },
     {
@@ -328,12 +353,12 @@ window.LevelData = {
       ],
       config: {
         pieces: [
-          { id: 'cab', outlineSVG: '<path d="M80 30 L100 10 L180 10 L200 30" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<path d="M5 40 L15 10 L45 10 L55 40" fill="#34495e"/>' },
-          { id: 'body', outlineSVG: '<rect x="60" y="30" width="160" height="60" rx="8" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<rect x="5" y="10" width="50" height="30" rx="5" fill="#2c3e50"/>' },
-          { id: 'wheel1', outlineSVG: '<circle cx="100" cy="120" r="30" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<circle cx="30" cy="25" r="20" fill="#444"/><circle cx="30" cy="25" r="8" fill="#888"/>' },
-          { id: 'wheel2', outlineSVG: '<circle cx="180" cy="120" r="30" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<circle cx="30" cy="25" r="20" fill="#444"/><circle cx="30" cy="25" r="8" fill="#888"/>' },
-          { id: 'spoiler', outlineSVG: '<polygon points="190,28 220,15 220,35" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<polygon points="10,30 40,10 40,35" fill="#f39c12"/>' },
-          { id: 'lights', outlineSVG: '<rect x="60" y="35" width="20" height="12" rx="3" fill="none" stroke="#b2bec3" stroke-width="2" stroke-dasharray="5,5"/>', pieceSVG: '<rect x="15" y="18" width="30" height="14" rx="4" fill="#f1c40f" opacity="0.8"/>' }
+          { id: 'cab', outlineSVG: '<path d="M80 30 L100 10 L180 10 L200 30" fill="none" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<path d="M5 40 L15 10 L45 10 L55 40" fill="#34495e"/>' },
+          { id: 'body', outlineSVG: '<rect x="60" y="30" width="160" height="60" rx="8" fill="none" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<rect x="5" y="10" width="50" height="30" rx="5" fill="#2c3e50"/>' },
+          { id: 'wheel1', outlineSVG: '<circle cx="100" cy="120" r="30" fill="none" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<circle cx="30" cy="25" r="20" fill="#444"/><circle cx="30" cy="25" r="8" fill="#888"/>' },
+          { id: 'wheel2', outlineSVG: '<circle cx="180" cy="120" r="30" fill="none" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<circle cx="30" cy="25" r="20" fill="#444"/><circle cx="30" cy="25" r="8" fill="#888"/>' },
+          { id: 'spoiler', outlineSVG: '<polygon points="190,28 220,15 220,35" fill="none" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<polygon points="10,30 40,10 40,35" fill="#f39c12"/>' },
+          { id: 'lights', outlineSVG: '<rect x="60" y="35" width="20" height="12" rx="3" fill="none" stroke="#5a6672" stroke-width="3.5" stroke-dasharray="8,4"/>', pieceSVG: '<rect x="15" y="18" width="30" height="14" rx="4" fill="#f1c40f" opacity="0.8"/>' }
         ],
         facts: [
           { es: 'La cabina esta muy alta!', en: 'The cab sits way up high!', ca: 'La cabina esta molt alta!' },
@@ -361,9 +386,11 @@ window.LevelData = {
         badItems: ['🛢️', '💨'],
         catchGoal: 10,
         speed: 2.5,
-        spawnRate: 1100,
+        spawnRate: 1000,
         goodLabel: { es: '!Atrapa los rayos!', en: 'Catch the bolts!', ca: 'Atrapa els llamps!' },
-        badLabel: { es: '!Evita el aceite!', en: 'Avoid the oil!', ca: 'Evita l\'oli!' }
+        badLabel: { es: '!Evita el aceite!', en: 'Avoid the oil!', ca: 'Evita l\'oli!' },
+        lives: 3,
+        penalizeMissed: true
       }
     },
     {
@@ -379,12 +406,14 @@ window.LevelData = {
       ],
       config: {
         character: '🧟',
-        obstacles: ['🪦', '💀', '🕸️'],
         collectible: '⭐',
-        totalCollectibles: 8,
+        totalCollectibles: 10,
         groundColor: '#636e72',
         skyColor: '#a29bfe',
-        label: { es: '!Corre por el cementerio!', en: 'Run through the graveyard!', ca: 'Corre pel cementiri!' }
+        label: { es: '!Corre por el cementerio!', en: 'Run through the graveyard!', ca: 'Corre pel cementiri!' },
+        hasGaps: true,
+        hasPlatforms: true,
+        hasDoubleJump: true
       }
     },
     {

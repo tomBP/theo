@@ -227,6 +227,51 @@ window.WorldMapBG = {
       '</svg>';
   },
 
+  /* Animated creatures for mid/far layers */
+  dinoCreatures: function () {
+    return '<svg viewBox="0 0 2000 400" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;">' +
+      '<style>' +
+        '.fly1{animation:fly1 6s ease-in-out infinite;}.fly2{animation:fly2 8s ease-in-out infinite;}.fly3{animation:fly3 7s ease-in-out infinite;}' +
+        '@keyframes fly1{0%,100%{transform:translateX(0) translateY(0);}50%{transform:translateX(40px) translateY(-15px);}}' +
+        '@keyframes fly2{0%,100%{transform:translateX(0) translateY(0);}50%{transform:translateX(-30px) translateY(-20px);}}' +
+        '@keyframes fly3{0%,100%{transform:translateX(0) translateY(0);}50%{transform:translateX(25px) translateY(-10px);}}' +
+        '.dino-walk{animation:dino-walk 3s ease-in-out infinite;} @keyframes dino-walk{0%,100%{transform:translateX(0);}50%{transform:translateX(20px);}}' +
+      '</style>' +
+      /* Flying pterodactyls */
+      '<g class="fly1"><path d="M300 60 L310 55 L320 60 L330 55 L340 60 L330 63 L320 60 L310 63 Z" fill="#636e72" opacity="0.6"/></g>' +
+      '<g class="fly2"><path d="M900 40 L912 34 L924 40 L936 34 L948 40 L936 44 L924 40 L912 44 Z" fill="#636e72" opacity="0.5"/></g>' +
+      '<g class="fly3"><path d="M1600 70 L1610 65 L1620 70 L1630 65 L1640 70 L1630 73 L1620 70 L1610 73 Z" fill="#636e72" opacity="0.55"/></g>' +
+      /* Small walking dino */
+      '<g class="dino-walk" opacity="0.4"><ellipse cx="450" cy="350" rx="12" ry="8" fill="#27ae60"/><circle cx="445" cy="344" r="5" fill="#2ecc71"/><circle cx="443" cy="342" r="1.5" fill="#2d3436"/></g>' +
+      /* Flowers */
+      '<circle cx="150" cy="370" r="4" fill="#e74c3c" opacity="0.6"/>' +
+      '<circle cx="155" cy="372" r="3" fill="#f39c12" opacity="0.5"/>' +
+      '<circle cx="700" cy="375" r="4" fill="#9b59b6" opacity="0.5"/>' +
+      '<circle cx="1100" cy="368" r="3" fill="#e74c3c" opacity="0.6"/>' +
+      '<circle cx="1500" cy="378" r="4" fill="#f39c12" opacity="0.5"/>' +
+      /* Mushrooms */
+      '<g opacity="0.5"><ellipse cx="350" cy="380" rx="6" ry="4" fill="#e74c3c"/><rect x="348" y="380" width="4" height="6" fill="#dfe6e9"/></g>' +
+      '<g opacity="0.45"><ellipse cx="1300" cy="376" rx="5" ry="3" fill="#e67e22"/><rect x="1298" y="376" width="4" height="5" fill="#dfe6e9"/></g>' +
+      '</svg>';
+  },
+
+  truckCreatures: function () {
+    return '<svg viewBox="0 0 2000 400" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;">' +
+      '<style>' +
+        '.dust1{animation:dust1 4s ease-in-out infinite;}.dust2{animation:dust2 5s ease-in-out infinite;}' +
+        '@keyframes dust1{0%,100%{opacity:0.3;transform:translateX(0);}50%{opacity:0.6;transform:translateX(15px);}}' +
+        '@keyframes dust2{0%,100%{opacity:0.2;transform:translateX(0);}50%{opacity:0.5;transform:translateX(-10px);}}' +
+      '</style>' +
+      /* Dust clouds */
+      '<g class="dust1"><ellipse cx="250" cy="360" rx="20" ry="8" fill="#d4a96a" opacity="0.4"/></g>' +
+      '<g class="dust2"><ellipse cx="800" cy="365" rx="18" ry="7" fill="#c49456" opacity="0.35"/></g>' +
+      '<g class="dust1"><ellipse cx="1400" cy="358" rx="22" ry="9" fill="#d4a96a" opacity="0.4"/></g>' +
+      /* Tire marks */
+      '<path d="M100 385 Q200 380 300 388 Q400 382 500 386" fill="none" stroke="#4a3d30" stroke-width="2" opacity="0.3"/>' +
+      '<path d="M600 383 Q700 388 800 382 Q900 387 1000 384" fill="none" stroke="#4a3d30" stroke-width="2" opacity="0.25"/>' +
+      '</svg>';
+  },
+
   babyTrex: function () {
     return '<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">' +
       '<ellipse cx="30" cy="38" rx="11" ry="13" fill="#00b894"/>' +

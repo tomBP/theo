@@ -198,6 +198,36 @@
       es: 'Reiniciar',
       en: 'Reset',
       ca: 'Reiniciar'
+    },
+    oops: {
+      es: '!Oops!',
+      en: 'Oops!',
+      ca: 'Oops!'
+    },
+    missedOne: {
+      es: '!Se escapo uno!',
+      en: 'Missed one!',
+      ca: 'Se n\'ha escapat un!'
+    },
+    pressEnter: {
+      es: 'Pulsa Enter',
+      en: 'Press Enter',
+      ca: 'Prem Enter'
+    },
+    coins: {
+      es: 'Monedas',
+      en: 'Coins',
+      ca: 'Monedes'
+    },
+    doubleJumpHint: {
+      es: '!Doble salto!',
+      en: 'Double jump!',
+      ca: 'Doble salt!'
+    },
+    time: {
+      es: 'Tiempo',
+      en: 'Time',
+      ca: 'Temps'
     }
   };
 
