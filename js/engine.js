@@ -16,7 +16,8 @@ window.Engine = (function () {
     spotdiff: SpotDiffGame,
     sorting: SortingGame,
     tracer: TracerGame,
-    flappy: FlappyGame
+    flappy: FlappyGame,
+    racer: RacerGame
   };
 
   function startLevel(levelData) {
@@ -105,6 +106,9 @@ window.Engine = (function () {
           break;
         case 'tracer':
           progressEl.textContent = '0%';
+          break;
+        case 'racer':
+          progressEl.textContent = 'Lap 0/' + (config.laps || 3);
           break;
       }
     }

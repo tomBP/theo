@@ -548,23 +548,20 @@ window.LevelData = {
     },
     {
       id: 'truck-10',
-      name: { es: 'TODOS LOS TRUCKS', en: 'ALL TRUCKS', ca: 'TOTS ELS TRUCKS' },
-      gameType: 'tracer',
+      name: { es: 'LA GRAN CARRERA', en: 'THE BIG RACE', ca: 'LA GRAN CURSA' },
+      gameType: 'racer',
       illustration: function () { return TruckSVG.stadium(); },
       keyFact: { es: 'Completaste TODOS los niveles! Eres un CAMPEON de Dinos y Trucks!', en: 'You completed ALL the levels! You are a Dino & Truck CHAMPION!', ca: 'Has completat TOTS els nivells! Ets un CAMPIO de Dinos i Trucks!' },
       learnFacts: [
-        { es: 'Aprendiste sobre 10 dinosaurios increibles!', en: 'You learned about 10 amazing dinosaurs!', ca: 'Has apres sobre 10 dinosaures increibles!' },
-        { es: 'Aprendiste sobre 10 monster trucks geniales!', en: 'You learned about 10 incredible monster trucks!', ca: 'Has apres sobre 10 monster trucks genials!' },
-        { es: 'Es hora del gran final — colorea TODOS los trucks!', en: 'Time for the grand finale — color ALL the trucks!', ca: 'Es hora del gran final — pinta TOTS els trucks!' }
+        { es: 'Es hora de la carrera final!', en: 'Time for the final race!', ca: 'Es hora de la cursa final!' },
+        { es: 'Grave Digger contra Megalodon — quien ganara?', en: 'Grave Digger vs Megalodon — who will win?', ca: 'Grave Digger contra Megalodon — qui guanyara?' },
+        { es: 'Mantene pulsado para acelerar y cambia de carril para adelantar!', en: 'Hold to accelerate and switch lanes to overtake!', ca: 'Mante premut per accelerar i canvia de carril per avançar!' }
       ],
       config: {
-        tracePath: 'M 30 250 L 30 180 Q 30 140 60 120 L 100 100 Q 130 85 150 50 Q 170 15 190 50 L 210 85 Q 230 100 260 100 L 270 100 Q 290 100 290 120 L 290 150 Q 290 170 270 170 L 240 170 Q 220 170 220 190 L 220 250',
-        viewBox: '0 0 320 300',
-        shapeLabel: { es: 'Trofeo', en: 'Trophy', ca: 'Trofeu' },
-        strokeColor: '#f1c40f',
-        guideColor: '#dfe6e9',
-        strokeWidth: 24,
-        completionThreshold: 0.75
+        laps: 3,
+        playerTruck: TruckSVG.gravedigger(),
+        cpuTruck: TruckSVG.megalodon(),
+        cpuDifficulty: 0.85
       }
     }
   ]

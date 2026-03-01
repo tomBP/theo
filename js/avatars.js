@@ -138,9 +138,9 @@ window.AvatarDialog = (function () {
       ca: 'Els grans a un costat i els petits a l\'altre!'
     },
     'truck-10': {
-      es: 'Traza la forma con cuidado, campeona!',
-      en: 'Trace the shape carefully, champion!',
-      ca: 'Traca la forma amb cura, campiona!'
+      es: 'Gana la carrera, campeona!',
+      en: 'Win the race, champion!',
+      ca: 'Guanya la cursa, campiona!'
     }
   };
 
