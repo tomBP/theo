@@ -1,45 +1,45 @@
 /* ===== Family Avatar Pixel-Art SVGs ===== */
 window.AvatarSVG = {
 
-  /* Theo: Girl ~4-5, long brown hair, brown eyes, red pompom hat, smiling */
+  /* Theo: Boy ~4-5, short brown hair, brown eyes, red cap, big smile */
   theo: function () {
     return '<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">' +
-      /* Hat - red pompom */
-      '<rect x="14" y="2" width="20" height="4" fill="#e74c3c"/>' +
-      '<rect x="12" y="6" width="24" height="4" fill="#e74c3c"/>' +
-      '<rect x="20" y="0" width="8" height="4" fill="#c0392b"/>' +
-      '<rect x="22" y="0" width="4" height="2" fill="#e74c3c"/>' +
-      /* Hair - brown, long */
-      '<rect x="10" y="8" width="4" height="20" fill="#5D4037"/>' +
-      '<rect x="34" y="8" width="4" height="20" fill="#5D4037"/>' +
+      /* Cap - red, turned slightly */
+      '<rect x="10" y="6" width="26" height="4" fill="#e74c3c"/>' +
+      '<rect x="12" y="4" width="22" height="4" fill="#c0392b"/>' +
+      '<rect x="8" y="10" width="8" height="2" fill="#e74c3c"/>' + /* brim */
+      /* Hair - brown, short messy */
+      '<rect x="10" y="8" width="4" height="6" fill="#5D4037"/>' +
+      '<rect x="34" y="8" width="4" height="6" fill="#5D4037"/>' +
       '<rect x="10" y="10" width="28" height="2" fill="#5D4037"/>' +
-      '<rect x="8" y="12" width="4" height="18" fill="#6D4C41"/>' +
-      '<rect x="36" y="12" width="4" height="18" fill="#6D4C41"/>' +
-      '<rect x="8" y="28" width="6" height="6" fill="#5D4037"/>' +
-      '<rect x="34" y="28" width="6" height="6" fill="#5D4037"/>' +
+      '<rect x="34" y="10" width="4" height="4" fill="#6D4C41"/>' +
       /* Face - skin */
       '<rect x="14" y="12" width="20" height="16" fill="#FFCC99"/>' +
-      /* Eyes - brown */
+      /* Eyes - brown, bright */
       '<rect x="16" y="16" width="4" height="4" fill="white"/>' +
       '<rect x="28" y="16" width="4" height="4" fill="white"/>' +
       '<rect x="18" y="16" width="2" height="4" fill="#5D4037"/>' +
       '<rect x="30" y="16" width="2" height="4" fill="#5D4037"/>' +
       '<rect x="18" y="16" width="2" height="2" fill="#2d2d2d"/>' +
       '<rect x="30" y="16" width="2" height="2" fill="#2d2d2d"/>' +
-      /* Smile */
+      /* Big smile */
       '<rect x="20" y="24" width="8" height="2" fill="#e17055"/>' +
       '<rect x="18" y="22" width="2" height="2" fill="#e17055"/>' +
       '<rect x="28" y="22" width="2" height="2" fill="#e17055"/>' +
       /* Cheeks */
-      '<rect x="14" y="20" width="4" height="4" fill="#FFB6C1" opacity="0.5"/>' +
-      '<rect x="30" y="20" width="4" height="4" fill="#FFB6C1" opacity="0.5"/>' +
-      /* Body - pink top */
-      '<rect x="14" y="30" width="20" height="10" fill="#fd79a8"/>' +
-      '<rect x="10" y="32" width="4" height="8" fill="#fd79a8"/>' +
-      '<rect x="34" y="32" width="4" height="8" fill="#fd79a8"/>' +
-      /* Legs */
-      '<rect x="16" y="40" width="6" height="6" fill="#6c5ce7"/>' +
-      '<rect x="26" y="40" width="6" height="6" fill="#6c5ce7"/>' +
+      '<rect x="14" y="20" width="4" height="4" fill="#FFB6C1" opacity="0.4"/>' +
+      '<rect x="30" y="20" width="4" height="4" fill="#FFB6C1" opacity="0.4"/>' +
+      /* Body - green T-shirt */
+      '<rect x="14" y="30" width="20" height="10" fill="#00b894"/>' +
+      '<rect x="10" y="32" width="4" height="8" fill="#00b894"/>' +
+      '<rect x="34" y="32" width="4" height="8" fill="#00b894"/>' +
+      /* Star on shirt */
+      '<rect x="22" y="33" width="4" height="4" fill="#f9ca24"/>' +
+      '<rect x="20" y="35" width="8" height="2" fill="#f9ca24"/>' +
+      /* Shorts - blue */
+      '<rect x="16" y="40" width="6" height="4" fill="#2980b9"/>' +
+      '<rect x="26" y="40" width="6" height="4" fill="#2980b9"/>' +
+      /* Shoes - red sneakers */
       '<rect x="16" y="44" width="6" height="4" fill="#e74c3c"/>' +
       '<rect x="26" y="44" width="6" height="4" fill="#e74c3c"/>' +
       '</svg>';
