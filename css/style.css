@@ -414,7 +414,7 @@ body {
   padding: 10px 16px;
   padding-bottom: calc(20px + var(--safe-bottom));
   touch-action: manipulation;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   margin: 0 auto;
 }
