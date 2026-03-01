@@ -113,6 +113,56 @@ window.SpotDiffGame = (function () {
     };
     overlay.addEventListener('pointerdown', handler);
     boundHandlers.push({ el: overlay, event: 'pointerdown', fn: handler });
+
+    // Magnifying glass (desktop hover devices only)
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+      setupMagnifier();
+    }
+  }
+
+  function setupMagnifier() {
+    var rightPanel = container.querySelector('#spotdiff-right');
+    if (!rightPanel) return;
+
+    var mag = document.createElement('div');
+    mag.className = 'spotdiff-magnifier';
+    mag.id = 'spotdiff-magnifier';
+    rightPanel.appendChild(mag);
+
+    var moveHandler = function (e) {
+      var rect = rightPanel.getBoundingClientRect();
+      var x = e.clientX - rect.left;
+      var y = e.clientY - rect.top;
+
+      mag.style.left = (x - 50) + 'px';
+      mag.style.top = (y - 50) + 'px';
+      mag.style.display = 'block';
+
+      // Clone SVG content for magnified view
+      var svg = rightPanel.querySelector('svg');
+      if (!svg) return;
+      var vb = svg.viewBox.baseVal;
+      var svgX = (x / rect.width) * (vb.width || 200);
+      var svgY = (y / rect.height) * (vb.height || 200);
+
+      mag.innerHTML = '';
+      var clone = svg.cloneNode(true);
+      clone.style.position = 'absolute';
+      clone.style.width = (rect.width * 3) + 'px';
+      clone.style.height = (rect.height * 3) + 'px';
+      clone.style.left = (50 - x * 3) + 'px';
+      clone.style.top = (50 - y * 3) + 'px';
+      mag.appendChild(clone);
+    };
+
+    var leaveHandler = function () {
+      mag.style.display = 'none';
+    };
+
+    rightPanel.addEventListener('pointermove', moveHandler);
+    rightPanel.addEventListener('pointerleave', leaveHandler);
+    boundHandlers.push({ el: rightPanel, event: 'pointermove', fn: moveHandler });
+    boundHandlers.push({ el: rightPanel, event: 'pointerleave', fn: leaveHandler });
   }
 
   function handleTap(e) {

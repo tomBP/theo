@@ -241,6 +241,7 @@ window.TracerGame = (function () {
     if (coveragePercent >= threshold) {
       isDrawing = false;
       AudioManager.correct();
+      showCompletionText();
       setTimeout(onComplete, 600);
     }
   }
@@ -265,6 +266,18 @@ window.TracerGame = (function () {
         html += ' fill="' + strokeColor + '" opacity="0.4" />';
       }
     }
+    // Add guide dots (3 glowing dots at next uncovered segment)
+    var guideDotCount = 0;
+    for (var j = 0; j < samplePoints.length && guideDotCount < 3; j++) {
+      if (!covered[j]) {
+        html += '<circle class="tracer-guide-dot"';
+        html += ' cx="' + samplePoints[j].x.toFixed(1) + '"';
+        html += ' cy="' + samplePoints[j].y.toFixed(1) + '"';
+        html += ' r="7" />';
+        guideDotCount++;
+      }
+    }
+
     coveredGroup.innerHTML = html;
 
     // Update progress bar
@@ -274,6 +287,20 @@ window.TracerGame = (function () {
 
     var pctEl = container.querySelector('#tracer-percent');
     if (pctEl) pctEl.textContent = pct + '%';
+  }
+
+  function showCompletionText() {
+    var svg = container.querySelector('#tracer-svg');
+    if (!svg) return;
+    var vbParts = viewBox.split(/\s+/);
+    var vbW = parseFloat(vbParts[2]) || 300;
+    var vbH = parseFloat(vbParts[3]) || 300;
+    var textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    textEl.setAttribute('class', 'tracer-completion-text');
+    textEl.setAttribute('x', vbW / 2);
+    textEl.setAttribute('y', vbH / 2);
+    textEl.textContent = t('amazing');
+    svg.appendChild(textEl);
   }
 
   function resetTracing() {

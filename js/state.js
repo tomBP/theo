@@ -28,11 +28,7 @@ window.GameState = (function () {
     }
   }
 
-  function isUnlocked(levelId, allLevelIds) {
-    var idx = allLevelIds.indexOf(levelId);
-    if (idx === 0) return true;
-    return isCompleted(allLevelIds[idx - 1]);
-  }
+  function isUnlocked(levelId, allLevelIds) { return true; }
 
   function getCompletedCount(theme) {
     var state = load();

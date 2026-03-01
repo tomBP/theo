@@ -262,6 +262,7 @@ window.SortingGame = (function () {
       if (factEl && fact) factEl.textContent = fact;
 
       selectedItemId = null;
+      updateBucketCounts();
       updateProgress();
 
       if (sortedCount >= totalItems) {
@@ -280,6 +281,25 @@ window.SortingGame = (function () {
       if (itemEl) itemEl.classList.remove('selected');
       selectedItemId = null;
     }
+  }
+
+  function updateBucketCounts() {
+    categories.forEach(function (cat) {
+      var count = 0;
+      var catTotal = 0;
+      items.forEach(function (item) {
+        if (item.category === cat.id) {
+          catTotal++;
+          if (item.sorted) count++;
+        }
+      });
+      var countEl = document.getElementById('bucket-count-' + cat.id);
+      if (countEl) countEl.textContent = count + '/' + catTotal;
+      var bucketEl = document.getElementById('bucket-' + cat.id);
+      if (bucketEl && count >= catTotal && catTotal > 0) {
+        bucketEl.classList.add('bucket-complete');
+      }
+    });
   }
 
   function findBucketAt(x, y) {

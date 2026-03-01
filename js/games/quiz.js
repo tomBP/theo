@@ -1,11 +1,14 @@
 /* ===== Quiz Game ===== */
 window.QuizGame = (function () {
   var questions, currentQ, container, onComplete, illustration;
+  var streak, hasUsed5050;
 
   function start(config, gameArea, done) {
     questions = config.questions;
     illustration = config.illustration || '';
     currentQ = 0;
+    streak = 0;
+    hasUsed5050 = false;
     onComplete = done;
     container = gameArea;
     showQuestion();
@@ -48,6 +51,11 @@ window.QuizGame = (function () {
       allBtns.forEach(function (b) { b.removeEventListener('click', handleAnswer); });
       feedback.textContent = L(questions[currentQ].fact) || t('greatJob');
       feedback.style.color = 'var(--color-success)';
+      streak++;
+      hasUsed5050 = false;
+      if (streak >= 3) {
+        showStreakCelebration(streak);
+      }
       setTimeout(function () {
         currentQ++;
         updateProgress();
@@ -58,13 +66,61 @@ window.QuizGame = (function () {
       btn.classList.add('wrong');
       feedback.textContent = t('tryAgain');
       feedback.style.color = 'var(--color-error)';
+      streak = 0;
       setTimeout(function () {
         btn.classList.remove('wrong');
         btn.style.opacity = '0.4';
         btn.style.pointerEvents = 'none';
         feedback.textContent = '';
+        // Show 50/50 button if not used for this question
+        if (!hasUsed5050) {
+          show5050Button();
+        }
       }, 800);
     }
+  }
+
+  function showStreakCelebration(count) {
+    var el = document.createElement('div');
+    el.className = 'quiz-streak-float';
+    el.textContent = count + ' ' + t('inARow') + '!';
+    document.body.appendChild(el);
+    setTimeout(function () {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, 1100);
+  }
+
+  function show5050Button() {
+    var feedback = document.getElementById('quiz-feedback');
+    if (!feedback) return;
+    var btn = document.createElement('button');
+    btn.className = 'quiz-5050-btn';
+    btn.textContent = '50/50';
+    btn.addEventListener('click', function () {
+      apply5050();
+      if (btn.parentNode) btn.parentNode.removeChild(btn);
+    });
+    feedback.after(btn);
+  }
+
+  function apply5050() {
+    hasUsed5050 = true;
+    var q = questions[currentQ];
+    // Find wrong answers that are still visible
+    var wrongBtns = [];
+    container.querySelectorAll('.quiz-answer-btn').forEach(function (btn) {
+      if (btn.dataset.correct === 'false' && btn.style.pointerEvents !== 'none') {
+        wrongBtns.push(btn);
+      }
+    });
+    // Eliminate one wrong answer (leave at least one wrong visible)
+    if (wrongBtns.length > 1) {
+      var idx = Math.floor(Math.random() * wrongBtns.length);
+      wrongBtns[idx].style.opacity = '0.4';
+      wrongBtns[idx].style.pointerEvents = 'none';
+      wrongBtns[idx].removeEventListener('click', handleAnswer);
+    }
+    AudioManager.tap();
   }
 
   function updateProgress() {

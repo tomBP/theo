@@ -2,11 +2,14 @@
 window.MatchingGame = (function () {
   var cards, container, onComplete, matchedCount, totalPairs;
   var flipped = [], locked = false, facts;
+  var flipCount, consecutiveMatches;
 
   function start(config, gameArea, done) {
     facts = config.facts || [];
     totalPairs = config.pairs.length;
     matchedCount = 0;
+    flipCount = 0;
+    consecutiveMatches = 0;
     flipped = [];
     locked = false;
     onComplete = done;
@@ -27,6 +30,8 @@ window.MatchingGame = (function () {
 
   function render(gridClass) {
     var html = '<div class="matching-container">';
+    html += '<div class="matching-flips" id="matching-flips">' + t('flips') + ': 0</div>';
+    html += '<div class="matching-streak-text" id="matching-streak"></div>';
     html += '<div class="matching-grid ' + gridClass + '">';
     cards.forEach(function (card, i) {
       html += '<div class="matching-card" data-index="' + i + '" data-pair="' + card.id + '">';
@@ -55,6 +60,8 @@ window.MatchingGame = (function () {
     AudioManager.flip();
     card.classList.add('flipped');
     flipped.push(card);
+    flipCount++;
+    updateFlipDisplay();
 
     if (flipped.length === 2) {
       locked = true;
@@ -74,6 +81,11 @@ window.MatchingGame = (function () {
       c1.classList.add('matched');
       c2.classList.add('matched');
       matchedCount++;
+      consecutiveMatches++;
+
+      if (consecutiveMatches >= 2) {
+        showStreakText(consecutiveMatches);
+      }
 
       var fact = L(facts[matchedCount - 1]) || '';
       var factEl = document.getElementById('matching-fact');
@@ -89,6 +101,8 @@ window.MatchingGame = (function () {
     } else {
       // No match — flip back
       AudioManager.wrong();
+      consecutiveMatches = 0;
+      clearStreakText();
       setTimeout(function () {
         c1.classList.remove('flipped');
         c2.classList.remove('flipped');
@@ -96,6 +110,21 @@ window.MatchingGame = (function () {
         locked = false;
       }, 1500);
     }
+  }
+
+  function updateFlipDisplay() {
+    var el = document.getElementById('matching-flips');
+    if (el) el.textContent = t('flips') + ': ' + flipCount;
+  }
+
+  function showStreakText(count) {
+    var el = document.getElementById('matching-streak');
+    if (el) el.textContent = count + ' ' + t('inARow') + '!';
+  }
+
+  function clearStreakText() {
+    var el = document.getElementById('matching-streak');
+    if (el) el.textContent = '';
   }
 
   function updateProgress() {

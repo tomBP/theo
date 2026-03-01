@@ -11,6 +11,7 @@ window.CatcherGame = (function () {
   var keysDown;
   var destroyed;
   var lives, maxLives, penalizeMissed;
+  var combo;
 
   function start(config, gameArea, onComplete) {
     container = gameArea;
@@ -35,6 +36,7 @@ window.CatcherGame = (function () {
     isDragging = false;
     keysDown = {};
     catcherWidth = 80;
+    combo = 0;
 
     render();
     bindEvents();
@@ -269,7 +271,11 @@ window.CatcherGame = (function () {
         if (itemCenterX >= catcherX - 10 && itemCenterX <= catcherX + catcherWidth + 10) {
           if (item.isGood) {
             score++;
+            combo++;
             AudioManager.correct();
+            if (combo > 0 && combo % 5 === 0) {
+              showComboText(combo);
+            }
             updateScore();
             updateProgress();
             if (score >= catchGoal) {
@@ -278,6 +284,7 @@ window.CatcherGame = (function () {
             }
           } else {
             // Bad catch = lose life
+            combo = 0;
             loseLife();
             if (lives <= 0) {
               triggerReset();
@@ -312,6 +319,16 @@ window.CatcherGame = (function () {
     }
 
     rafId = requestAnimationFrame(gameLoop);
+  }
+
+  function showComboText(count) {
+    var area = document.getElementById('catcher-area');
+    if (!area) return;
+    var el = document.createElement('div');
+    el.className = 'catcher-combo-text';
+    el.textContent = count + 'x ' + t('combo') + '!';
+    area.appendChild(el);
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 1100);
   }
 
   function loseLife() {
@@ -358,6 +375,7 @@ window.CatcherGame = (function () {
     score = 0;
     lives = maxLives;
     items = [];
+    combo = 0;
     updateScore();
     updateProgress();
     updateHeartsDisplay();

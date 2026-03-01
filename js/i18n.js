@@ -228,6 +228,26 @@
       es: 'Tiempo',
       en: 'Time',
       ca: 'Temps'
+    },
+    undo: {
+      es: 'Deshacer',
+      en: 'Undo',
+      ca: 'Desfer'
+    },
+    combo: {
+      es: 'COMBO',
+      en: 'COMBO',
+      ca: 'COMBO'
+    },
+    inARow: {
+      es: 'seguidos',
+      en: 'in a row',
+      ca: 'seguits'
+    },
+    flips: {
+      es: 'Giros',
+      en: 'Flips',
+      ca: 'Girs'
     }
   };
 

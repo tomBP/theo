@@ -7,6 +7,7 @@ window.SimonGame = (function () {
   var playTimeouts, audioCtx;
   var PAD_TONES = [262, 330, 392, 523]; // C4, E4, G4, C5
   var label;
+  var PAD_EMOJIS = ['\uD83E\uDD81', '\uD83D\uDC38', '\uD83D\uDC26', '\uD83C\uDF3B']; // lion, frog, bird, flower
 
   function start(config, gameArea, onComplete) {
     container = gameArea;
@@ -61,7 +62,7 @@ window.SimonGame = (function () {
     html += '<div class="simon-grid" id="simon-grid">';
     for (var i = 0; i < 4; i++) {
       var color = colors[i] || '#ccc';
-      html += '<div class="simon-pad" id="simon-pad-' + i + '" data-pad="' + i + '" style="background:' + color + ';box-shadow:var(--shadow-soft);" disabled></div>';
+      html += '<div class="simon-pad" id="simon-pad-' + i + '" data-pad="' + i + '" style="background:' + color + ';box-shadow:var(--shadow-soft);" disabled><span class="simon-emoji-label">' + PAD_EMOJIS[i] + '</span></div>';
     }
     html += '</div>';
     html += '<div class="simon-round" id="simon-round"></div>';
@@ -198,6 +199,11 @@ window.SimonGame = (function () {
     var pad = document.getElementById('simon-pad-' + padIndex);
     if (!pad) return;
     pad.classList.add('lit');
+    // Add ripple effect
+    var ripple = document.createElement('div');
+    ripple.className = 'simon-ripple';
+    pad.appendChild(ripple);
+    setTimeout(function () { if (ripple.parentNode) ripple.parentNode.removeChild(ripple); }, 700);
     var t = setTimeout(function () {
       if (pad) pad.classList.remove('lit');
     }, duration);

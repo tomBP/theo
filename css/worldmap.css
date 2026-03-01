@@ -289,24 +289,6 @@
   animation: checkpoint-float 2.5s ease-in-out infinite;
 }
 
-/* Locked checkpoint */
-.worldmap-checkpoint.locked {
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-.worldmap-checkpoint.locked .worldmap-checkpoint-marker {
-  width: 40px;
-  height: 40px;
-  background: #aaa;
-  border: 3px solid #888;
-  opacity: 0.5;
-  font-size: 0.9rem;
-}
-
-.worldmap-checkpoint.locked .worldmap-checkpoint-label {
-  opacity: 0;
-}
 
 /* ===== Character ===== */
 .worldmap-character {
@@ -575,11 +557,6 @@
     width: 42px;
     height: 42px;
     font-size: 1rem;
-  }
-
-  .worldmap-checkpoint.locked .worldmap-checkpoint-marker {
-    width: 34px;
-    height: 34px;
   }
 
   .worldmap-character {

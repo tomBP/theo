@@ -532,6 +532,8 @@ window.RunnerGame = (function () {
               e.el.style.opacity = '0';
               e.el.style.transform = 'scale(1.5)';
             }
+            // Floating "+1" text
+            showPlusOne(screenX, e.y);
             updateScore();
             updateProgress();
             if (collected >= totalCollectibles) {
@@ -549,6 +551,18 @@ window.RunnerGame = (function () {
     }
 
     rafId = requestAnimationFrame(gameLoop);
+  }
+
+  function showPlusOne(x, y) {
+    var area = document.getElementById('runner-area');
+    if (!area) return;
+    var el = document.createElement('div');
+    el.className = 'runner-plus-one';
+    el.textContent = '+1';
+    el.style.left = (x + 10) + 'px';
+    el.style.top = (y - 10) + 'px';
+    area.appendChild(el);
+    setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 900);
   }
 
   function boxesOverlap(a, b) {

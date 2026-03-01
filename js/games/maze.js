@@ -6,6 +6,7 @@ window.MazeGame = (function () {
   var SWIPE_THRESHOLD = 30;
   var fogRadius, enemies, enemyTimer, timerInterval, startTimeMs;
   var boundKeyDown;
+  var visited;
 
   function start(config, gameArea, done) {
     grid = config.grid;
@@ -40,6 +41,8 @@ window.MazeGame = (function () {
       };
     });
 
+    visited = {};
+    visited[config.start.r + ',' + config.start.c] = true;
     startTimeMs = Date.now();
     render();
     bindEvents();
@@ -102,6 +105,9 @@ window.MazeGame = (function () {
         }
 
         cls += ' path';
+        if (visited && visited[r + ',' + c]) {
+          cls += ' visited';
+        }
         if (r === playerPos.r && c === playerPos.c) {
           cls += ' player';
           content = playerEmoji;
@@ -198,6 +204,7 @@ window.MazeGame = (function () {
     if (grid[nr][nc] === 1) return;
 
     playerPos = { r: nr, c: nc };
+    visited[nr + ',' + nc] = true;
     AudioManager.tap();
 
     // Check collectible

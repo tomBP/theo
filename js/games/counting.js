@@ -31,6 +31,22 @@ window.CountingGame = (function () {
     container.querySelectorAll('.counting-answer-btn').forEach(function (btn) {
       btn.addEventListener('click', handleAnswer);
     });
+
+    // Tap-to-mark on scene SVG
+    var scene = container.querySelector('.counting-scene');
+    if (scene) {
+      scene.addEventListener('click', function (e) {
+        var rect = scene.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var y = e.clientY - rect.top;
+        var mark = document.createElement('div');
+        mark.className = 'counting-mark';
+        mark.style.left = x + 'px';
+        mark.style.top = y + 'px';
+        scene.appendChild(mark);
+        AudioManager.tap();
+      });
+    }
   }
 
   function handleAnswer(e) {

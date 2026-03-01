@@ -101,6 +101,9 @@ window.DragDropGame = (function () {
       dragging.style.cssText = '';
       placedCount++;
 
+      // Floating progress text
+      showSnapFloat(placedCount + '/' + totalPieces);
+
       var fact = L(facts[placedCount - 1]) || '';
       var factEl = document.getElementById('dragdrop-fact');
       if (factEl && fact) factEl.textContent = fact;
@@ -159,6 +162,20 @@ window.DragDropGame = (function () {
       if (dist < 60) match = dz;
     });
     return match;
+  }
+
+  function showSnapFloat(text) {
+    var el = document.createElement('div');
+    el.className = 'dragdrop-snap-float';
+    el.textContent = text;
+    el.style.left = '50%';
+    el.style.top = '40%';
+    el.style.transform = 'translateX(-50%)';
+    var containerDiv = container.querySelector('.dragdrop-container');
+    if (containerDiv) {
+      containerDiv.appendChild(el);
+      setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 900);
+    }
   }
 
   function updateProgress() {

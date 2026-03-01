@@ -412,6 +412,11 @@ window.WorldMap = (function () {
   }
 
   function getCharacterContent() {
+    // Use Theo avatar if available
+    if (window.AvatarSVG && typeof window.AvatarSVG.theo === 'function') {
+      return window.AvatarSVG.theo();
+    }
+    // Fallback to theme-specific characters
     if (window.WorldMapBG) {
       try {
         if (currentTheme === 'dino' && typeof window.WorldMapBG.babyTrex === 'function') {
@@ -437,15 +442,11 @@ window.WorldMap = (function () {
   }
 
   function getCurrentCheckpointIndex() {
-    // Find the furthest unlocked (or last completed) checkpoint
+    // Find the furthest completed checkpoint, default to 0
     var levels = window.LevelData ? window.LevelData[currentTheme] : [];
-    var levelIds = levels.map(function (l) { return l.id; });
     var idx = 0;
     for (var i = 0; i < levels.length; i++) {
-      var unlocked = GameState.isUnlocked(levels[i].id, levelIds);
-      if (unlocked) {
-        idx = i;
-      }
+      if (GameState.isCompleted(levels[i].id)) idx = i;
     }
     return idx;
   }
@@ -708,6 +709,9 @@ window.WorldMap = (function () {
       characterPos.y = py - bounceY; // store without bounce
       characterEl.style.left = px + 'px';
       characterEl.style.top = py + 'px';
+
+      // Check coin collision during walk
+      checkCoinCollision();
 
       // Auto-scroll to follow character
       centerOnCharacter(true);
