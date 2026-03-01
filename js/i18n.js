@@ -248,6 +248,16 @@
       es: 'Giros',
       en: 'Flips',
       ca: 'Girs'
+    },
+    resetProgress: {
+      es: 'Reiniciar progreso',
+      en: 'Reset progress',
+      ca: 'Reiniciar progres'
+    },
+    resetConfirm: {
+      es: 'Seguro? Se borrara todo el progreso.',
+      en: 'Are you sure? All progress will be lost.',
+      ca: 'Segur? Es borrara tot el progres.'
     }
   };
 

@@ -47,6 +47,14 @@ window.App = (function () {
       updateThemeCards();
     });
 
+    document.getElementById('btn-reset').addEventListener('click', function () {
+      if (confirm(t('resetConfirm'))) {
+        GameState.resetProgress();
+        AudioManager.tap();
+        applyLanguage();
+      }
+    });
+
     document.getElementById('btn-theme-dino').addEventListener('click', function () {
       AudioManager.tap();
       selectTheme('dino');
@@ -92,6 +100,7 @@ window.App = (function () {
     // Splash
     document.getElementById('splash-title').innerHTML = t('splashTitle');
     document.getElementById('btn-start').textContent = t('tapToStart');
+    document.getElementById('btn-reset').textContent = t('resetProgress');
 
     // Theme select
     document.getElementById('theme-screen-title').textContent = t('chooseAdventure');

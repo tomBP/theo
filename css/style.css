@@ -200,6 +200,23 @@ body {
   animation: none;
 }
 
+.splash-reset {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+  padding: 8px 20px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: var(--radius-large);
+  background: rgba(255,255,255,0.2);
+  color: var(--color-text-light);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.splash-reset:active {
+  transform: scale(0.95);
+}
+
 /* ===== Theme Select ===== */
 .theme-cards {
   display: flex;
