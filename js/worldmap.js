@@ -673,7 +673,8 @@ window.WorldMap = (function () {
     var walkPoints = interpolatePathPoints(startX, startY, endX, endY, targetIndex);
 
     var startTime = null;
-    var duration = WALK_DURATION;
+    // Scale duration based on number of walk points (longer paths take more time)
+    var duration = WALK_DURATION * Math.max(1, Math.ceil(walkPoints.length / WALK_STEPS));
 
     // Flip character based on direction
     if (endX < startX) {

@@ -1,17 +1,18 @@
 /* ===== Family Avatar Pixel-Art SVGs ===== */
 window.AvatarSVG = {
 
-  /* Theo: Boy ~4-5, long brown hair, brown eyes, big smile */
+  /* Theo: Boy ~4-5, short brown hair, brown eyes, red cap, big smile */
   theo: function () {
     return '<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">' +
-      /* Hair - brown, long flowing */
-      '<rect x="10" y="4" width="28" height="4" fill="#5D4037"/>' +
-      '<rect x="8" y="6" width="32" height="4" fill="#6D4C41"/>' +
-      '<rect x="8" y="8" width="4" height="22" fill="#5D4037"/>' +  /* left side hair */
-      '<rect x="36" y="8" width="4" height="22" fill="#5D4037"/>' + /* right side hair */
-      '<rect x="6" y="14" width="4" height="16" fill="#5D4037"/>' + /* left long strand */
-      '<rect x="38" y="14" width="4" height="16" fill="#5D4037"/>' + /* right long strand */
-      '<rect x="10" y="10" width="28" height="2" fill="#5D4037"/>' + /* top cover */
+      /* Cap - red, turned slightly */
+      '<rect x="10" y="6" width="26" height="4" fill="#e74c3c"/>' +
+      '<rect x="12" y="4" width="22" height="4" fill="#c0392b"/>' +
+      '<rect x="8" y="10" width="8" height="2" fill="#e74c3c"/>' + /* brim */
+      /* Hair - brown, short messy */
+      '<rect x="10" y="8" width="4" height="6" fill="#5D4037"/>' +
+      '<rect x="34" y="8" width="4" height="6" fill="#5D4037"/>' +
+      '<rect x="10" y="10" width="28" height="2" fill="#5D4037"/>' +
+      '<rect x="34" y="10" width="4" height="4" fill="#6D4C41"/>' +
       /* Face - skin */
       '<rect x="14" y="12" width="20" height="16" fill="#FFCC99"/>' +
       /* Eyes - brown, bright */

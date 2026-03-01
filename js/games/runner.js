@@ -489,20 +489,20 @@ window.RunnerGame = (function () {
 
     // Check platform collisions (land on top)
     var playerScreenX = areaWidth * PLAYER_LEFT_PCT;
-    var playerWorldX = scrollPos + playerScreenX;
     var playerBottom = groundY + playerY + PLAYER_SIZE;
-    var playerLeft = playerWorldX + 6;
-    var playerRight = playerWorldX + PLAYER_SIZE - 6;
+    var playerLeftEdge = playerScreenX + 6;
+    var playerRightEdge = playerScreenX + PLAYER_SIZE - 6;
 
     for (var p = 0; p < entities.length; p++) {
       var ent = entities[p];
       if (!ent.active) continue;
 
       if (ent.type === TYPE_PLATFORM && playerVY >= 0) {
-        // Check if player is landing on platform
+        // Check if player is landing on platform (all in screen coords)
+        var platScreenX = ent.x - scrollPos;
         var platScreenY = ent.y;
         if (playerBottom >= platScreenY && playerBottom <= platScreenY + 16 &&
-            playerRight > ent.x - scrollPos + 4 && playerLeft < ent.x - scrollPos + ent.width - 4) {
+            playerRightEdge > platScreenX + 4 && playerLeftEdge < platScreenX + ent.width - 4) {
           playerY = platScreenY - groundY - PLAYER_SIZE;
           playerVY = 0;
           isJumping = false;
