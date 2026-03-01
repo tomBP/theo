@@ -269,14 +269,14 @@ window.LevelData = {
     },
     {
       id: 'dino-9',
-      name: { es: 'Pteranodon', en: 'Pteranodon', ca: 'Pteranodon' },
+      name: { es: 'Diplodocus', en: 'Diplodocus', ca: 'Diplodocus' },
       gameType: 'maze',
-      illustration: function () { return DinoSVG.pteranodon(); },
-      keyFact: { es: 'El Pteranodon era un reptil volador con una envergadura de 10 metros!', en: 'Pteranodon was a flying reptile with a 33-foot wingspan!', ca: 'El Pteranodon era un reptil volador amb una envergadura de 10 metres!' },
+      illustration: function () { return DinoSVG.diplodocus(); },
+      keyFact: { es: 'El Diplodocus media tanto como 3 autobuses escolares y tenia una cola como un latigo!', en: 'Diplodocus was as long as 3 school buses and had a whip tail!', ca: 'El Diplodocus feia tant com 3 autobusos escolars i tenia una cua com un fuet!' },
       learnFacts: [
-        { es: 'El Pteranodon NO era un dinosaurio — era un reptil volador!', en: 'Pteranodon was NOT a dinosaur — it was a flying reptile!', ca: 'El Pteranodon NO era un dinosaure — era un reptil volador!' },
-        { es: 'Su envergadura era de 10 metros — enorme!', en: 'Its wingspan was 33 feet — huge!', ca: 'La seva envergadura era de 10 metres — enorme!' },
-        { es: 'Comia peces recogiendolos del agua', en: 'It ate fish by scooping them up', ca: 'Menjava peixos recollint-los de l\'aigua' }
+        { es: 'Diplodocus significa "doble viga"', en: 'Diplodocus means "double beam"', ca: 'Diplodocus significa "doble biga"' },
+        { es: 'Media 27 metros de largo!', en: 'It was 90 feet long!', ca: 'Feia 27 metres de llarg!' },
+        { es: 'Su cola podia chasquear como un latigo', en: 'Its tail could crack like a whip', ca: 'La seva cua podia petar com un fuet' }
       ],
       config: {
         grid: [
@@ -292,11 +292,11 @@ window.LevelData = {
           [0,0,1,1,1,0,1,0,0,0,0,0]
         ],
         start: { r: 0, c: 0 }, goal: { r: 9, c: 11 },
-        playerEmoji: '🦅', goalEmoji: '🪺', wallColor: '#a8d8ea',
+        playerEmoji: '🦕', goalEmoji: '🌿', wallColor: '#a8d8ea',
         collectibles: [
-          { r: 1, c: 3, emoji: '⭐' }, { r: 4, c: 0, emoji: '🐟' },
+          { r: 1, c: 3, emoji: '⭐' }, { r: 4, c: 0, emoji: '🌿' },
           { r: 2, c: 5, emoji: '⭐' }, { r: 6, c: 7, emoji: '⭐' },
-          { r: 8, c: 4, emoji: '🐟' }, { r: 9, c: 9, emoji: '⭐' }
+          { r: 8, c: 4, emoji: '🌿' }, { r: 9, c: 9, emoji: '⭐' }
         ],
         fogRadius: 3,
         showTimer: true,
@@ -308,36 +308,23 @@ window.LevelData = {
     },
     {
       id: 'dino-10',
-      name: { es: 'Diplodocus', en: 'Diplodocus', ca: 'Diplodocus' },
-      gameType: 'sorting',
-      illustration: function () { return DinoSVG.diplodocus(); },
-      keyFact: { es: 'El Diplodocus media tanto como 3 autobuses escolares y tenia una cola como un latigo!', en: 'Diplodocus was as long as 3 school buses and had a whip tail!', ca: 'El Diplodocus feia tant com 3 autobusos escolars i tenia una cua com un fuet!' },
+      name: { es: 'Pteranodon', en: 'Pteranodon', ca: 'Pteranodon' },
+      gameType: 'flappy',
+      illustration: function () { return DinoSVG.pteranodon(); },
+      keyFact: { es: 'El Pteranodon era un reptil volador con una envergadura de 10 metros!', en: 'Pteranodon was a flying reptile with a 33-foot wingspan!', ca: 'El Pteranodon era un reptil volador amb una envergadura de 10 metres!' },
       learnFacts: [
-        { es: 'Diplodocus significa "doble viga"', en: 'Diplodocus means "double beam"', ca: 'Diplodocus significa "doble biga"' },
-        { es: 'Media 27 metros de largo!', en: 'It was 90 feet long!', ca: 'Feia 27 metres de llarg!' },
-        { es: 'Su cola podia chasquear como un latigo', en: 'Its tail could crack like a whip', ca: 'La seva cua podia petar com un fuet' }
+        { es: 'El Pteranodon NO era un dinosaurio — era un reptil volador!', en: 'Pteranodon was NOT a dinosaur — it was a flying reptile!', ca: 'El Pteranodon NO era un dinosaure — era un reptil volador!' },
+        { es: 'Su envergadura era de 10 metros — enorme!', en: 'Its wingspan was 33 feet — huge!', ca: 'La seva envergadura era de 10 metres — enorme!' },
+        { es: 'Comia peces recogiendolos del agua', en: 'It ate fish by scooping them up', ca: 'Menjava peixos recollint-los de l\'aigua' }
       ],
       config: {
-        categories: [
-          { id: 'herb', label: { es: 'Herbivoro', en: 'Herbivore', ca: 'Herbivor' }, color: '#2ecc71' },
-          { id: 'carn', label: { es: 'Carnivoro', en: 'Carnivore', ca: 'Carnivor' }, color: '#e74c3c' }
-        ],
-        items: [
-          { id: 's1', label: { es: 'Diplodocus', en: 'Diplodocus', ca: 'Diplodocus' }, emoji: '🦕', category: 'herb' },
-          { id: 's2', label: { es: 'T-Rex', en: 'T-Rex', ca: 'T-Rex' }, emoji: '🦖', category: 'carn' },
-          { id: 's3', label: { es: 'Triceratops', en: 'Triceratops', ca: 'Triceratops' }, emoji: '🦕', category: 'herb' },
-          { id: 's4', label: { es: 'Velociraptor', en: 'Velociraptor', ca: 'Velociraptor' }, emoji: '🦖', category: 'carn' },
-          { id: 's5', label: { es: 'Stegosaurus', en: 'Stegosaurus', ca: 'Stegosaurus' }, emoji: '🦕', category: 'herb' },
-          { id: 's6', label: { es: 'Spinosaurus', en: 'Spinosaurus', ca: 'Spinosaurus' }, emoji: '🦖', category: 'carn' }
-        ],
-        facts: [
-          { es: 'Diplodocus comia plantas!', en: 'Diplodocus ate plants!', ca: 'Diplodocus menjava plantes!' },
-          { es: 'T-Rex era carnivoro!', en: 'T-Rex was a meat-eater!', ca: 'T-Rex era carnivor!' },
-          { es: 'Triceratops comia helechos!', en: 'Triceratops ate ferns!', ca: 'Triceratops menjava falgueres!' },
-          { es: 'Velociraptor cazaba presas!', en: 'Velociraptor hunted prey!', ca: 'Velociraptor cacava preses!' },
-          { es: 'Stegosaurus era herbivoro!', en: 'Stegosaurus was a plant-eater!', ca: 'Stegosaurus era herbivor!' },
-          { es: 'Spinosaurus comia peces!', en: 'Spinosaurus ate fish!', ca: 'Spinosaurus menjava peixos!' }
-        ]
+        character: '<svg width="36" height="36" viewBox="0 0 36 36"><g fill="#5b8fa8"><path d="M8 14 L2 8 Q0 6 4 10 L8 12Z"/><path d="M28 14 L34 8 Q36 6 32 10 L28 12Z"/><rect x="8" y="12" width="20" height="10" rx="4"/><path d="M6 14 Q2 10 1 14 Q0 18 6 18Z"/><path d="M30 14 Q34 10 35 14 Q36 18 30 18Z"/></g><g fill="#4a7a90"><rect x="12" y="22" width="4" height="4" rx="1"/><rect x="20" y="22" width="4" height="4" rx="1"/></g><rect x="12" y="8" width="12" height="8" rx="3" fill="#6ba0b8"/><circle cx="15" cy="12" r="2" fill="white"/><circle cx="21" cy="12" r="2" fill="white"/><circle cx="15.5" cy="12.5" r="1" fill="#222"/><circle cx="21.5" cy="12.5" r="1" fill="#222"/><path d="M14 16 Q18 18 22 16" fill="none" stroke="#4a7a90" stroke-width="0.8"/><path d="M16 6 L18 2 L20 6" fill="#6ba0b8" stroke="#4a7a90" stroke-width="0.5"/></svg>',
+        collectible: '🐟',
+        totalCollectibles: 8,
+        skyColor: '#87CEEB',
+        label: { es: '!Vuela por el cielo!', en: 'Fly through the sky!', ca: 'Vola pel cel!' },
+        pipeGap: 130,
+        pipeWidth: 50
       }
     }
   ],

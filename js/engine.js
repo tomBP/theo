@@ -15,7 +15,8 @@ window.Engine = (function () {
     simon: SimonGame,
     spotdiff: SpotDiffGame,
     sorting: SortingGame,
-    tracer: TracerGame
+    tracer: TracerGame,
+    flappy: FlappyGame
   };
 
   function startLevel(levelData) {
@@ -90,6 +91,7 @@ window.Engine = (function () {
           progressEl.textContent = '0/' + config.catchGoal;
           break;
         case 'runner':
+        case 'flappy':
           progressEl.textContent = '0/' + config.totalCollectibles;
           break;
         case 'simon':
