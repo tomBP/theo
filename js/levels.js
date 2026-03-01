@@ -171,15 +171,16 @@ window.LevelData = {
         { es: 'Sus patas delanteras eran mas largas que las traseras', en: 'Its front legs were longer than its back legs', ca: 'Les seves potes davanteres eren mes llargues que les del darrere' }
       ],
       config: {
-        character: '🦕',
-        collectible: '⭐',
+        character: '<svg width="40" height="40" viewBox="0 0 40 40"><g fill="#5b9e6f"><rect x="16" y="2" width="10" height="10" rx="2"/><rect x="14" y="10" width="6" height="14"/><rect x="10" y="14" width="4" height="4"/><rect x="20" y="12" width="10" height="10" rx="1"/><rect x="22" y="22" width="6" height="4"/><rect x="14" y="24" width="8" height="6"/><rect x="28" y="18" width="6" height="4"/><rect x="32" y="14" width="4" height="4"/></g><g fill="#4a8a5e"><rect x="14" y="28" width="4" height="8" rx="1"/><rect x="22" y="28" width="4" height="8" rx="1"/></g><rect x="18" y="4" width="3" height="2" rx="1" fill="white"/><rect x="19" y="5" width="1.5" height="1" fill="#222"/><rect x="16" y="8" width="6" height="1" fill="#3d7a4e"/><rect x="12" y="16" width="2" height="1" fill="#3d7a4e"/><rect x="34" y="16" width="2" height="1" fill="#3d7a4e"/><g fill="#7bc88e"><rect x="22" y="13" width="2" height="2"/><rect x="26" y="15" width="2" height="2"/><rect x="18" y="17" width="2" height="2"/></g></svg>',
+        collectible: '🥚',
         totalCollectibles: 10,
         groundColor: '#2d8a4e',
         skyColor: '#e8f8f5',
         label: { es: '!Corre por la jungla!', en: 'Run through the jungle!', ca: 'Corre per la jungla!' },
         hasGaps: true,
         hasPlatforms: true,
-        hasDoubleJump: true
+        hasDoubleJump: true,
+        theme: 'dino'
       }
     },
     {

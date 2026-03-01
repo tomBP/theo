@@ -12,7 +12,7 @@ window.RunnerGame = (function () {
   var collectibleIndex;
   var isDead, deathTimer;
   var keysDown;
-  var hasGaps, hasPlatforms, hasDoubleJump;
+  var hasGaps, hasPlatforms, hasDoubleJump, theme;
 
   var PLAYER_LEFT_PCT = 0.22;
   var PLAYER_SIZE = 40;
@@ -45,6 +45,7 @@ window.RunnerGame = (function () {
     hasGaps = config.hasGaps || false;
     hasPlatforms = config.hasPlatforms || false;
     hasDoubleJump = config.hasDoubleJump || false;
+    theme = config.theme || '';
 
     resetState();
     render();
@@ -77,7 +78,8 @@ window.RunnerGame = (function () {
     html += '.runner-bg-layer{position:absolute;bottom:' + GROUND_HEIGHT + 'px;left:0;width:200%;height:100%;will-change:transform;pointer-events:none;}';
     html += '.runner-ground{position:absolute;bottom:0;left:0;width:200%;height:' + GROUND_HEIGHT + 'px;will-change:transform;}';
     html += '.runner-ground-pattern{width:100%;height:100%;background:repeating-linear-gradient(90deg,transparent,transparent 30px,rgba(0,0,0,0.08) 30px,rgba(0,0,0,0.08) 32px);}';
-    html += '.runner-player{position:absolute;font-size:2rem;z-index:10;will-change:transform;transition:none;line-height:1;display:inline-block;transform:scaleX(-1);}';
+    html += '.runner-player{position:absolute;font-size:2rem;z-index:10;will-change:transform;transition:none;line-height:1;display:inline-block;transform:scaleX(-1);width:' + PLAYER_SIZE + 'px;height:' + PLAYER_SIZE + 'px;}';
+    html += '.runner-player svg{display:block;width:100%;height:100%;}';
     html += '.runner-player.dead{animation:runner-death 0.6s ease-out forwards;}';
     html += '.runner-entity{position:absolute;z-index:5;will-change:transform;line-height:1;pointer-events:none;}';
     html += '.runner-entity.collectible{z-index:6;font-size:1.8rem;}';
@@ -104,11 +106,11 @@ window.RunnerGame = (function () {
     html += '.runner-cloud{position:absolute;opacity:0.4;z-index:1;pointer-events:none;}';
     html += '</style>';
     html += '<div class="runner-area" id="runner-area" style="background:' + skyColor + ';">';
-    // Background clouds
-    html += renderClouds();
+    // Background decorations
+    html += theme === 'dino' ? renderDinoBackground() : renderClouds();
     html += '<div class="runner-bg-layer" id="runner-bg"></div>';
     html += '<div class="runner-ground" id="runner-ground" style="background:' + groundColor + ';"><div class="runner-ground-pattern"></div></div>';
-    html += '<div class="runner-player" id="runner-player">' + character + '</div>';
+    html += '<div class="runner-player" id="runner-player"' + (character.indexOf('<svg') === 0 ? ' style="font-size:0;"' : '') + '>' + character + '</div>';
     html += '<div class="runner-score" id="runner-score">0/' + totalCollectibles + ' ' + collectibleEmoji + '</div>';
     if (label) {
       html += '<div class="runner-label">' + label + '</div>';
@@ -141,6 +143,33 @@ window.RunnerGame = (function () {
       html += '<ellipse cx="20" cy="20" rx="18" ry="10" fill="white"/>';
       html += '<ellipse cx="35" cy="15" rx="15" ry="12" fill="white"/>';
       html += '<ellipse cx="45" cy="20" rx="14" ry="9" fill="white"/>';
+      html += '</svg></div>';
+    }
+    return html;
+  }
+
+  function renderDinoBackground() {
+    var html = '';
+    // Clouds
+    html += renderClouds();
+    // Prehistoric vegetation silhouettes in background
+    var plants = [
+      { x: '5%', y: '55%', w: 40 },
+      { x: '25%', y: '50%', w: 50 },
+      { x: '50%', y: '52%', w: 45 },
+      { x: '75%', y: '48%', w: 55 },
+      { x: '92%', y: '54%', w: 38 }
+    ];
+    for (var i = 0; i < plants.length; i++) {
+      var p = plants[i];
+      html += '<div class="runner-cloud" style="left:' + p.x + ';top:' + p.y + ';opacity:0.15;">';
+      html += '<svg width="' + p.w + '" height="' + Math.round(p.w * 1.5) + '" viewBox="0 0 40 60">';
+      // Palm tree silhouette
+      html += '<rect x="18" y="20" width="4" height="40" fill="#2d5a1e" rx="2"/>';
+      html += '<path d="M20 22 Q5 10 2 18 Q8 16 20 22Z" fill="#3d7a2e"/>';
+      html += '<path d="M20 22 Q35 10 38 18 Q32 16 20 22Z" fill="#3d7a2e"/>';
+      html += '<path d="M20 20 Q10 2 8 12 Q14 10 20 20Z" fill="#4a8a3e"/>';
+      html += '<path d="M20 20 Q30 2 32 12 Q26 10 20 20Z" fill="#4a8a3e"/>';
       html += '</svg></div>';
     }
     return html;
@@ -332,27 +361,52 @@ window.RunnerGame = (function () {
     switch (ent.type) {
       case TYPE_BLOCK:
         el.className = 'runner-block';
-        el.innerHTML = '<svg width="32" height="36" viewBox="0 0 32 36"><rect x="0" y="0" width="32" height="36" fill="#c0392b" rx="2"/><rect x="2" y="2" width="13" height="16" fill="#e74c3c" rx="1"/><rect x="17" y="2" width="13" height="16" fill="#e74c3c" rx="1"/><rect x="8" y="20" width="16" height="14" fill="#e74c3c" rx="1"/><rect x="0" y="18" width="32" height="2" fill="#a93226"/><rect x="15" y="0" width="2" height="18" fill="#a93226"/></svg>';
+        if (theme === 'dino') {
+          // Rock/boulder
+          el.innerHTML = '<svg width="32" height="36" viewBox="0 0 32 36"><path d="M4 36 L2 20 Q0 12 8 6 L16 2 Q24 0 30 8 L32 16 Q32 28 28 36Z" fill="#8b7355"/><path d="M4 36 L2 20 Q0 12 8 6 L16 2 Q20 4 18 12 L14 24 Q10 32 4 36Z" fill="#a0896c"/><circle cx="12" cy="18" r="2" fill="#7a6548" opacity="0.4"/><circle cx="22" cy="14" r="1.5" fill="#7a6548" opacity="0.3"/><path d="M8 28 L14 24" stroke="#7a6548" stroke-width="0.5" opacity="0.3"/></svg>';
+        } else {
+          el.innerHTML = '<svg width="32" height="36" viewBox="0 0 32 36"><rect x="0" y="0" width="32" height="36" fill="#c0392b" rx="2"/><rect x="2" y="2" width="13" height="16" fill="#e74c3c" rx="1"/><rect x="17" y="2" width="13" height="16" fill="#e74c3c" rx="1"/><rect x="8" y="20" width="16" height="14" fill="#e74c3c" rx="1"/><rect x="0" y="18" width="32" height="2" fill="#a93226"/><rect x="15" y="0" width="2" height="18" fill="#a93226"/></svg>';
+        }
         break;
       case TYPE_PIPE:
         el.className = 'runner-pipe';
         var pw = ent.width, ph = ent.height;
-        el.innerHTML = '<svg width="' + pw + '" height="' + ph + '" viewBox="0 0 ' + pw + ' ' + ph + '"><rect x="0" y="0" width="' + pw + '" height="10" fill="#27ae60" rx="2"/><rect x="3" y="10" width="' + (pw - 6) + '" height="' + (ph - 10) + '" fill="#2ecc71"/><rect x="3" y="10" width="4" height="' + (ph - 10) + '" fill="#27ae60" opacity="0.5"/></svg>';
+        if (theme === 'dino') {
+          // Volcano vent / stalagmite
+          el.innerHTML = '<svg width="' + pw + '" height="' + ph + '" viewBox="0 0 ' + pw + ' ' + ph + '"><path d="M' + (pw*0.1) + ' ' + ph + ' L' + (pw*0.3) + ' 8 Q' + (pw*0.5) + ' 0 ' + (pw*0.7) + ' 8 L' + (pw*0.9) + ' ' + ph + 'Z" fill="#6d5c4a"/><path d="M' + (pw*0.1) + ' ' + ph + ' L' + (pw*0.3) + ' 8 Q' + (pw*0.4) + ' 4 ' + (pw*0.45) + ' 10 L' + (pw*0.35) + ' ' + ph + 'Z" fill="#8b7355" opacity="0.6"/><ellipse cx="' + (pw*0.5) + '" cy="6" rx="' + (pw*0.15) + '" ry="3" fill="#e74c3c" opacity="0.6"/></svg>';
+        } else {
+          el.innerHTML = '<svg width="' + pw + '" height="' + ph + '" viewBox="0 0 ' + pw + ' ' + ph + '"><rect x="0" y="0" width="' + pw + '" height="10" fill="#27ae60" rx="2"/><rect x="3" y="10" width="' + (pw - 6) + '" height="' + (ph - 10) + '" fill="#2ecc71"/><rect x="3" y="10" width="4" height="' + (ph - 10) + '" fill="#27ae60" opacity="0.5"/></svg>';
+        }
         break;
       case TYPE_ENEMY:
         el.className = 'runner-enemy';
-        el.textContent = '👾';
+        if (theme === 'dino') {
+          // Small raptor enemy
+          el.innerHTML = '<svg width="30" height="32" viewBox="0 0 30 32"><g fill="#c0392b"><rect x="10" y="2" width="8" height="6" rx="1"/><rect x="8" y="8" width="6" height="10"/><rect x="14" y="10" width="8" height="6" rx="1"/><rect x="20" y="8" width="4" height="3"/></g><g fill="#a93226"><rect x="8" y="18" width="3" height="8" rx="1"/><rect x="14" y="18" width="3" height="8" rx="1"/></g><rect x="12" y="4" width="2.5" height="2" rx="1" fill="white"/><rect x="13" y="4.5" width="1" height="1" fill="#222"/><rect x="10" y="7" width="4" height="1" fill="#e74c3c"/><rect x="22" y="9" width="3" height="1" fill="#e74c3c"/></svg>';
+        } else {
+          el.textContent = '👾';
+        }
         break;
       case TYPE_GAP:
         el.className = 'runner-gap-marker';
         el.style.width = ent.width + 'px';
         el.style.height = ent.height + 'px';
-        el.style.background = 'rgba(0,0,0,0.7)';
+        if (theme === 'dino') {
+          el.style.background = 'linear-gradient(180deg, #4a3728 0%, #2a1f15 40%, #1a120b 100%)';
+        } else {
+          el.style.background = 'rgba(0,0,0,0.7)';
+        }
         el.style.borderRadius = '0 0 4px 4px';
         break;
       case TYPE_PLATFORM:
         el.className = 'runner-platform';
-        el.innerHTML = '<svg width="' + ent.width + '" height="12" viewBox="0 0 ' + ent.width + ' 12"><rect x="0" y="0" width="' + ent.width + '" height="12" fill="#8B7355" rx="2"/><rect x="0" y="0" width="' + ent.width + '" height="4" fill="#a0896c" rx="2"/></svg>';
+        if (theme === 'dino') {
+          // Stone/rock platform with moss
+          var w = ent.width;
+          el.innerHTML = '<svg width="' + w + '" height="12" viewBox="0 0 ' + w + ' 12"><rect x="0" y="2" width="' + w + '" height="10" fill="#8b7355" rx="3"/><rect x="0" y="0" width="' + w + '" height="5" fill="#6d8b5e" rx="3"/><rect x="4" y="6" width="8" height="2" fill="#7a6548" rx="1" opacity="0.4"/><rect x="' + (w-14) + '" y="7" width="6" height="2" fill="#7a6548" rx="1" opacity="0.3"/></svg>';
+        } else {
+          el.innerHTML = '<svg width="' + ent.width + '" height="12" viewBox="0 0 ' + ent.width + ' 12"><rect x="0" y="0" width="' + ent.width + '" height="12" fill="#8B7355" rx="2"/><rect x="0" y="0" width="' + ent.width + '" height="4" fill="#a0896c" rx="2"/></svg>';
+        }
         break;
       case TYPE_COLLECTIBLE:
         el.className = 'runner-entity collectible';
