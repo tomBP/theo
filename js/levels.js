@@ -67,27 +67,93 @@ window.LevelData = {
         scenes: [
           {
             question: { es: 'Cuantas placas puedes contar?', en: 'How many plates can you count?', ca: 'Quantes plaques pots comptar?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#e8f8f5"/><polygon points="60,120 68,90 76,120" fill="#e67e22"/><polygon points="80,115 88,82 96,115" fill="#e67e22"/><polygon points="100,112 108,78 116,112" fill="#e67e22"/><polygon points="120,112 128,76 136,112" fill="#e67e22"/><polygon points="140,115 148,84 156,115" fill="#e67e22"/><ellipse cx="150" cy="130" rx="80" ry="25" fill="#7B8D4E"/></svg>',
+            sceneSVG: '<svg viewBox="0 0 300 200"><rect width="300" height="200" fill="#e8f8f5"/><rect x="0" y="170" width="300" height="30" fill="#a8d5a2" rx="4"/>' +
+              /* Stegosaurus body */
+              '<ellipse cx="150" cy="130" rx="75" ry="28" fill="#7B8D4E"/><ellipse cx="150" cy="140" rx="60" ry="16" fill="#8fa05a" opacity="0.5"/>' +
+              /* Head + neck */
+              '<path d="M80 125 Q65 118 55 115" fill="none" stroke="#6a7d3e" stroke-width="8" stroke-linecap="round"/><ellipse cx="50" cy="114" rx="16" ry="12" fill="#7B8D4E"/><circle cx="44" cy="110" r="3" fill="white"/><circle cx="44" cy="110" r="1.5" fill="#2d2d2d"/><circle cx="42" cy="114" r="1" fill="#3d4a25"/>' +
+              /* Smile */
+              '<path d="M40 117 Q44 120 48 117" fill="none" stroke="#5a6b35" stroke-width="1"/>' +
+              /* 5 plates - orange, large and clear */
+              '<polygon points="88,102 96,70 104,102" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>' +
+              '<polygon points="108,96 117,62 126,96" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>' +
+              '<polygon points="128,94 138,58 148,94" fill="#f39c12" stroke="#d35400" stroke-width="1.5"/>' +
+              '<polygon points="148,96 157,64 166,96" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>' +
+              '<polygon points="166,100 174,72 182,100" fill="#e67e22" stroke="#d35400" stroke-width="1.5"/>' +
+              /* Tail */
+              '<path d="M220 125 Q240 118 245 125" fill="none" stroke="#6a7d3e" stroke-width="7" stroke-linecap="round"/>' +
+              '<polygon points="242,118 256,110 250,126" fill="#c0392b"/><polygon points="248,122 262,116 256,130" fill="#c0392b"/>' +
+              /* Legs */
+              '<rect x="100" y="148" width="12" height="24" rx="4" fill="#6a7d3e"/><rect x="130" y="150" width="12" height="22" rx="4" fill="#6a7d3e"/><rect x="160" y="150" width="12" height="22" rx="4" fill="#6a7d3e"/><rect x="190" y="148" width="12" height="24" rx="4" fill="#6a7d3e"/>' +
+              '</svg>',
             answers: [4, 5, 6], correct: 5, fact: { es: 'Cinco placas en fila!', en: 'Five plates in a row!', ca: 'Cinc plaques en fila!' }
           },
           {
             question: { es: 'Cuantos pinchos tiene la cola?', en: 'How many tail spikes?', ca: 'Quantes punxes te la cua?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#e8f8f5"/><line x1="80" y1="120" x2="180" y2="120" stroke="#7B8D4E" stroke-width="12" stroke-linecap="round"/><polygon points="180,110 210,100 195,120" fill="#c0392b"/><polygon points="190,108 220,95 205,118" fill="#c0392b"/><polygon points="185,130 215,140 200,120" fill="#c0392b"/><polygon points="195,132 225,145 210,122" fill="#c0392b"/></svg>',
+            sceneSVG: '<svg viewBox="0 0 300 200"><rect width="300" height="200" fill="#e8f8f5"/><rect x="0" y="170" width="300" height="30" fill="#a8d5a2" rx="4"/>' +
+              /* Stego body (partial, focus on tail) */
+              '<ellipse cx="100" cy="120" rx="65" ry="28" fill="#7B8D4E"/><ellipse cx="100" cy="132" rx="50" ry="14" fill="#8fa05a" opacity="0.5"/>' +
+              /* Head */
+              '<path d="M40 115 Q28 108 22 106" fill="none" stroke="#6a7d3e" stroke-width="7" stroke-linecap="round"/><ellipse cx="18" cy="106" rx="14" ry="10" fill="#7B8D4E"/><circle cx="13" cy="102" r="2.5" fill="white"/><circle cx="13" cy="102" r="1.2" fill="#2d2d2d"/>' +
+              /* Plates */
+              '<polygon points="55,96 62,72 69,96" fill="#e67e22" stroke="#d35400" stroke-width="1"/><polygon points="72,92 80,66 88,92" fill="#e67e22" stroke="#d35400" stroke-width="1"/><polygon points="90,90 99,64 108,90" fill="#f39c12" stroke="#d35400" stroke-width="1"/><polygon points="108,92 116,68 124,92" fill="#e67e22" stroke="#d35400" stroke-width="1"/><polygon points="124,96 131,74 138,96" fill="#e67e22" stroke="#d35400" stroke-width="1"/>' +
+              /* Tail - thick and clear */
+              '<path d="M160 118 Q195 108 220 112" fill="none" stroke="#6a7d3e" stroke-width="10" stroke-linecap="round"/>' +
+              /* 4 tail spikes - big, red, clearly countable */
+              '<polygon points="215,100 240,86 230,108" fill="#c0392b" stroke="#992d22" stroke-width="1.5"/>' +
+              '<polygon points="225,96 252,80 242,106" fill="#e74c3c" stroke="#992d22" stroke-width="1.5"/>' +
+              '<polygon points="222,118 248,128 234,112" fill="#c0392b" stroke="#992d22" stroke-width="1.5"/>' +
+              '<polygon points="230,122 258,134 244,116" fill="#e74c3c" stroke="#992d22" stroke-width="1.5"/>' +
+              /* Legs */
+              '<rect x="60" y="140" width="11" height="28" rx="4" fill="#6a7d3e"/><rect x="85" y="142" width="11" height="26" rx="4" fill="#6a7d3e"/><rect x="110" y="142" width="11" height="26" rx="4" fill="#6a7d3e"/><rect x="135" y="140" width="11" height="28" rx="4" fill="#6a7d3e"/>' +
+              '</svg>',
             answers: [3, 4, 5], correct: 4, fact: { es: 'Cuatro pinchos afilados!', en: 'Four sharp tail spikes!', ca: 'Quatre punxes esmolades!' }
           },
           {
             question: { es: 'Cuantos bebes Stegosaurus hay?', en: 'How many baby Stegosauruses?', ca: 'Quants bebes Stegosaurus hi ha?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#e8f8f5"/><ellipse cx="80" cy="150" rx="25" ry="15" fill="#8fa05a"/><polygon points="65,140 69,128 73,140" fill="#e67e22"/><polygon points="75,138 79,126 83,138" fill="#e67e22"/><ellipse cx="160" cy="155" rx="22" ry="13" fill="#8fa05a"/><polygon points="148,146 151,136 154,146" fill="#e67e22"/><polygon points="157,144 160,134 163,144" fill="#e67e22"/><ellipse cx="240" cy="150" rx="25" ry="15" fill="#8fa05a"/><polygon points="228,140 232,128 236,140" fill="#e67e22"/><polygon points="238,138 242,126 246,138" fill="#e67e22"/></svg>',
+            sceneSVG: '<svg viewBox="0 0 300 200"><rect width="300" height="200" fill="#e8f8f5"/><rect x="0" y="170" width="300" height="30" fill="#a8d5a2" rx="4"/>' +
+              /* Mama stego in background */
+              '<ellipse cx="150" cy="85" rx="50" ry="18" fill="#5a6b35" opacity="0.3"/><polygon points="118,74 123,58 128,74" fill="#d35400" opacity="0.3"/><polygon points="133,72 138,54 143,72" fill="#d35400" opacity="0.3"/><polygon points="148,72 153,54 158,72" fill="#d35400" opacity="0.3"/><polygon points="163,74 168,58 173,74" fill="#d35400" opacity="0.3"/>' +
+              /* Baby 1 */
+              '<ellipse cx="60" cy="145" rx="28" ry="14" fill="#8fa05a"/><ellipse cx="60" cy="150" rx="20" ry="8" fill="#a3b76a" opacity="0.5"/><path d="M36 140 Q28 135 24 134" fill="none" stroke="#7a9444" stroke-width="4" stroke-linecap="round"/><ellipse cx="22" cy="133" rx="8" ry="6" fill="#8fa05a"/><circle cx="19" cy="131" r="2" fill="white"/><circle cx="19" cy="131" r="1" fill="#2d2d2d"/><path d="M17 134 Q19 136 22 134" fill="none" stroke="#6a7d3e" stroke-width="0.8"/><polygon points="47,136 50,126 53,136" fill="#e67e22" stroke="#d35400" stroke-width="0.8"/><polygon points="55,134 58,124 61,134" fill="#e67e22" stroke="#d35400" stroke-width="0.8"/><rect x="46" y="155" width="6" height="14" rx="2" fill="#7a9444"/><rect x="60" y="155" width="6" height="14" rx="2" fill="#7a9444"/>' +
+              /* Baby 2 */
+              '<ellipse cx="155" cy="148" rx="26" ry="13" fill="#8fa05a"/><ellipse cx="155" cy="153" rx="18" ry="7" fill="#a3b76a" opacity="0.5"/><path d="M133 143 Q125 138 121 137" fill="none" stroke="#7a9444" stroke-width="4" stroke-linecap="round"/><ellipse cx="119" cy="136" rx="8" ry="6" fill="#8fa05a"/><circle cx="116" cy="134" r="2" fill="white"/><circle cx="116" cy="134" r="1" fill="#2d2d2d"/><path d="M114 137 Q116 139 119 137" fill="none" stroke="#6a7d3e" stroke-width="0.8"/><polygon points="142,138 145,128 148,138" fill="#e67e22" stroke="#d35400" stroke-width="0.8"/><polygon points="150,137 153,127 156,137" fill="#e67e22" stroke="#d35400" stroke-width="0.8"/><rect x="141" y="157" width="6" height="12" rx="2" fill="#7a9444"/><rect x="155" y="157" width="6" height="12" rx="2" fill="#7a9444"/>' +
+              /* Baby 3 */
+              '<ellipse cx="245" cy="143" rx="27" ry="14" fill="#8fa05a"/><ellipse cx="245" cy="148" rx="19" ry="8" fill="#a3b76a" opacity="0.5"/><path d="M222 138 Q214 133 210 132" fill="none" stroke="#7a9444" stroke-width="4" stroke-linecap="round"/><ellipse cx="208" cy="131" rx="8" ry="6" fill="#8fa05a"/><circle cx="205" cy="129" r="2" fill="white"/><circle cx="205" cy="129" r="1" fill="#2d2d2d"/><path d="M203 132 Q205 134 208 132" fill="none" stroke="#6a7d3e" stroke-width="0.8"/><polygon points="233,132 236,122 239,132" fill="#e67e22" stroke="#d35400" stroke-width="0.8"/><polygon points="241,131 244,121 247,131" fill="#e67e22" stroke="#d35400" stroke-width="0.8"/><rect x="231" y="153" width="6" height="14" rx="2" fill="#7a9444"/><rect x="245" y="153" width="6" height="14" rx="2" fill="#7a9444"/>' +
+              '</svg>',
             answers: [2, 3, 4], correct: 3, fact: { es: 'Tres bebes dinos adorables!', en: 'Three cute baby dinos!', ca: 'Tres bebes dinos adorables!' }
           },
           {
             question: { es: 'Cuantas patas tiene el Stegosaurus?', en: 'How many legs does Stegosaurus have?', ca: 'Quantes potes te l\'Stegosaurus?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#e8f8f5"/><ellipse cx="150" cy="110" rx="70" ry="30" fill="#7B8D4E"/><rect x="95" y="128" width="14" height="35" rx="4" fill="#6a7d3e"/><rect x="120" y="130" width="14" height="33" rx="4" fill="#6a7d3e"/><rect x="160" y="130" width="14" height="33" rx="4" fill="#6a7d3e"/><rect x="185" y="128" width="14" height="35" rx="4" fill="#6a7d3e"/></svg>',
+            sceneSVG: '<svg viewBox="0 0 300 200"><rect width="300" height="200" fill="#e8f8f5"/><rect x="0" y="180" width="300" height="20" fill="#a8d5a2" rx="4"/>' +
+              /* Full stegosaurus - side view, legs clearly visible */
+              '<ellipse cx="150" cy="110" rx="70" ry="28" fill="#7B8D4E"/><ellipse cx="150" cy="122" rx="55" ry="14" fill="#8fa05a" opacity="0.5"/>' +
+              /* Head */
+              '<path d="M84 105 Q68 98 58 96" fill="none" stroke="#6a7d3e" stroke-width="8" stroke-linecap="round"/><ellipse cx="54" cy="95" rx="16" ry="12" fill="#7B8D4E"/><circle cx="47" cy="91" r="3.5" fill="white"/><circle cx="47" cy="91" r="1.8" fill="#2d2d2d"/><path d="M44 97 Q48 100 52 97" fill="none" stroke="#5a6b35" stroke-width="1"/><circle cx="43" cy="95" r="1" fill="#3d4a25"/>' +
+              /* Plates */
+              '<polygon points="98,84 105,58 112,84" fill="#e67e22" stroke="#d35400" stroke-width="1"/><polygon points="116,80 124,52 132,80" fill="#f39c12" stroke="#d35400" stroke-width="1"/><polygon points="134,78 143,50 152,78" fill="#e67e22" stroke="#d35400" stroke-width="1"/><polygon points="152,80 160,54 168,80" fill="#f39c12" stroke="#d35400" stroke-width="1"/><polygon points="168,84 175,60 182,84" fill="#e67e22" stroke="#d35400" stroke-width="1"/>' +
+              /* Tail */
+              '<path d="M216 108 Q238 100 245 106" fill="none" stroke="#6a7d3e" stroke-width="7" stroke-linecap="round"/><polygon points="242,100 256,92 250,108" fill="#c0392b"/><polygon points="248,104 262,98 256,112" fill="#c0392b"/>' +
+              /* 4 legs - BOLD, clearly separated, with feet */
+              '<rect x="92" y="130" width="16" height="38" rx="5" fill="#6a7d3e" stroke="#5a6b35" stroke-width="1"/><ellipse cx="100" cy="170" rx="10" ry="5" fill="#5a6b35"/>' +
+              '<rect x="122" y="132" width="16" height="36" rx="5" fill="#6a7d3e" stroke="#5a6b35" stroke-width="1"/><ellipse cx="130" cy="170" rx="10" ry="5" fill="#5a6b35"/>' +
+              '<rect x="162" y="132" width="16" height="36" rx="5" fill="#6a7d3e" stroke="#5a6b35" stroke-width="1"/><ellipse cx="170" cy="170" rx="10" ry="5" fill="#5a6b35"/>' +
+              '<rect x="192" y="130" width="16" height="38" rx="5" fill="#6a7d3e" stroke="#5a6b35" stroke-width="1"/><ellipse cx="200" cy="170" rx="10" ry="5" fill="#5a6b35"/>' +
+              '</svg>',
             answers: [2, 4, 6], correct: 4, fact: { es: 'Cuatro patas fuertes!', en: 'Four strong legs!', ca: 'Quatre potes fortes!' }
           },
           {
             question: { es: 'Cuantos arboles hay en el bosque?', en: 'How many trees in the forest?', ca: 'Quants arbres hi ha al bosc?' },
-            sceneSVG: '<svg viewBox="0 0 300 200"><rect x="0" y="0" width="300" height="200" fill="#e8f8f5"/><rect x="35" y="100" width="10" height="50" fill="#8B7355"/><polygon points="20,110 40,40 60,110" fill="#27ae60"/><rect x="95" y="90" width="10" height="60" fill="#8B7355"/><polygon points="80,100 100,25 120,100" fill="#2ecc71"/><rect x="155" y="95" width="10" height="55" fill="#8B7355"/><polygon points="140,105 160,30 180,105" fill="#27ae60"/><rect x="215" y="100" width="10" height="50" fill="#8B7355"/><polygon points="200,110 220,40 240,110" fill="#2ecc71"/><rect x="265" y="90" width="10" height="60" fill="#8B7355"/><polygon points="250,100 270,25 290,100" fill="#27ae60"/><ellipse cx="100" cy="170" rx="25" ry="15" fill="#7B8D4E"/></svg>',
+            sceneSVG: '<svg viewBox="0 0 300 200"><rect width="300" height="200" fill="#e8f8f5"/><rect x="0" y="165" width="300" height="35" fill="#a8d5a2" rx="4"/>' +
+              /* 5 trees - varied, fun, clearly countable */
+              '<rect x="28" y="100" width="10" height="65" fill="#8B7355" rx="2"/><polygon points="10,110 33,30 56,110" fill="#27ae60"/><polygon points="15,85 33,45 51,85" fill="#2ecc71"/>' +
+              '<rect x="85" y="90" width="10" height="75" fill="#a0896c" rx="2"/><polygon points="68,100 90,20 112,100" fill="#2ecc71"/><polygon points="73,70 90,35 107,70" fill="#27ae60"/>' +
+              '<rect x="145" y="95" width="10" height="70" fill="#8B7355" rx="2"/><polygon points="128,105 150,28 172,105" fill="#27ae60"/><polygon points="133,78 150,40 167,78" fill="#2ecc71"/>' +
+              '<rect x="200" y="100" width="10" height="65" fill="#a0896c" rx="2"/><polygon points="185,110 205,35 225,110" fill="#2ecc71"/><polygon points="190,82 205,48 220,82" fill="#27ae60"/>' +
+              '<rect x="258" y="92" width="10" height="73" fill="#8B7355" rx="2"/><polygon points="242,102 263,25 284,102" fill="#27ae60"/><polygon points="247,75 263,38 279,75" fill="#2ecc71"/>' +
+              /* Little stego peeking between trees */
+              '<ellipse cx="150" cy="158" rx="22" ry="10" fill="#7B8D4E"/><path d="M132 153 Q126 148 122 148" fill="none" stroke="#6a7d3e" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="120" cy="147" rx="6" ry="5" fill="#7B8D4E"/><circle cx="118" cy="145" r="1.5" fill="white"/><circle cx="118" cy="145" r="0.8" fill="#2d2d2d"/><polygon points="142,148 144,140 146,148" fill="#e67e22"/><polygon points="148,147 150,139 152,147" fill="#e67e22"/><polygon points="154,148 156,140 158,148" fill="#e67e22"/>' +
+              '</svg>',
             answers: [4, 5, 6], correct: 5, fact: { es: 'Cinco arboles para comer!', en: 'Five trees for munching!', ca: 'Cinc arbres per menjar!' }
           }
         ]
