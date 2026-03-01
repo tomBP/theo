@@ -319,7 +319,7 @@ window.LevelData = {
       ],
       config: {
         character: '<svg width="36" height="36" viewBox="0 0 36 36"><g fill="#5b8fa8"><path d="M8 14 L2 8 Q0 6 4 10 L8 12Z"/><path d="M28 14 L34 8 Q36 6 32 10 L28 12Z"/><rect x="8" y="12" width="20" height="10" rx="4"/><path d="M6 14 Q2 10 1 14 Q0 18 6 18Z"/><path d="M30 14 Q34 10 35 14 Q36 18 30 18Z"/></g><g fill="#4a7a90"><rect x="12" y="22" width="4" height="4" rx="1"/><rect x="20" y="22" width="4" height="4" rx="1"/></g><rect x="12" y="8" width="12" height="8" rx="3" fill="#6ba0b8"/><circle cx="15" cy="12" r="2" fill="white"/><circle cx="21" cy="12" r="2" fill="white"/><circle cx="15.5" cy="12.5" r="1" fill="#222"/><circle cx="21.5" cy="12.5" r="1" fill="#222"/><path d="M14 16 Q18 18 22 16" fill="none" stroke="#4a7a90" stroke-width="0.8"/><path d="M16 6 L18 2 L20 6" fill="#6ba0b8" stroke="#4a7a90" stroke-width="0.5"/></svg>',
-        collectible: '🐟',
+        collectible: '⭐',
         totalCollectibles: 8,
         skyColor: '#87CEEB',
         label: { es: '!Vuela por el cielo!', en: 'Fly through the sky!', ca: 'Vola pel cel!' },
