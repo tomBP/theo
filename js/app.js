@@ -125,14 +125,18 @@ window.App = (function () {
   }
 
   function updateThemeCards() {
+    var dinoLevels = window.LevelData ? window.LevelData.dino : [];
+    var truckLevels = window.LevelData ? window.LevelData.truck : [];
+    var dinoTotal = dinoLevels.length || 10;
+    var truckTotal = truckLevels.length || 10;
     var dinoCount = GameState.getCompletedCount('dino');
     var truckCount = GameState.getCompletedCount('truck');
     document.getElementById('theme-dino-stars').innerHTML =
-      Icons.star(true).repeat(dinoCount) + Icons.star(false).repeat(10 - dinoCount) +
-      '<br>' + dinoCount + '/10 ' + t('completed');
+      Icons.star(true).repeat(dinoCount) + Icons.star(false).repeat(dinoTotal - dinoCount) +
+      '<br>' + dinoCount + '/' + dinoTotal + ' ' + t('completed');
     document.getElementById('theme-truck-stars').innerHTML =
-      Icons.star(true).repeat(truckCount) + Icons.star(false).repeat(10 - truckCount) +
-      '<br>' + truckCount + '/10 ' + t('completed');
+      Icons.star(true).repeat(truckCount) + Icons.star(false).repeat(truckTotal - truckCount) +
+      '<br>' + truckCount + '/' + truckTotal + ' ' + t('completed');
   }
 
   function selectTheme(theme) {

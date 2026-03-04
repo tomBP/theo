@@ -2,11 +2,12 @@
 window.WorldMap = (function () {
 
   /* ---------- Constants ---------- */
-  var SCENE_WIDTH = 3200;
-  var CHECKPOINT_COUNT = 10;
   var PATH_PADDING_LEFT = 180;
   var PATH_PADDING_RIGHT = 180;
-  var PATH_SPACING = (SCENE_WIDTH - PATH_PADDING_LEFT - PATH_PADDING_RIGHT) / (CHECKPOINT_COUNT - 1);
+  var BASE_SPACING = 316; // approx spacing per checkpoint
+  var CHECKPOINT_COUNT = 10;
+  var SCENE_WIDTH = 3200;
+  var PATH_SPACING = BASE_SPACING;
   var PARALLAX_FAR = 0.2;
   var PARALLAX_MID = 0.5;
   var PARALLAX_NEAR = 1.0;
@@ -84,6 +85,12 @@ window.WorldMap = (function () {
   /* ---------- show ---------- */
   function show(theme) {
     currentTheme = theme;
+
+    // Compute checkpoint count from level data
+    var levels = window.LevelData ? window.LevelData[theme] : [];
+    CHECKPOINT_COUNT = Math.max(levels.length, 2);
+    SCENE_WIDTH = PATH_PADDING_LEFT + PATH_PADDING_RIGHT + BASE_SPACING * (CHECKPOINT_COUNT - 1);
+    PATH_SPACING = (SCENE_WIDTH - PATH_PADDING_LEFT - PATH_PADDING_RIGHT) / (CHECKPOINT_COUNT - 1);
 
     // Clean any previous state
     cleanupInternal();
