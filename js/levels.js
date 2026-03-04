@@ -559,36 +559,21 @@ window.LevelData = {
     },
     {
       id: 'truck-9',
-      name: { es: 'Earthshaker', en: 'Earthshaker', ca: 'Earthshaker' },
-      gameType: 'sorting',
+      name: { es: 'Conductor de Monster Truck', en: 'Monster Truck Driver', ca: 'Conductor de Monster Truck' },
+      gameType: 'fpdriver',
       illustration: function () { return TruckSVG.earthshaker(); },
-      keyFact: { es: 'Earthshaker es tan pesado que el suelo tiembla cuando aterriza!', en: 'Earthshaker is so heavy that the ground shakes when it lands!', ca: 'Earthshaker es tan pesat que el terra tremola quan aterra!' },
+      keyFact: { es: 'Los conductores de monster trucks pueden ver por encima de todos los demas vehiculos!', en: 'Monster truck drivers can see above all other vehicles!', ca: 'Els conductors de monster trucks poden veure per sobre de tots els altres vehicles!' },
       learnFacts: [
-        { es: 'Earthshaker pesa unas 4500 kilos!', en: 'Earthshaker weighs about 10,000 pounds!', ca: 'Earthshaker pesa unes 4500 quilos!' },
-        { es: 'Cuando aterriza de un salto, puedes sentir el suelo temblar!', en: 'When it lands from a jump, you can feel the ground shake!', ca: 'Quan aterra d\'un salt, pots sentir el terra tremolar!' },
-        { es: 'Tiene neumaticos enormes para aplastar coches', en: 'It has massive tires for crushing cars', ca: 'Te pneumatics enormes per aixafar cotxes' }
+        { es: 'Los monster trucks se sientan muy alto — como 3 metros del suelo!', en: 'Monster trucks sit very high — about 10 feet off the ground!', ca: 'Els monster trucks estan molt alts — uns 3 metres del terra!' },
+        { es: 'Los conductores usan cinturones de 5 puntos para mantenerse seguros', en: 'Drivers use 5-point harnesses to stay safe', ca: 'Els conductors utilitzen cinturons de 5 punts per estar segurs' },
+        { es: 'Pueden saltar sobre coches y esquivar obstaculos a gran velocidad!', en: 'They can jump over cars and dodge obstacles at high speed!', ca: 'Poden saltar sobre cotxes i esquivar obstacles a gran velocitat!' }
       ],
       config: {
-        categories: [
-          { id: 'big', label: { es: 'Grandes', en: 'Big', ca: 'Grans' }, color: '#e74c3c' },
-          { id: 'small', label: { es: 'Pequenos', en: 'Small', ca: 'Petits' }, color: '#3498db' }
-        ],
-        items: [
-          { id: 'i1', label: { es: 'Earthshaker', en: 'Earthshaker', ca: 'Earthshaker' }, emoji: '🚛', category: 'big' },
-          { id: 'i2', label: { es: 'Megalodon', en: 'Megalodon', ca: 'Megalodon' }, emoji: '🦈', category: 'big' },
-          { id: 'i3', label: { es: 'Coche', en: 'Car', ca: 'Cotxe' }, emoji: '🚗', category: 'small' },
-          { id: 'i4', label: { es: 'Grave Digger', en: 'Grave Digger', ca: 'Grave Digger' }, emoji: '🚛', category: 'big' },
-          { id: 'i5', label: { es: 'Bicicleta', en: 'Bicycle', ca: 'Bicicleta' }, emoji: '🚲', category: 'small' },
-          { id: 'i6', label: { es: 'Patinete', en: 'Scooter', ca: 'Patinet' }, emoji: '🛴', category: 'small' }
-        ],
-        facts: [
-          { es: 'Earthshaker es enorme!', en: 'Earthshaker is huge!', ca: 'Earthshaker es enorme!' },
-          { es: 'Megalodon es gigante!', en: 'Megalodon is giant!', ca: 'Megalodon es gegant!' },
-          { es: 'Un coche es mucho mas pequeno!', en: 'A car is much smaller!', ca: 'Un cotxe es molt mes petit!' },
-          { es: 'Grave Digger es masivo!', en: 'Grave Digger is massive!', ca: 'Grave Digger es massiu!' },
-          { es: 'Una bici es diminuta!', en: 'A bike is tiny!', ca: 'Una bici es diminuta!' },
-          { es: 'Un patinete es pequenito!', en: 'A scooter is so small!', ca: 'Un patinet es petit!' }
-        ]
+        totalCollectibles: 10,
+        collectible: '⭐',
+        baseSpeed: 3,
+        maxSpeed: 6,
+        speedRamp: true
       }
     },
     {
