@@ -326,6 +326,51 @@ window.LevelData = {
         pipeGap: 130,
         pipeWidth: 50
       }
+    },
+    {
+      id: 'dino-11',
+      name: { es: 'T-Rex vs Monster Truck', en: 'T-Rex vs Monster Truck', ca: 'T-Rex vs Monster Truck' },
+      gameType: 'runner',
+      illustration: function () { return DinoSVG.trex(); },
+      keyFact: { es: 'Que pasaria si un T-Rex condujera un Monster Truck? Caos total y mucha diversion!', en: 'What if a T-Rex drove a Monster Truck? Total chaos and tons of fun!', ca: 'Que passaria si un T-Rex conduis un Monster Truck? Caos total i molta diversio!' },
+      learnFacts: [
+        { es: 'Los Monster Trucks pesan mas de 4500 kilos — como 3 T-Rex juntos!', en: 'Monster Trucks weigh over 10,000 pounds — like 3 T-Rex together!', ca: 'Els Monster Trucks pesen mes de 4500 quilos — com 3 T-Rex junts!' },
+        { es: 'Un T-Rex podia correr a 30 km/h y un Monster Truck a mas de 160 km/h!', en: 'A T-Rex could run at 20 mph and a Monster Truck goes over 100 mph!', ca: 'Un T-Rex podia correr a 30 km/h i un Monster Truck a mes de 160 km/h!' },
+        { es: 'Los neumaticos de Monster Truck miden casi 2 metros — mas altos que un Velociraptor!', en: 'Monster Truck tires are nearly 6 feet tall — taller than a Velociraptor!', ca: 'Els pneumatics de Monster Truck fan quasi 2 metres — mes alts que un Velociraptor!' }
+      ],
+      config: {
+        character: '<svg width="40" height="40" viewBox="0 0 40 40">' +
+          '<rect x="4" y="16" width="32" height="10" rx="3" fill="#4a4a4a"/>' +
+          '<rect x="6" y="12" width="14" height="7" rx="2" fill="#5a5a5a"/>' +
+          '<rect x="2" y="24" width="36" height="3" fill="#2d2d2d"/>' +
+          '<circle cx="10" cy="30" r="5" fill="#333"/><circle cx="10" cy="30" r="3" fill="#666"/>' +
+          '<circle cx="30" cy="30" r="5" fill="#333"/><circle cx="30" cy="30" r="3" fill="#666"/>' +
+          '<g fill="#5b9e6f">' +
+          '<rect x="12" y="2" width="8" height="7" rx="2"/>' +
+          '<rect x="10" y="7" width="5" height="6"/>' +
+          '<rect x="15" y="8" width="8" height="5" rx="1"/>' +
+          '</g>' +
+          '<rect x="14" y="3" width="2.5" height="2" rx="1" fill="white"/>' +
+          '<rect x="15" y="3.5" width="1" height="1" fill="#222"/>' +
+          '<rect x="12" y="7" width="4" height="1" fill="#3d7a4e"/>' +
+          '<g fill="#5b9e6f"><rect x="22" y="6" width="3" height="3" rx="1"/><rect x="26" y="5" width="2" height="4" rx="1"/></g>' +
+          '</svg>',
+        collectible: '🏆',
+        totalCollectibles: 20,
+        groundColor: '#5a3e2b',
+        skyColor: '#2c3e50',
+        label: { es: '!Sobrevive al caos prehistorico!', en: 'Survive the prehistoric chaos!', ca: 'Sobreviu al caos prehistoric!' },
+        hasGaps: true,
+        hasPlatforms: true,
+        hasDoubleJump: true,
+        theme: 'mixed',
+        speedRamp: true,
+        baseSpeed: 3,
+        maxSpeed: 5.5,
+        hasMovingPlatforms: true,
+        hasFallingHazards: true,
+        hasComboObstacles: true
+      }
     }
   ],
 
