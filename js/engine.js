@@ -17,7 +17,8 @@ window.Engine = (function () {
     sorting: SortingGame,
     tracer: TracerGame,
     flappy: FlappyGame,
-    racer: RacerGame
+    racer: RacerGame,
+    fpdriver: FPDriverGame
   };
 
   function startLevel(levelData) {
@@ -109,6 +110,9 @@ window.Engine = (function () {
           break;
         case 'racer':
           progressEl.textContent = 'Lap 0/' + (config.laps || 3);
+          break;
+        case 'fpdriver':
+          progressEl.textContent = '0/' + config.totalCollectibles;
           break;
       }
     }
