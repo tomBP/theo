@@ -492,7 +492,7 @@ window.FPDriverGame = (function () {
     var sc = proj.scale;
     if (sc < 0.006) return;
 
-    var sz = 55 * sc;
+    var sz = 90 * sc;
     if (sz < 2) return;
 
     ctx.save();
@@ -500,56 +500,88 @@ window.FPDriverGame = (function () {
 
     switch (obs.type) {
       case 'barrel':
-        ctx.fillStyle = '#2d3436';
+        // Outline glow for visibility
+        ctx.shadowColor = 'rgba(255,100,0,0.5)';
+        ctx.shadowBlur = sz * 0.3;
+        ctx.fillStyle = '#e74c3c';
         roundRect(ctx, -sz * 0.38, -sz * 1.25, sz * 0.76, sz * 1.05, sz * 0.07);
         ctx.fill();
-        ctx.fillStyle = '#636e72';
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#c0392b';
         ctx.fillRect(-sz * 0.3, -sz * 1.1, sz * 0.6, sz * 0.8);
         ctx.fillStyle = '#fdcb6e';
         ctx.fillRect(-sz * 0.18, -sz * 0.85, sz * 0.36, sz * 0.3);
+        // Hazard stripes
         ctx.fillStyle = '#2d3436';
-        ctx.fillRect(-sz * 0.38, -sz * 0.65, sz * 0.76, sz * 0.05);
+        ctx.fillRect(-sz * 0.38, -sz * 0.65, sz * 0.76, sz * 0.06);
+        ctx.fillRect(-sz * 0.38, -sz * 1.2, sz * 0.76, sz * 0.06);
+        // Warning symbol
+        if (sz > 12) {
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold ' + Math.max(8, sz * 0.22) + 'px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('!', 0, -sz * 0.55);
+        }
         break;
 
       case 'cone':
-        ctx.fillStyle = '#e17055';
+        ctx.shadowColor = 'rgba(255,100,0,0.5)';
+        ctx.shadowBlur = sz * 0.3;
+        ctx.fillStyle = '#ff6b35';
         ctx.beginPath();
         ctx.moveTo(0, -sz * 1.15);
-        ctx.lineTo(-sz * 0.32, 0);
-        ctx.lineTo(sz * 0.32, 0);
+        ctx.lineTo(-sz * 0.36, 0);
+        ctx.lineTo(sz * 0.36, 0);
         ctx.closePath();
         ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-        ctx.fillRect(-sz * 0.18, -sz * 0.65, sz * 0.36, sz * 0.08);
-        ctx.fillRect(-sz * 0.24, -sz * 0.35, sz * 0.48, sz * 0.08);
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        ctx.fillRect(-sz * 0.2, -sz * 0.7, sz * 0.4, sz * 0.1);
+        ctx.fillRect(-sz * 0.27, -sz * 0.4, sz * 0.54, sz * 0.1);
         ctx.fillStyle = '#d63031';
-        ctx.fillRect(-sz * 0.36, -sz * 0.06, sz * 0.72, sz * 0.06);
+        ctx.fillRect(-sz * 0.38, -sz * 0.06, sz * 0.76, sz * 0.08);
         break;
 
       case 'tire':
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur = sz * 0.3;
         ctx.fillStyle = '#2d3436';
-        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.55, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
         ctx.fillStyle = '#636e72';
-        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.35, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.4, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#2d3436';
-        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.15, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.18, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#b2bec3';
-        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.07, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.08, 0, Math.PI * 2); ctx.fill();
+        // Tread marks
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = Math.max(1, sz * 0.03);
+        for (var ti = 0; ti < 8; ti++) {
+          var ta = ti * Math.PI / 4;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(ta) * sz * 0.4, -sz * 0.5 + Math.sin(ta) * sz * 0.4);
+          ctx.lineTo(Math.cos(ta) * sz * 0.55, -sz * 0.5 + Math.sin(ta) * sz * 0.55);
+          ctx.stroke();
+        }
         break;
 
       case 'barrier':
-        ctx.fillStyle = '#b2bec3';
-        roundRect(ctx, -sz * 0.65, -sz * 0.4, sz * 1.3, sz * 0.4, 3);
-        ctx.fill();
+        ctx.shadowColor = 'rgba(255,0,0,0.4)';
+        ctx.shadowBlur = sz * 0.3;
         ctx.fillStyle = '#dfe6e9';
-        ctx.fillRect(-sz * 0.65, -sz * 0.4, sz * 1.3, sz * 0.1);
-        for (var si = 0; si < 4; si++) {
+        roundRect(ctx, -sz * 0.7, -sz * 0.45, sz * 1.4, sz * 0.45, 3);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = '#f5f6fa';
+        ctx.fillRect(-sz * 0.7, -sz * 0.45, sz * 1.4, sz * 0.1);
+        for (var si = 0; si < 5; si++) {
           ctx.fillStyle = si % 2 === 0 ? '#e74c3c' : '#fff';
-          ctx.fillRect(-sz * 0.65 + si * sz * 0.325, -sz * 0.3, sz * 0.325, sz * 0.08);
+          ctx.fillRect(-sz * 0.7 + si * sz * 0.28, -sz * 0.35, sz * 0.28, sz * 0.1);
         }
-        if (sz > 10) {
+        if (sz > 8) {
           ctx.fillStyle = '#e74c3c';
-          ctx.font = 'bold ' + Math.max(7, sz * 0.2) + 'px sans-serif';
+          ctx.font = 'bold ' + Math.max(8, sz * 0.25) + 'px sans-serif';
           ctx.textAlign = 'center';
           ctx.fillText('JUMP!', 0, -sz * 0.06);
         }
@@ -613,9 +645,12 @@ window.FPDriverGame = (function () {
     var hoodY = h * 0.68 - jumpOff;
     var hoodH = h * 0.13;
 
+    // Horizontal offset — cabin shifts left/right based on lane
+    var laneShift = (lanePos - 1) * w * 0.12;
+
     // Shadow
     ctx.fillStyle = 'rgba(0,0,0,0.1)';
-    ctx.fillRect(w * 0.12, hoodY + bounce + 3, w * 0.76, hoodH);
+    ctx.fillRect(w * 0.12 + laneShift, hoodY + bounce + 3, w * 0.76, hoodH);
 
     // Hood
     var hg = ctx.createLinearGradient(0, hoodY, 0, hoodY + hoodH);
@@ -624,20 +659,20 @@ window.FPDriverGame = (function () {
     hg.addColorStop(1, '#a93226');
     ctx.fillStyle = hg;
     ctx.beginPath();
-    ctx.moveTo(w * 0.14, hoodY + hoodH + bounce);
-    ctx.lineTo(w * 0.19, hoodY + bounce);
-    ctx.lineTo(w * 0.81, hoodY + bounce);
-    ctx.lineTo(w * 0.86, hoodY + hoodH + bounce);
+    ctx.moveTo(w * 0.14 + laneShift, hoodY + hoodH + bounce);
+    ctx.lineTo(w * 0.19 + laneShift, hoodY + bounce);
+    ctx.lineTo(w * 0.81 + laneShift, hoodY + bounce);
+    ctx.lineTo(w * 0.86 + laneShift, hoodY + hoodH + bounce);
     ctx.closePath();
     ctx.fill();
 
     // Scoop
     ctx.fillStyle = '#1a1a1a';
     ctx.beginPath();
-    ctx.moveTo(w * 0.37, hoodY + hoodH * 0.22 + bounce);
-    ctx.lineTo(w * 0.39, hoodY - hoodH * 0.06 + bounce);
-    ctx.lineTo(w * 0.61, hoodY - hoodH * 0.06 + bounce);
-    ctx.lineTo(w * 0.63, hoodY + hoodH * 0.22 + bounce);
+    ctx.moveTo(w * 0.37 + laneShift, hoodY + hoodH * 0.22 + bounce);
+    ctx.lineTo(w * 0.39 + laneShift, hoodY - hoodH * 0.06 + bounce);
+    ctx.lineTo(w * 0.61 + laneShift, hoodY - hoodH * 0.06 + bounce);
+    ctx.lineTo(w * 0.63 + laneShift, hoodY + hoodH * 0.22 + bounce);
     ctx.closePath();
     ctx.fill();
 
@@ -645,21 +680,21 @@ window.FPDriverGame = (function () {
     ctx.strokeStyle = 'rgba(0,0,0,0.15)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(w * 0.5, hoodY + bounce);
-    ctx.lineTo(w * 0.5, hoodY + hoodH + bounce);
+    ctx.moveTo(w * 0.5 + laneShift, hoodY + bounce);
+    ctx.lineTo(w * 0.5 + laneShift, hoodY + hoodH + bounce);
     ctx.stroke();
 
     // Flames
-    drawFlame(ctx, w * 0.21, hoodY + hoodH * 0.5 + bounce, hoodH * 0.35, 1);
-    drawFlame(ctx, w * 0.79, hoodY + hoodH * 0.5 + bounce, hoodH * 0.35, -1);
+    drawFlame(ctx, w * 0.21 + laneShift, hoodY + hoodH * 0.5 + bounce, hoodH * 0.35, 1);
+    drawFlame(ctx, w * 0.79 + laneShift, hoodY + hoodH * 0.5 + bounce, hoodH * 0.35, -1);
 
     // Side mirrors
     ctx.fillStyle = '#2d3436';
-    ctx.fillRect(w * 0.04, hoodY - hoodH * 0.3 + bounce, w * 0.065, hoodH * 0.5);
-    ctx.fillRect(w * 0.895, hoodY - hoodH * 0.3 + bounce, w * 0.065, hoodH * 0.5);
+    ctx.fillRect(w * 0.04 + laneShift, hoodY - hoodH * 0.3 + bounce, w * 0.065, hoodH * 0.5);
+    ctx.fillRect(w * 0.895 + laneShift, hoodY - hoodH * 0.3 + bounce, w * 0.065, hoodH * 0.5);
     ctx.fillStyle = '#a8d8ea';
-    ctx.fillRect(w * 0.045, hoodY - hoodH * 0.2 + bounce, w * 0.05, hoodH * 0.3);
-    ctx.fillRect(w * 0.905, hoodY - hoodH * 0.2 + bounce, w * 0.05, hoodH * 0.3);
+    ctx.fillRect(w * 0.045 + laneShift, hoodY - hoodH * 0.2 + bounce, w * 0.05, hoodH * 0.3);
+    ctx.fillRect(w * 0.905 + laneShift, hoodY - hoodH * 0.2 + bounce, w * 0.05, hoodH * 0.3);
 
     // Lane indicator (green arrow on road)
     var indZ = 0.78;
@@ -690,6 +725,9 @@ window.FPDriverGame = (function () {
     var dashH = h * 0.17;
     var dashY = h - dashH;
 
+    // Dashboard horizontal shift to match cabin
+    var dashShift = (lanePos - 1) * w * 0.12;
+
     var dg = ctx.createLinearGradient(0, dashY, 0, h);
     dg.addColorStop(0, '#3a3a3a');
     dg.addColorStop(0.12, '#2d3436');
@@ -700,7 +738,7 @@ window.FPDriverGame = (function () {
     ctx.fillRect(0, dashY, w, 2);
 
     // Steering wheel
-    var cx = w * 0.5;
+    var cx = w * 0.5 + dashShift;
     var cy = dashY + dashH * 0.55;
     var wr = Math.min(dashH * 0.38, w * 0.10);
     var tilt = (lanePos - 1) * 30;
@@ -725,7 +763,7 @@ window.FPDriverGame = (function () {
     ctx.restore();
 
     // Speedometer (left)
-    var gx = w * 0.16, gy = dashY + dashH * 0.55, gr = dashH * 0.28;
+    var gx = w * 0.16 + dashShift, gy = dashY + dashH * 0.55, gr = dashH * 0.28;
     ctx.fillStyle = '#111';
     ctx.beginPath(); ctx.arc(gx, gy, gr, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#444'; ctx.lineWidth = 1.5; ctx.stroke();
@@ -743,7 +781,7 @@ window.FPDriverGame = (function () {
     ctx.fillText(Math.round(60 + (speed - baseSpeed) * 25), gx, gy + gr * 0.55);
 
     // Star gauge (right)
-    var tx = w * 0.84;
+    var tx = w * 0.84 + dashShift;
     ctx.fillStyle = '#111';
     ctx.beginPath(); ctx.arc(tx, gy, gr, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#444'; ctx.lineWidth = 1.5; ctx.stroke();
