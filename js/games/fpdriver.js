@@ -7,17 +7,17 @@ window.FPDriverGame = (function () {
 
   // Player state
   var playerLane; // 0=left, 1=center, 2=right
-  var targetLane; // smooth lane transition target
   var lanePos; // smooth 0-2 float for rendering
   var isJumping, jumpTimer, jumpDuration;
   var collected, totalCollectibles;
   var isDead, deathTimer;
   var speed, distance;
   var truckBounce;
+  var graceTimer; // invincibility frames at start
 
   // Road & obstacles
   var obstacles, collectibles;
-  var nextObstacleDist, nextCollectibleDist;
+  var spawnTimer, collectibleTimer;
   var LANE_COUNT = 3;
 
   // Pseudo-3D road parameters
@@ -29,6 +29,13 @@ window.FPDriverGame = (function () {
   // Config
   var collectibleEmoji, speedRamp;
   var baseSpeed, maxSpeed;
+
+  // Timing constants
+  var OBSTACLE_INTERVAL = 1.8; // seconds between obstacles
+  var COLLECTIBLE_INTERVAL = 1.2; // seconds between collectibles
+  var GRACE_PERIOD = 2.5; // seconds of invincibility at start
+  var Z_SPEED_BASE = 0.45; // z units per second at base speed
+  var HIT_Z = 0.12; // z threshold for collision (how close to player)
 
   function start(config, gameArea, onComplete) {
     container = gameArea;
@@ -50,40 +57,41 @@ window.FPDriverGame = (function () {
 
   function resetState() {
     playerLane = 1;
-    targetLane = 1;
     lanePos = 1;
     isJumping = false;
     jumpTimer = 0;
-    jumpDuration = 0.45;
+    jumpDuration = 0.5;
     collected = 0;
     isDead = false;
     speed = baseSpeed;
     distance = 0;
     truckBounce = 0;
+    graceTimer = GRACE_PERIOD;
     obstacles = [];
     collectibles = [];
-    nextObstacleDist = 2.0;
-    nextCollectibleDist = 1.0;
+    spawnTimer = OBSTACLE_INTERVAL * 0.7; // first obstacle after ~1.3s
+    collectibleTimer = 0.5; // first star quickly
   }
 
   function render() {
     var html = '<style>';
-    html += '.fpd-area{position:relative;width:100%;height:100%;min-height:300px;overflow:hidden;border-radius:var(--radius-medium);touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer;background:#333;}';
+    html += '.fpd-area{position:relative;width:100%;height:100%;min-height:280px;overflow:hidden;border-radius:var(--radius-medium);touch-action:none;-webkit-user-select:none;user-select:none;cursor:pointer;background:#333;}';
     html += '.fpd-canvas{display:block;}';
-    html += '.fpd-score{position:absolute;top:10px;right:14px;font-family:var(--font-title);font-size:clamp(1rem,3vw,1.3rem);color:var(--color-text);z-index:30;background:rgba(255,255,255,0.85);padding:4px 12px;border-radius:var(--radius-small);box-shadow:var(--shadow-soft);}';
-    html += '.fpd-speed{position:absolute;top:10px;left:14px;font-family:var(--font-title);font-size:clamp(0.8rem,2.5vw,1rem);color:var(--color-text);z-index:30;background:rgba(255,255,255,0.85);padding:4px 12px;border-radius:var(--radius-small);}';
-    html += '.fpd-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-body);font-weight:700;font-size:clamp(0.9rem,3vw,1.1rem);color:#fff;z-index:30;white-space:nowrap;background:rgba(0,0,0,0.6);padding:8px 16px;border-radius:var(--radius-small);pointer-events:none;}';
-    // Control buttons
-    html += '.fpd-ctrl{position:absolute;z-index:25;border:none;outline:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;background:rgba(255,255,255,0.18);-webkit-user-select:none;user-select:none;touch-action:none;}';
-    html += '.fpd-ctrl:active{background:rgba(255,255,255,0.4);}';
-    html += '.fpd-ctrl-left{bottom:12px;left:12px;width:60px;height:60px;}';
-    html += '.fpd-ctrl-right{bottom:12px;left:80px;width:60px;height:60px;}';
-    html += '.fpd-ctrl-jump{bottom:12px;right:12px;width:70px;height:70px;font-size:1.3rem;font-family:var(--font-title);}';
+    html += '.fpd-score{position:absolute;top:8px;right:10px;font-family:var(--font-title);font-size:clamp(0.9rem,2.8vw,1.2rem);color:var(--color-text);z-index:30;background:rgba(255,255,255,0.88);padding:3px 10px;border-radius:var(--radius-small);box-shadow:var(--shadow-soft);}';
+    html += '.fpd-speed{position:absolute;top:8px;left:10px;font-family:var(--font-title);font-size:clamp(0.75rem,2.2vw,0.95rem);color:var(--color-text);z-index:30;background:rgba(255,255,255,0.88);padding:3px 10px;border-radius:var(--radius-small);}';
+    html += '.fpd-hint{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-body);font-weight:700;font-size:clamp(0.85rem,2.8vw,1.05rem);color:#fff;z-index:30;white-space:nowrap;background:rgba(0,0,0,0.6);padding:6px 14px;border-radius:var(--radius-small);pointer-events:none;transition:opacity 0.5s;}';
+    // Control buttons — positioned above the dashboard
+    html += '.fpd-controls{position:absolute;bottom:18%;left:0;right:0;z-index:25;display:flex;justify-content:space-between;align-items:center;padding:0 8px;pointer-events:none;}';
+    html += '.fpd-ctrl{pointer-events:auto;border:none;outline:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;-webkit-user-select:none;user-select:none;touch-action:none;opacity:0.65;transition:opacity 0.15s,transform 0.1s;}';
+    html += '.fpd-ctrl:active{opacity:1;transform:scale(1.1);}';
+    html += '.fpd-ctrl-arrow{width:52px;height:52px;font-size:1.5rem;background:rgba(255,255,255,0.22);border:2px solid rgba(255,255,255,0.3);}';
+    html += '.fpd-ctrl-jump{width:56px;height:56px;font-size:0.75rem;font-family:var(--font-title);font-weight:800;background:rgba(46,204,113,0.35);border:2px solid rgba(46,204,113,0.5);}';
+    html += '.fpd-steer-group{display:flex;gap:6px;}';
     // Overlays
-    html += '.fpd-flash{position:absolute;inset:0;background:rgba(255,0,0,0.35);z-index:35;pointer-events:none;animation:fpd-flash-out 0.5s ease-out forwards;}';
+    html += '.fpd-flash{position:absolute;inset:0;background:rgba(255,0,0,0.3);z-index:35;pointer-events:none;animation:fpd-flash-out 0.5s ease-out forwards;}';
     html += '@keyframes fpd-flash-out{from{opacity:1;}to{opacity:0;}}';
-    html += '.fpd-ouch{position:absolute;font-family:var(--font-title);font-size:2rem;color:#e74c3c;z-index:36;pointer-events:none;animation:fpd-ouch-float 1s ease-out forwards;text-shadow:0 2px 4px rgba(0,0,0,0.4);}';
-    html += '@keyframes fpd-ouch-float{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-60px) scale(1.5);}}';
+    html += '.fpd-ouch{position:absolute;left:50%;top:30%;transform:translateX(-50%);font-family:var(--font-title);font-size:2rem;color:#e74c3c;z-index:36;pointer-events:none;animation:fpd-ouch-float 1s ease-out forwards;text-shadow:0 2px 6px rgba(0,0,0,0.4);}';
+    html += '@keyframes fpd-ouch-float{0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}100%{opacity:0;transform:translateX(-50%) translateY(-50px) scale(1.4);}}';
     html += '.fpd-reset-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.55);z-index:40;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;animation:fpd-ov-in 0.3s ease;}';
     html += '@keyframes fpd-ov-in{from{opacity:0;}to{opacity:1;}}';
     html += '.fpd-reset-text{font-family:var(--font-title);font-size:clamp(1.5rem,5vw,2rem);color:white;text-shadow:0 2px 8px rgba(0,0,0,0.4);}';
@@ -99,10 +107,14 @@ window.FPDriverGame = (function () {
       en: 'Dodge obstacles and collect stars!',
       ca: 'Esquiva obstacles i recull estrelles!'
     }) + '</div>';
-    // On-screen controls
-    html += '<button class="fpd-ctrl fpd-ctrl-left" id="fpd-left">&larr;</button>';
-    html += '<button class="fpd-ctrl fpd-ctrl-right" id="fpd-right">&rarr;</button>';
-    html += '<button class="fpd-ctrl fpd-ctrl-jump" id="fpd-jump">JUMP</button>';
+    // Controls row
+    html += '<div class="fpd-controls">';
+    html += '<div class="fpd-steer-group">';
+    html += '<button class="fpd-ctrl fpd-ctrl-arrow" id="fpd-left" aria-label="Left">&larr;</button>';
+    html += '<button class="fpd-ctrl fpd-ctrl-arrow" id="fpd-right" aria-label="Right">&rarr;</button>';
+    html += '</div>';
+    html += '<button class="fpd-ctrl fpd-ctrl-jump" id="fpd-jump" aria-label="Jump">JUMP</button>';
+    html += '</div>';
     html += '</div>';
 
     container.innerHTML = html;
@@ -121,35 +133,33 @@ window.FPDriverGame = (function () {
       canvas.style.height = areaHeight + 'px';
     }
 
-    ROAD_VANISH_Y = areaHeight * 0.40;
+    // Road perspective — wider road that fills more of the screen
+    ROAD_VANISH_Y = areaHeight * 0.38;
     ROAD_BOTTOM_Y = areaHeight;
     var vanishX = areaWidth * 0.5;
-    ROAD_LEFT_VANISH = vanishX - areaWidth * 0.03;
-    ROAD_RIGHT_VANISH = vanishX + areaWidth * 0.03;
-    ROAD_LEFT_BOTTOM = -areaWidth * 0.1;
-    ROAD_RIGHT_BOTTOM = areaWidth * 1.1;
+    ROAD_LEFT_VANISH = vanishX - areaWidth * 0.04;
+    ROAD_RIGHT_VANISH = vanishX + areaWidth * 0.04;
+    ROAD_LEFT_BOTTOM = -areaWidth * 0.25;
+    ROAD_RIGHT_BOTTOM = areaWidth * 1.25;
 
-    // Hide hint after 3 seconds
+    // Fade hint after 2.5s
     setTimeout(function () {
       var hint = document.getElementById('fpd-hint');
-      if (hint && hint.parentNode) hint.parentNode.removeChild(hint);
-    }, 3000);
+      if (hint) {
+        hint.style.opacity = '0';
+        setTimeout(function () { if (hint.parentNode) hint.parentNode.removeChild(hint); }, 600);
+      }
+    }, 2500);
   }
 
   function steerLeft() {
     if (isDead) return;
-    if (playerLane > 0) {
-      playerLane--;
-      AudioManager.tap();
-    }
+    if (playerLane > 0) { playerLane--; AudioManager.tap(); }
   }
 
   function steerRight() {
     if (isDead) return;
-    if (playerLane < 2) {
-      playerLane++;
-      AudioManager.tap();
-    }
+    if (playerLane < 2) { playerLane++; AudioManager.tap(); }
   }
 
   function doJump() {
@@ -160,163 +170,146 @@ window.FPDriverGame = (function () {
   }
 
   function bindEvents() {
-    // On-screen buttons
     var leftBtn = document.getElementById('fpd-left');
     var rightBtn = document.getElementById('fpd-right');
     var jumpBtn = document.getElementById('fpd-jump');
 
-    if (leftBtn) {
-      leftBtn.addEventListener('touchstart', function (e) { e.preventDefault(); e.stopPropagation(); steerLeft(); }, { passive: false });
-      leftBtn.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); steerLeft(); });
+    function addBtn(el, fn) {
+      if (!el) return;
+      el.addEventListener('touchstart', function (e) { e.preventDefault(); e.stopPropagation(); fn(); }, { passive: false });
+      el.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); fn(); });
     }
-    if (rightBtn) {
-      rightBtn.addEventListener('touchstart', function (e) { e.preventDefault(); e.stopPropagation(); steerRight(); }, { passive: false });
-      rightBtn.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); steerRight(); });
-    }
-    if (jumpBtn) {
-      jumpBtn.addEventListener('touchstart', function (e) { e.preventDefault(); e.stopPropagation(); doJump(); }, { passive: false });
-      jumpBtn.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); doJump(); });
-    }
+    addBtn(leftBtn, steerLeft);
+    addBtn(rightBtn, steerRight);
+    addBtn(jumpBtn, doJump);
 
-    // Keyboard
     boundKeyDown = function (e) {
       if (isDead) return;
-      if (e.key === 'ArrowLeft' || e.key === 'a') {
-        e.preventDefault(); steerLeft();
-      } else if (e.key === 'ArrowRight' || e.key === 'd') {
-        e.preventDefault(); steerRight();
-      } else if (e.key === ' ' || e.key === 'ArrowUp') {
-        e.preventDefault(); doJump();
-      }
+      if (e.key === 'ArrowLeft' || e.key === 'a') { e.preventDefault(); steerLeft(); }
+      else if (e.key === 'ArrowRight' || e.key === 'd') { e.preventDefault(); steerRight(); }
+      else if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); doJump(); }
     };
     boundKeyUp = function () {};
-
     document.addEventListener('keydown', boundKeyDown);
     document.addEventListener('keyup', boundKeyUp);
   }
 
   // --- Spawning ---
   function spawnObstacle() {
-    var lane = Math.floor(Math.random() * LANE_COUNT);
+    // During grace period, never spawn in player's lane
+    var lane;
+    if (graceTimer > 0) {
+      var safeLanes = [0, 1, 2];
+      safeLanes.splice(safeLanes.indexOf(playerLane), 1);
+      lane = safeLanes[Math.floor(Math.random() * safeLanes.length)];
+    } else {
+      lane = Math.floor(Math.random() * LANE_COUNT);
+    }
     var types = ['barrel', 'cone', 'tire', 'barrier'];
     var type = types[Math.floor(Math.random() * types.length)];
-    var jumpable = (type === 'barrier');
 
     obstacles.push({
       lane: lane,
-      z: 1.0,
+      z: 1.0, // far away
       type: type,
-      jumpable: jumpable,
+      jumpable: (type === 'barrier'),
       active: true
     });
   }
 
   function spawnCollectible() {
     if (collected + countActiveCollectibles() >= totalCollectibles) return;
-    // Avoid spawning on same lane as an upcoming obstacle
+    // Prefer lanes without obstacles
     var safeLanes = [0, 1, 2];
     for (var i = 0; i < obstacles.length; i++) {
-      if (obstacles[i].z > 0.7) {
+      if (obstacles[i].z > 0.6) {
         var idx = safeLanes.indexOf(obstacles[i].lane);
         if (idx > -1 && safeLanes.length > 1) safeLanes.splice(idx, 1);
       }
     }
     var lane = safeLanes[Math.floor(Math.random() * safeLanes.length)];
-    collectibles.push({
-      lane: lane,
-      z: 1.0,
-      active: true
-    });
+    collectibles.push({ lane: lane, z: 1.0, active: true });
   }
 
   function countActiveCollectibles() {
     var c = 0;
-    for (var i = 0; i < collectibles.length; i++) {
-      if (collectibles[i].active) c++;
-    }
+    for (var i = 0; i < collectibles.length; i++) { if (collectibles[i].active) c++; }
     return c;
   }
 
   // --- Perspective ---
   function projectZ(z) {
-    // z: 0 = horizon (far), 1 = player (near)
+    // z: 0=horizon(far), 1=player(near)
     var curve = z * z;
-    var screenY = ROAD_VANISH_Y + (ROAD_BOTTOM_Y - ROAD_VANISH_Y) * curve;
-    return { y: screenY, scale: curve };
+    return { y: ROAD_VANISH_Y + (ROAD_BOTTOM_Y - ROAD_VANISH_Y) * curve, scale: curve };
   }
 
   function getLaneX(lane, z) {
-    var proj = projectZ(z);
-    var t = proj.scale;
-    var leftEdge = ROAD_LEFT_VANISH + (ROAD_LEFT_BOTTOM - ROAD_LEFT_VANISH) * t;
-    var rightEdge = ROAD_RIGHT_VANISH + (ROAD_RIGHT_BOTTOM - ROAD_RIGHT_VANISH) * t;
-    var roadWidth = rightEdge - leftEdge;
-    var laneWidth = roadWidth / LANE_COUNT;
-    return leftEdge + laneWidth * (lane + 0.5);
+    var t = projectZ(z).scale;
+    var le = ROAD_LEFT_VANISH + (ROAD_LEFT_BOTTOM - ROAD_LEFT_VANISH) * t;
+    var re = ROAD_RIGHT_VANISH + (ROAD_RIGHT_BOTTOM - ROAD_RIGHT_VANISH) * t;
+    var lw = (re - le) / LANE_COUNT;
+    return le + lw * (lane + 0.5);
   }
 
   // --- Main Loop ---
   function gameLoop(timestamp) {
     if (destroyed) return;
-    var dt = Math.min((timestamp - lastTime) / 16.67, 3);
+    var rawDt = (timestamp - lastTime) / 1000; // seconds
+    var dt = Math.min(rawDt, 0.1); // cap at 100ms
     lastTime = timestamp;
 
-    if (isDead) {
-      rafId = requestAnimationFrame(gameLoop);
-      return;
-    }
+    if (isDead) { rafId = requestAnimationFrame(gameLoop); return; }
 
     // Speed ramping
     if (speedRamp && totalCollectibles > 0) {
       speed = baseSpeed + (maxSpeed - baseSpeed) * (collected / totalCollectibles);
     }
 
-    // Z-speed: how fast objects approach (fraction of z per frame)
-    var zSpeed = 0.012 * speed * dt;
-    distance += zSpeed;
+    // Grace period countdown
+    if (graceTimer > 0) graceTimer -= dt;
 
-    // Truck bounce
-    truckBounce += dt * 0.25;
+    var speedFactor = speed / baseSpeed;
+    var zPerSec = Z_SPEED_BASE * speedFactor;
+    var zStep = zPerSec * dt;
+    distance += zStep;
+
+    truckBounce += dt * 4;
 
     // Smooth lane transition
-    lanePos += (playerLane - lanePos) * Math.min(1, 0.2 * dt * 4);
+    lanePos += (playerLane - lanePos) * Math.min(1, dt * 12);
 
-    // --- Spawn obstacles ---
-    nextObstacleDist -= zSpeed;
-    if (nextObstacleDist <= 0) {
+    // Spawn obstacles on timer
+    spawnTimer -= dt;
+    if (spawnTimer <= 0) {
       spawnObstacle();
-      // Spawn more frequently as speed increases
-      nextObstacleDist = 0.25 + Math.random() * 0.35;
+      // Interval gets slightly shorter as speed increases
+      spawnTimer = OBSTACLE_INTERVAL / Math.sqrt(speedFactor) + Math.random() * 0.6;
     }
 
-    // --- Spawn collectibles ---
-    nextCollectibleDist -= zSpeed;
-    if (nextCollectibleDist <= 0 && collected < totalCollectibles) {
+    // Spawn collectibles on timer
+    collectibleTimer -= dt;
+    if (collectibleTimer <= 0 && collected < totalCollectibles) {
       spawnCollectible();
-      nextCollectibleDist = 0.18 + Math.random() * 0.25;
+      collectibleTimer = COLLECTIBLE_INTERVAL + Math.random() * 0.5;
     }
 
-    // --- Jump timer ---
+    // Jump
     if (isJumping) {
-      jumpTimer += dt * 0.035;
-      if (jumpTimer >= jumpDuration) {
-        isJumping = false;
-        jumpTimer = 0;
-      }
+      jumpTimer += dt;
+      if (jumpTimer >= jumpDuration) { isJumping = false; jumpTimer = 0; }
     }
 
-    // --- Move & collide obstacles ---
-    var HIT_Z_MIN = 0.02;
-    var HIT_Z_MAX = 0.18;
-
+    // Move obstacles
     for (var i = obstacles.length - 1; i >= 0; i--) {
       var obs = obstacles[i];
-      obs.z -= zSpeed;
+      obs.z -= zStep;
 
-      if (obs.active && obs.z < HIT_Z_MAX && obs.z > -HIT_Z_MIN) {
+      // Collision — only when obstacle is close to player
+      if (obs.active && graceTimer <= 0 && obs.z < HIT_Z && obs.z > -0.03) {
         if (obs.lane === playerLane) {
           if (obs.jumpable && isJumping) {
-            obs.active = false; // cleared it
+            obs.active = false;
           } else {
             triggerDeath();
             rafId = requestAnimationFrame(gameLoop);
@@ -324,32 +317,25 @@ window.FPDriverGame = (function () {
           }
         }
       }
-      if (obs.z < -0.15) {
-        obstacles.splice(i, 1);
-      }
+      if (obs.z < -0.15) obstacles.splice(i, 1);
     }
 
-    // --- Move & collide collectibles ---
+    // Move collectibles
     for (var j = collectibles.length - 1; j >= 0; j--) {
       var col = collectibles[j];
-      col.z -= zSpeed;
+      col.z -= zStep;
 
-      if (col.active && col.z < HIT_Z_MAX && col.z > -HIT_Z_MIN) {
+      if (col.active && col.z < HIT_Z && col.z > -0.03) {
         if (col.lane === playerLane) {
           col.active = false;
           collected++;
           AudioManager.collect();
           updateScore();
           updateProgress();
-          if (collected >= totalCollectibles) {
-            finishGame();
-            return;
-          }
+          if (collected >= totalCollectibles) { finishGame(); return; }
         }
       }
-      if (col.z < -0.15) {
-        collectibles.splice(j, 1);
-      }
+      if (col.z < -0.15) collectibles.splice(j, 1);
     }
 
     renderFrame();
@@ -362,99 +348,105 @@ window.FPDriverGame = (function () {
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
     if (!ctx) return;
-    var w = areaWidth;
-    var h = areaHeight;
+    var w = areaWidth, h = areaHeight;
 
     ctx.clearRect(0, 0, w, h);
 
     // Sky
-    var skyGrad = ctx.createLinearGradient(0, 0, 0, h * 0.42);
-    skyGrad.addColorStop(0, '#4a90d9');
-    skyGrad.addColorStop(0.7, '#87CEEB');
-    skyGrad.addColorStop(1, '#b8e4f9');
-    ctx.fillStyle = skyGrad;
-    ctx.fillRect(0, 0, w, h * 0.44);
+    var sg = ctx.createLinearGradient(0, 0, 0, h * 0.40);
+    sg.addColorStop(0, '#4a90d9');
+    sg.addColorStop(0.7, '#87CEEB');
+    sg.addColorStop(1, '#b8e4f9');
+    ctx.fillStyle = sg;
+    ctx.fillRect(0, 0, w, h * 0.42);
 
     // Sun
     ctx.fillStyle = '#FFD93D';
-    ctx.beginPath(); ctx.arc(w * 0.82, h * 0.1, 18, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = 'rgba(255,217,61,0.25)';
-    ctx.beginPath(); ctx.arc(w * 0.82, h * 0.1, 28, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w * 0.83, h * 0.09, 16, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,217,61,0.2)';
+    ctx.beginPath(); ctx.arc(w * 0.83, h * 0.09, 26, 0, Math.PI * 2); ctx.fill();
 
-    // Clouds
-    drawCloud(ctx, w * 0.12, h * 0.07, 38);
-    drawCloud(ctx, w * 0.42, h * 0.13, 32);
-    drawCloud(ctx, w * 0.72, h * 0.05, 28);
+    // Clouds (scroll slowly)
+    var cx1 = ((w * 0.15 + distance * 3) % (w * 1.3)) - w * 0.15;
+    var cx2 = ((w * 0.5 + distance * 2) % (w * 1.3)) - w * 0.15;
+    var cx3 = ((w * 0.8 + distance * 1.5) % (w * 1.3)) - w * 0.15;
+    drawCloud(ctx, cx1, h * 0.06, 35);
+    drawCloud(ctx, cx2, h * 0.12, 28);
+    drawCloud(ctx, cx3, h * 0.04, 24);
 
     // Hills
     ctx.fillStyle = '#a0896c';
     ctx.beginPath();
-    ctx.moveTo(0, h * 0.40);
-    ctx.lineTo(w * 0.12, h * 0.33);
-    ctx.lineTo(w * 0.25, h * 0.37);
-    ctx.lineTo(w * 0.4, h * 0.29);
-    ctx.lineTo(w * 0.55, h * 0.35);
-    ctx.lineTo(w * 0.7, h * 0.31);
-    ctx.lineTo(w * 0.85, h * 0.36);
-    ctx.lineTo(w, h * 0.34);
-    ctx.lineTo(w, h * 0.42);
-    ctx.lineTo(0, h * 0.42);
+    ctx.moveTo(0, h * 0.38);
+    ctx.lineTo(w * 0.12, h * 0.32);
+    ctx.lineTo(w * 0.25, h * 0.36);
+    ctx.lineTo(w * 0.4, h * 0.28);
+    ctx.lineTo(w * 0.55, h * 0.34);
+    ctx.lineTo(w * 0.7, h * 0.30);
+    ctx.lineTo(w * 0.85, h * 0.35);
+    ctx.lineTo(w, h * 0.32);
+    ctx.lineTo(w, h * 0.40);
+    ctx.lineTo(0, h * 0.40);
     ctx.closePath();
     ctx.fill();
 
-    // Dirt ground
-    var dirtGrad = ctx.createLinearGradient(0, h * 0.40, 0, h);
-    dirtGrad.addColorStop(0, '#c4a56a');
-    dirtGrad.addColorStop(0.3, '#a0896c');
-    dirtGrad.addColorStop(1, '#8B7355');
-    ctx.fillStyle = dirtGrad;
-    ctx.fillRect(0, h * 0.40, w, h * 0.6);
+    // Dirt
+    var dg = ctx.createLinearGradient(0, h * 0.38, 0, h);
+    dg.addColorStop(0, '#c4a56a');
+    dg.addColorStop(0.3, '#a0896c');
+    dg.addColorStop(1, '#8B7355');
+    ctx.fillStyle = dg;
+    ctx.fillRect(0, h * 0.38, w, h * 0.62);
 
     // Road
     drawRoad(ctx, w, h);
 
-    // Entities sorted far-to-near
-    var allEnts = [];
+    // Entities — sort far to near
+    var ents = [];
     for (var oi = 0; oi < obstacles.length; oi++) {
-      if (obstacles[oi].z > -0.1 && obstacles[oi].z < 1.05)
-        allEnts.push({ kind: 'obs', d: obstacles[oi] });
+      if (obstacles[oi].z > -0.05 && obstacles[oi].z < 1.02)
+        ents.push({ k: 'o', d: obstacles[oi] });
     }
     for (var ci = 0; ci < collectibles.length; ci++) {
-      if (collectibles[ci].active && collectibles[ci].z > -0.1 && collectibles[ci].z < 1.05)
-        allEnts.push({ kind: 'col', d: collectibles[ci] });
+      if (collectibles[ci].active && collectibles[ci].z > -0.05 && collectibles[ci].z < 1.02)
+        ents.push({ k: 'c', d: collectibles[ci] });
     }
-    allEnts.sort(function (a, b) { return b.d.z - a.d.z; });
-    for (var ei = 0; ei < allEnts.length; ei++) {
-      if (allEnts[ei].kind === 'obs') drawObstacle(ctx, allEnts[ei].d);
-      else drawCollectible(ctx, allEnts[ei].d);
+    ents.sort(function (a, b) { return b.d.z - a.d.z; });
+    for (var ei = 0; ei < ents.length; ei++) {
+      if (ents[ei].k === 'o') drawObstacle(ctx, ents[ei].d);
+      else drawCollectible(ctx, ents[ei].d);
     }
 
-    // Player truck view & dashboard
+    // Truck hood + dashboard
     drawPlayerView(ctx, w, h);
     drawDashboard(ctx, w, h);
 
-    // HUD speed
-    var kmh = Math.round(60 + speed * 18);
+    // Grace period indicator
+    if (graceTimer > 0) {
+      ctx.fillStyle = 'rgba(46,204,113,0.15)';
+      ctx.fillRect(0, 0, w * (graceTimer / GRACE_PERIOD), 4);
+    }
+
+    // Speed HUD
+    var kmh = Math.round(60 + (speed - baseSpeed) * 25);
     var spEl = document.getElementById('fpd-speed');
     if (spEl) spEl.textContent = kmh + ' km/h';
   }
 
   function drawCloud(ctx, x, y, s) {
-    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.beginPath();
-    ctx.arc(x, y, s * 0.38, 0, Math.PI * 2);
-    ctx.arc(x + s * 0.28, y - s * 0.12, s * 0.32, 0, Math.PI * 2);
-    ctx.arc(x + s * 0.52, y, s * 0.28, 0, Math.PI * 2);
+    ctx.arc(x, y, s * 0.36, 0, Math.PI * 2);
+    ctx.arc(x + s * 0.26, y - s * 0.1, s * 0.3, 0, Math.PI * 2);
+    ctx.arc(x + s * 0.48, y, s * 0.26, 0, Math.PI * 2);
     ctx.fill();
   }
 
   function drawRoad(ctx, w, h) {
-    var steps = 50;
+    var steps = 45;
     for (var i = 0; i < steps; i++) {
-      var z1 = i / steps;
-      var z2 = (i + 1) / steps;
-      var p1 = projectZ(z1);
-      var p2 = projectZ(z2);
+      var z1 = i / steps, z2 = (i + 1) / steps;
+      var p1 = projectZ(z1), p2 = projectZ(z2);
       var t1 = p1.scale, t2 = p2.scale;
 
       var l1 = ROAD_LEFT_VANISH + (ROAD_LEFT_BOTTOM - ROAD_LEFT_VANISH) * t1;
@@ -462,19 +454,19 @@ window.FPDriverGame = (function () {
       var l2 = ROAD_LEFT_VANISH + (ROAD_LEFT_BOTTOM - ROAD_LEFT_VANISH) * t2;
       var r2 = ROAD_RIGHT_VANISH + (ROAD_RIGHT_BOTTOM - ROAD_RIGHT_VANISH) * t2;
 
-      // Road stripes that scroll
-      var stripe = Math.floor(((1 - z1) * 30 + distance * 25) % 2);
-      ctx.fillStyle = stripe === 0 ? '#636e72' : '#555a5e';
+      // Scrolling stripes
+      var stripe = Math.floor(((1 - z1) * 25 + distance * 15) % 2);
+      ctx.fillStyle = stripe ? '#555a5e' : '#636e72';
       ctx.beginPath();
       ctx.moveTo(l1, p1.y); ctx.lineTo(r1, p1.y);
       ctx.lineTo(r2, p2.y); ctx.lineTo(l2, p2.y);
       ctx.closePath();
       ctx.fill();
 
-      // Lane dividers
-      if (stripe === 0 && t1 > 0.015) {
+      // Lane dividers (dashed yellow)
+      if (!stripe && t1 > 0.01) {
         ctx.strokeStyle = '#FFD93D';
-        ctx.lineWidth = Math.max(1, t1 * 4);
+        ctx.lineWidth = Math.max(1, t1 * 5);
         for (var ln = 1; ln < LANE_COUNT; ln++) {
           var lx1 = l1 + (r1 - l1) * (ln / LANE_COUNT);
           var lx2 = l2 + (r2 - l2) * (ln / LANE_COUNT);
@@ -482,10 +474,10 @@ window.FPDriverGame = (function () {
         }
       }
 
-      // Road edges
-      if (t1 > 0.01) {
-        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-        ctx.lineWidth = Math.max(1, t1 * 3);
+      // Road edges (white)
+      if (t1 > 0.008) {
+        ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+        ctx.lineWidth = Math.max(1.5, t1 * 4);
         ctx.beginPath(); ctx.moveTo(l1, p1.y); ctx.lineTo(l2, p2.y); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(r1, p1.y); ctx.lineTo(r2, p2.y); ctx.stroke();
       }
@@ -493,14 +485,14 @@ window.FPDriverGame = (function () {
   }
 
   function drawObstacle(ctx, obs) {
-    var zScreen = 1.0 - obs.z; // 0=far, 1=near
-    var proj = projectZ(zScreen);
-    var x = getLaneX(obs.lane, zScreen);
+    var zs = 1.0 - obs.z;
+    var proj = projectZ(zs);
+    var x = getLaneX(obs.lane, zs);
     var y = proj.y;
     var sc = proj.scale;
-    if (sc < 0.008) return;
+    if (sc < 0.006) return;
 
-    var sz = 50 * sc;
+    var sz = 55 * sc;
     if (sz < 2) return;
 
     ctx.save();
@@ -509,58 +501,57 @@ window.FPDriverGame = (function () {
     switch (obs.type) {
       case 'barrel':
         ctx.fillStyle = '#2d3436';
-        roundRect(ctx, -sz * 0.4, -sz * 1.3, sz * 0.8, sz * 1.1, sz * 0.08);
+        roundRect(ctx, -sz * 0.38, -sz * 1.25, sz * 0.76, sz * 1.05, sz * 0.07);
         ctx.fill();
         ctx.fillStyle = '#636e72';
-        ctx.fillRect(-sz * 0.33, -sz * 1.15, sz * 0.66, sz * 0.85);
+        ctx.fillRect(-sz * 0.3, -sz * 1.1, sz * 0.6, sz * 0.8);
         ctx.fillStyle = '#fdcb6e';
-        ctx.fillRect(-sz * 0.2, -sz * 0.9, sz * 0.4, sz * 0.35);
+        ctx.fillRect(-sz * 0.18, -sz * 0.85, sz * 0.36, sz * 0.3);
         ctx.fillStyle = '#2d3436';
-        ctx.fillRect(-sz * 0.4, -sz * 0.7, sz * 0.8, sz * 0.06);
+        ctx.fillRect(-sz * 0.38, -sz * 0.65, sz * 0.76, sz * 0.05);
         break;
+
       case 'cone':
         ctx.fillStyle = '#e17055';
         ctx.beginPath();
-        ctx.moveTo(0, -sz * 1.2);
-        ctx.lineTo(-sz * 0.35, 0);
-        ctx.lineTo(sz * 0.35, 0);
+        ctx.moveTo(0, -sz * 1.15);
+        ctx.lineTo(-sz * 0.32, 0);
+        ctx.lineTo(sz * 0.32, 0);
         ctx.closePath();
         ctx.fill();
         ctx.fillStyle = 'rgba(255,255,255,0.8)';
-        ctx.fillRect(-sz * 0.2, -sz * 0.7, sz * 0.4, sz * 0.1);
-        ctx.fillRect(-sz * 0.27, -sz * 0.4, sz * 0.54, sz * 0.1);
+        ctx.fillRect(-sz * 0.18, -sz * 0.65, sz * 0.36, sz * 0.08);
+        ctx.fillRect(-sz * 0.24, -sz * 0.35, sz * 0.48, sz * 0.08);
         ctx.fillStyle = '#d63031';
-        roundRect(ctx, -sz * 0.4, -sz * 0.08, sz * 0.8, sz * 0.08, 2);
-        ctx.fill();
+        ctx.fillRect(-sz * 0.36, -sz * 0.06, sz * 0.72, sz * 0.06);
         break;
+
       case 'tire':
         ctx.fillStyle = '#2d3436';
-        ctx.beginPath(); ctx.arc(0, -sz * 0.55, sz * 0.55, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.5, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#636e72';
-        ctx.beginPath(); ctx.arc(0, -sz * 0.55, sz * 0.38, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.35, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#2d3436';
-        ctx.beginPath(); ctx.arc(0, -sz * 0.55, sz * 0.18, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.15, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#b2bec3';
-        ctx.beginPath(); ctx.arc(0, -sz * 0.55, sz * 0.08, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(0, -sz * 0.5, sz * 0.07, 0, Math.PI * 2); ctx.fill();
         break;
+
       case 'barrier':
-        // Ramp/barrier (jumpable!)
         ctx.fillStyle = '#b2bec3';
-        roundRect(ctx, -sz * 0.7, -sz * 0.45, sz * 1.4, sz * 0.45, 3);
+        roundRect(ctx, -sz * 0.65, -sz * 0.4, sz * 1.3, sz * 0.4, 3);
         ctx.fill();
         ctx.fillStyle = '#dfe6e9';
-        ctx.fillRect(-sz * 0.7, -sz * 0.45, sz * 1.4, sz * 0.12);
-        // Red-white warning stripes
+        ctx.fillRect(-sz * 0.65, -sz * 0.4, sz * 1.3, sz * 0.1);
         for (var si = 0; si < 4; si++) {
           ctx.fillStyle = si % 2 === 0 ? '#e74c3c' : '#fff';
-          ctx.fillRect(-sz * 0.7 + si * sz * 0.35, -sz * 0.33, sz * 0.35, sz * 0.1);
+          ctx.fillRect(-sz * 0.65 + si * sz * 0.325, -sz * 0.3, sz * 0.325, sz * 0.08);
         }
-        // "JUMP" label when close enough
-        if (sz > 12) {
+        if (sz > 10) {
           ctx.fillStyle = '#e74c3c';
-          ctx.font = 'bold ' + Math.max(7, sz * 0.22) + 'px sans-serif';
+          ctx.font = 'bold ' + Math.max(7, sz * 0.2) + 'px sans-serif';
           ctx.textAlign = 'center';
-          ctx.fillText('JUMP!', 0, -sz * 0.08);
+          ctx.fillText('JUMP!', 0, -sz * 0.06);
         }
         break;
     }
@@ -569,29 +560,29 @@ window.FPDriverGame = (function () {
 
   function drawCollectible(ctx, col) {
     if (!col.active) return;
-    var zScreen = 1.0 - col.z;
-    var proj = projectZ(zScreen);
-    var x = getLaneX(col.lane, zScreen);
+    var zs = 1.0 - col.z;
+    var proj = projectZ(zs);
+    var x = getLaneX(col.lane, zs);
     var y = proj.y;
     var sc = proj.scale;
-    if (sc < 0.01) return;
+    if (sc < 0.008) return;
 
-    var sz = 30 * sc;
+    var sz = 28 * sc;
     if (sz < 2) return;
 
-    var floatY = Math.sin(distance * 20 + col.z * 8) * sz * 0.4;
+    var floatY = Math.sin(distance * 12 + col.z * 6) * sz * 0.35;
 
     ctx.save();
     ctx.translate(x, y - sz * 2 + floatY);
 
     // Glow
-    ctx.fillStyle = 'rgba(255,217,61,0.35)';
-    ctx.beginPath(); ctx.arc(0, 0, sz * 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(255,217,61,0.3)';
+    ctx.beginPath(); ctx.arc(0, 0, sz * 1.4, 0, Math.PI * 2); ctx.fill();
 
     // Star
     ctx.fillStyle = '#FFD93D';
     ctx.strokeStyle = '#e67e22';
-    ctx.lineWidth = Math.max(1, sz * 0.12);
+    ctx.lineWidth = Math.max(1, sz * 0.1);
     drawStar(ctx, 0, 0, 5, sz, sz * 0.45);
     ctx.fill();
     ctx.stroke();
@@ -615,17 +606,16 @@ window.FPDriverGame = (function () {
   function drawPlayerView(ctx, w, h) {
     var jumpOff = 0;
     if (isJumping) {
-      var jp = jumpTimer / jumpDuration;
-      jumpOff = Math.sin(jp * Math.PI) * 40;
+      jumpOff = Math.sin((jumpTimer / jumpDuration) * Math.PI) * 35;
     }
 
-    var bounce = Math.sin(truckBounce) * 1.5;
-    var hoodY = h * 0.70 - jumpOff;
-    var hoodH = h * 0.14;
+    var bounce = Math.sin(truckBounce) * 1.2;
+    var hoodY = h * 0.68 - jumpOff;
+    var hoodH = h * 0.13;
 
-    // Hood shadow
-    ctx.fillStyle = 'rgba(0,0,0,0.12)';
-    ctx.fillRect(w * 0.12, hoodY + bounce + 4, w * 0.76, hoodH);
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.1)';
+    ctx.fillRect(w * 0.12, hoodY + bounce + 3, w * 0.76, hoodH);
 
     // Hood
     var hg = ctx.createLinearGradient(0, hoodY, 0, hoodY + hoodH);
@@ -634,83 +624,75 @@ window.FPDriverGame = (function () {
     hg.addColorStop(1, '#a93226');
     ctx.fillStyle = hg;
     ctx.beginPath();
-    ctx.moveTo(w * 0.15, hoodY + hoodH + bounce);
-    ctx.lineTo(w * 0.20, hoodY + bounce);
-    ctx.lineTo(w * 0.80, hoodY + bounce);
-    ctx.lineTo(w * 0.85, hoodY + hoodH + bounce);
+    ctx.moveTo(w * 0.14, hoodY + hoodH + bounce);
+    ctx.lineTo(w * 0.19, hoodY + bounce);
+    ctx.lineTo(w * 0.81, hoodY + bounce);
+    ctx.lineTo(w * 0.86, hoodY + hoodH + bounce);
     ctx.closePath();
     ctx.fill();
 
-    // Hood scoop
+    // Scoop
     ctx.fillStyle = '#1a1a1a';
     ctx.beginPath();
-    ctx.moveTo(w * 0.38, hoodY + hoodH * 0.25 + bounce);
-    ctx.lineTo(w * 0.40, hoodY - hoodH * 0.08 + bounce);
-    ctx.lineTo(w * 0.60, hoodY - hoodH * 0.08 + bounce);
-    ctx.lineTo(w * 0.62, hoodY + hoodH * 0.25 + bounce);
+    ctx.moveTo(w * 0.37, hoodY + hoodH * 0.22 + bounce);
+    ctx.lineTo(w * 0.39, hoodY - hoodH * 0.06 + bounce);
+    ctx.lineTo(w * 0.61, hoodY - hoodH * 0.06 + bounce);
+    ctx.lineTo(w * 0.63, hoodY + hoodH * 0.22 + bounce);
     ctx.closePath();
     ctx.fill();
 
     // Center line
-    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(w * 0.5, hoodY + bounce);
     ctx.lineTo(w * 0.5, hoodY + hoodH + bounce);
     ctx.stroke();
 
-    // Flame decals
-    drawFlame(ctx, w * 0.22, hoodY + hoodH * 0.5 + bounce, hoodH * 0.4, 1);
-    drawFlame(ctx, w * 0.78, hoodY + hoodH * 0.5 + bounce, hoodH * 0.4, -1);
+    // Flames
+    drawFlame(ctx, w * 0.21, hoodY + hoodH * 0.5 + bounce, hoodH * 0.35, 1);
+    drawFlame(ctx, w * 0.79, hoodY + hoodH * 0.5 + bounce, hoodH * 0.35, -1);
 
     // Side mirrors
     ctx.fillStyle = '#2d3436';
-    ctx.fillRect(w * 0.05, hoodY - hoodH * 0.35 + bounce, w * 0.07, hoodH * 0.55);
-    ctx.fillRect(w * 0.88, hoodY - hoodH * 0.35 + bounce, w * 0.07, hoodH * 0.55);
+    ctx.fillRect(w * 0.04, hoodY - hoodH * 0.3 + bounce, w * 0.065, hoodH * 0.5);
+    ctx.fillRect(w * 0.895, hoodY - hoodH * 0.3 + bounce, w * 0.065, hoodH * 0.5);
     ctx.fillStyle = '#a8d8ea';
-    ctx.fillRect(w * 0.055, hoodY - hoodH * 0.25 + bounce, w * 0.055, hoodH * 0.35);
-    ctx.fillRect(w * 0.885, hoodY - hoodH * 0.25 + bounce, w * 0.055, hoodH * 0.35);
+    ctx.fillRect(w * 0.045, hoodY - hoodH * 0.2 + bounce, w * 0.05, hoodH * 0.3);
+    ctx.fillRect(w * 0.905, hoodY - hoodH * 0.2 + bounce, w * 0.05, hoodH * 0.3);
 
-    // Lane position indicator on road (green chevron)
-    var indicZ = 0.82;
-    var indX = getLaneX(lanePos, indicZ);
-    var indP = projectZ(indicZ);
-    var indY = indP.y;
+    // Lane indicator (green arrow on road)
+    var indZ = 0.78;
+    var indX = getLaneX(lanePos, indZ);
+    var indP = projectZ(indZ);
     var indSc = indP.scale;
-    ctx.fillStyle = 'rgba(46,204,113,0.45)';
+    ctx.fillStyle = 'rgba(46,204,113,0.4)';
     ctx.beginPath();
-    var aw = 18 * indSc;
-    ctx.moveTo(indX, indY - 14 * indSc);
-    ctx.lineTo(indX - aw, indY + 8 * indSc);
-    ctx.lineTo(indX + aw, indY + 8 * indSc);
+    var aw = 20 * indSc;
+    ctx.moveTo(indX, indP.y - 15 * indSc);
+    ctx.lineTo(indX - aw, indP.y + 8 * indSc);
+    ctx.lineTo(indX + aw, indP.y + 8 * indSc);
     ctx.closePath();
     ctx.fill();
   }
 
   function drawFlame(ctx, x, y, size, dir) {
-    ctx.fillStyle = 'rgba(255,165,0,0.6)';
+    ctx.fillStyle = 'rgba(255,165,0,0.55)';
     ctx.beginPath();
     ctx.moveTo(x, y + size * 0.5);
     ctx.quadraticCurveTo(x + dir * size * 0.3, y, x + dir * size * 0.1, y - size * 0.5);
     ctx.quadraticCurveTo(x + dir * size * 0.4, y - size * 0.2, x + dir * size * 0.2, y + size * 0.5);
     ctx.closePath();
     ctx.fill();
-    ctx.fillStyle = 'rgba(255,69,0,0.4)';
-    ctx.beginPath();
-    ctx.moveTo(x + dir * size * 0.05, y + size * 0.4);
-    ctx.quadraticCurveTo(x + dir * size * 0.35, y + size * 0.1, x + dir * size * 0.15, y - size * 0.3);
-    ctx.quadraticCurveTo(x + dir * size * 0.45, y, x + dir * size * 0.25, y + size * 0.4);
-    ctx.closePath();
-    ctx.fill();
   }
 
   function drawDashboard(ctx, w, h) {
-    var dashH = h * 0.20;
+    var dashH = h * 0.17;
     var dashY = h - dashH;
 
     var dg = ctx.createLinearGradient(0, dashY, 0, h);
-    dg.addColorStop(0, '#3d3d3d');
-    dg.addColorStop(0.15, '#2d3436');
+    dg.addColorStop(0, '#3a3a3a');
+    dg.addColorStop(0.12, '#2d3436');
     dg.addColorStop(1, '#1a1a1a');
     ctx.fillStyle = dg;
     ctx.fillRect(0, dashY, w, dashH);
@@ -719,96 +701,72 @@ window.FPDriverGame = (function () {
 
     // Steering wheel
     var cx = w * 0.5;
-    var cy = dashY + dashH * 0.58;
-    var wr = Math.min(dashH * 0.40, w * 0.11);
-    var tilt = (lanePos - 1) * 28;
+    var cy = dashY + dashH * 0.55;
+    var wr = Math.min(dashH * 0.38, w * 0.10);
+    var tilt = (lanePos - 1) * 30;
 
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(tilt * Math.PI / 180);
 
-    // Outer ring
-    ctx.strokeStyle = '#444';
-    ctx.lineWidth = wr * 0.24;
+    ctx.strokeStyle = '#444'; ctx.lineWidth = wr * 0.22;
     ctx.beginPath(); ctx.arc(0, 0, wr, 0, Math.PI * 2); ctx.stroke();
-    ctx.strokeStyle = '#5a5a5a';
-    ctx.lineWidth = wr * 0.15;
+    ctx.strokeStyle = '#5a5a5a'; ctx.lineWidth = wr * 0.14;
     ctx.beginPath(); ctx.arc(0, 0, wr, 0, Math.PI * 2); ctx.stroke();
 
-    // Center hub
     ctx.fillStyle = '#333';
-    ctx.beginPath(); ctx.arc(0, 0, wr * 0.28, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#555'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, wr * 0.26, 0, Math.PI * 2); ctx.fill();
 
-    // Spokes
-    ctx.strokeStyle = '#555'; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(0, -wr); ctx.lineTo(0, -wr * 0.28); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(-wr, 0); ctx.lineTo(-wr * 0.28, 0); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(wr, 0); ctx.lineTo(wr * 0.28, 0); ctx.stroke();
+    ctx.strokeStyle = '#555'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(0, -wr); ctx.lineTo(0, -wr * 0.26); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-wr, 0); ctx.lineTo(-wr * 0.26, 0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(wr, 0); ctx.lineTo(wr * 0.26, 0); ctx.stroke();
 
     ctx.restore();
 
-    // Speedometer (left gauge)
-    var gx = w * 0.17;
-    var gy = dashY + dashH * 0.55;
-    var gr = dashH * 0.30;
-
+    // Speedometer (left)
+    var gx = w * 0.16, gy = dashY + dashH * 0.55, gr = dashH * 0.28;
     ctx.fillStyle = '#111';
     ctx.beginPath(); ctx.arc(gx, gy, gr, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#444'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = '#444'; ctx.lineWidth = 1.5; ctx.stroke();
 
-    // Tick marks
-    for (var ti = 0; ti <= 8; ti++) {
-      var ta = -Math.PI * 0.75 + (ti / 8) * Math.PI * 1.5;
-      var x1 = gx + Math.cos(ta) * gr * 0.75;
-      var y1 = gy + Math.sin(ta) * gr * 0.75;
-      var x2 = gx + Math.cos(ta) * gr * 0.9;
-      var y2 = gy + Math.sin(ta) * gr * 0.9;
-      ctx.strokeStyle = ti > 5 ? '#e74c3c' : '#888';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
-    }
-
-    // Needle
-    var speedPct = Math.min(1, (speed - baseSpeed) / Math.max(1, maxSpeed - baseSpeed));
+    var speedPct = Math.min(1, (speed - baseSpeed) / Math.max(0.1, maxSpeed - baseSpeed));
     var na = -Math.PI * 0.75 + speedPct * Math.PI * 1.5;
-    ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 2;
+    ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.moveTo(gx, gy);
-    ctx.lineTo(gx + Math.cos(na) * gr * 0.7, gy + Math.sin(na) * gr * 0.7);
+    ctx.lineTo(gx + Math.cos(na) * gr * 0.65, gy + Math.sin(na) * gr * 0.65);
     ctx.stroke();
-    ctx.fillStyle = '#e74c3c';
-    ctx.beginPath(); ctx.arc(gx, gy, 3, 0, Math.PI * 2); ctx.fill();
 
-    var kmh = Math.round(60 + speed * 18);
     ctx.fillStyle = '#e74c3c';
-    ctx.font = 'bold ' + Math.max(7, gr * 0.38) + 'px sans-serif';
+    ctx.font = 'bold ' + Math.max(6, gr * 0.4) + 'px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(kmh, gx, gy + gr * 0.6);
+    ctx.fillText(Math.round(60 + (speed - baseSpeed) * 25), gx, gy + gr * 0.55);
 
-    // Star counter (right gauge)
-    var tx = w * 0.83;
+    // Star gauge (right)
+    var tx = w * 0.84;
     ctx.fillStyle = '#111';
     ctx.beginPath(); ctx.arc(tx, gy, gr, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#444'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = '#444'; ctx.lineWidth = 1.5; ctx.stroke();
 
-    // Star fill arc
     var starPct = collected / Math.max(1, totalCollectibles);
-    ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(tx, gy, gr * 0.75, -Math.PI * 0.5, -Math.PI * 0.5 + starPct * Math.PI * 2);
-    ctx.stroke();
+    if (starPct > 0) {
+      ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(tx, gy, gr * 0.7, -Math.PI * 0.5, -Math.PI * 0.5 + starPct * Math.PI * 2);
+      ctx.stroke();
+    }
 
     ctx.fillStyle = '#2ecc71';
-    ctx.font = 'bold ' + Math.max(7, gr * 0.38) + 'px sans-serif';
+    ctx.font = 'bold ' + Math.max(6, gr * 0.4) + 'px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(collected + '/' + totalCollectibles, tx, gy + gr * 0.15);
 
     // Hands
-    var hs = wr * 0.30;
+    var hs = wr * 0.25;
     ctx.fillStyle = '#e8b88a';
-    ctx.beginPath(); ctx.arc(cx - wr * 0.85, cy + wr * 0.15, hs, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#c9956a'; ctx.lineWidth = 1; ctx.stroke();
-    ctx.beginPath(); ctx.arc(cx + wr * 0.85, cy + wr * 0.15, hs, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx - wr * 0.82, cy + wr * 0.12, hs, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#c9956a'; ctx.lineWidth = 0.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx + wr * 0.82, cy + wr * 0.12, hs, 0, Math.PI * 2); ctx.fill();
     ctx.stroke();
   }
 
@@ -841,8 +799,6 @@ window.FPDriverGame = (function () {
       var ouch = document.createElement('div');
       ouch.className = 'fpd-ouch';
       ouch.textContent = t('oops');
-      ouch.style.left = (areaWidth * 0.38) + 'px';
-      ouch.style.top = (areaHeight * 0.30) + 'px';
       area.appendChild(ouch);
       setTimeout(function () { if (ouch.parentNode) ouch.parentNode.removeChild(ouch); }, 1100);
     }
@@ -863,16 +819,15 @@ window.FPDriverGame = (function () {
       '<div class="fpd-reset-sub">' + t('tryAgain') + '</div>';
     area.appendChild(overlay);
 
-    var restartHandler = function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      overlay.removeEventListener('touchstart', restartHandler);
-      overlay.removeEventListener('click', restartHandler);
+    var handler = function (e) {
+      e.preventDefault(); e.stopPropagation();
+      overlay.removeEventListener('touchstart', handler);
+      overlay.removeEventListener('click', handler);
       if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
       doReset();
     };
-    overlay.addEventListener('touchstart', restartHandler, { passive: false });
-    overlay.addEventListener('click', restartHandler);
+    overlay.addEventListener('touchstart', handler, { passive: false });
+    overlay.addEventListener('click', handler);
   }
 
   function doReset() {
@@ -883,19 +838,7 @@ window.FPDriverGame = (function () {
         if (els[i].parentNode) els[i].parentNode.removeChild(els[i]);
       }
     }
-    collected = 0;
-    isDead = false;
-    isJumping = false;
-    jumpTimer = 0;
-    speed = baseSpeed;
-    distance = 0;
-    truckBounce = 0;
-    obstacles = [];
-    collectibles = [];
-    nextObstacleDist = 2.0;
-    nextCollectibleDist = 1.0;
-    playerLane = 1;
-    lanePos = 1;
+    resetState();
     updateScore();
     updateProgress();
     lastTime = performance.now();
@@ -922,10 +865,8 @@ window.FPDriverGame = (function () {
     destroyed = true;
     if (rafId) cancelAnimationFrame(rafId);
     clearTimeout(deathTimer);
-
     document.removeEventListener('keydown', boundKeyDown);
     if (boundKeyUp) document.removeEventListener('keyup', boundKeyUp);
-
     obstacles = [];
     collectibles = [];
     if (container) container.innerHTML = '';
