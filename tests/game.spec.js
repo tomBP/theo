@@ -300,7 +300,7 @@ test.describe('World Map', () => {
 
     // Check key elements exist
     const checkpoints = await page.$$('.worldmap-checkpoint');
-    expect(checkpoints.length).toBe(10);
+    expect(checkpoints.length).toBe(11);
 
     const character = await page.$('.worldmap-character');
     expect(character).not.toBeNull();
@@ -319,7 +319,7 @@ test.describe('World Map', () => {
     await page.waitForSelector('#screen-worldmap.active');
 
     const coinCount = await page.$$eval('.worldmap-coin', els => els.length);
-    expect(coinCount).toBe(27); // 3 coins between each of 9 checkpoint pairs
+    expect(coinCount).toBe(30); // 3 coins between each of 10 checkpoint pairs
   });
 
   test('coin display counter exists', async ({ page }) => {
