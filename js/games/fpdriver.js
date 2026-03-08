@@ -711,15 +711,15 @@ window.FPDriverGame = (function () {
     }
 
     var bounce = Math.sin(truckBounce) * 1.2;
-    var hoodY = h * 0.68 - jumpOff;
-    var hoodH = h * 0.13;
+    var hoodY = h * 0.74 - jumpOff;
+    var hoodH = h * 0.09;
 
     // Horizontal offset — cabin shifts left/right based on lane
     var laneShift = (lanePos - 1) * w * 0.12;
 
     // Shadow
     ctx.fillStyle = 'rgba(0,0,0,0.1)';
-    ctx.fillRect(w * 0.12 + laneShift, hoodY + bounce + 3, w * 0.76, hoodH);
+    ctx.fillRect(w * 0.24 + laneShift, hoodY + bounce + 3, w * 0.52, hoodH);
 
     // Hood
     var hg = ctx.createLinearGradient(0, hoodY, 0, hoodY + hoodH);
@@ -728,20 +728,20 @@ window.FPDriverGame = (function () {
     hg.addColorStop(1, '#a93226');
     ctx.fillStyle = hg;
     ctx.beginPath();
-    ctx.moveTo(w * 0.14 + laneShift, hoodY + hoodH + bounce);
-    ctx.lineTo(w * 0.19 + laneShift, hoodY + bounce);
-    ctx.lineTo(w * 0.81 + laneShift, hoodY + bounce);
-    ctx.lineTo(w * 0.86 + laneShift, hoodY + hoodH + bounce);
+    ctx.moveTo(w * 0.26 + laneShift, hoodY + hoodH + bounce);
+    ctx.lineTo(w * 0.30 + laneShift, hoodY + bounce);
+    ctx.lineTo(w * 0.70 + laneShift, hoodY + bounce);
+    ctx.lineTo(w * 0.74 + laneShift, hoodY + hoodH + bounce);
     ctx.closePath();
     ctx.fill();
 
     // Scoop
     ctx.fillStyle = '#1a1a1a';
     ctx.beginPath();
-    ctx.moveTo(w * 0.37 + laneShift, hoodY + hoodH * 0.22 + bounce);
-    ctx.lineTo(w * 0.39 + laneShift, hoodY - hoodH * 0.06 + bounce);
-    ctx.lineTo(w * 0.61 + laneShift, hoodY - hoodH * 0.06 + bounce);
-    ctx.lineTo(w * 0.63 + laneShift, hoodY + hoodH * 0.22 + bounce);
+    ctx.moveTo(w * 0.42 + laneShift, hoodY + hoodH * 0.22 + bounce);
+    ctx.lineTo(w * 0.44 + laneShift, hoodY - hoodH * 0.06 + bounce);
+    ctx.lineTo(w * 0.56 + laneShift, hoodY - hoodH * 0.06 + bounce);
+    ctx.lineTo(w * 0.58 + laneShift, hoodY + hoodH * 0.22 + bounce);
     ctx.closePath();
     ctx.fill();
 
@@ -754,16 +754,16 @@ window.FPDriverGame = (function () {
     ctx.stroke();
 
     // Flames
-    drawFlame(ctx, w * 0.21 + laneShift, hoodY + hoodH * 0.5 + bounce, hoodH * 0.35, 1);
-    drawFlame(ctx, w * 0.79 + laneShift, hoodY + hoodH * 0.5 + bounce, hoodH * 0.35, -1);
+    drawFlame(ctx, w * 0.32 + laneShift, hoodY + hoodH * 0.5 + bounce, hoodH * 0.35, 1);
+    drawFlame(ctx, w * 0.68 + laneShift, hoodY + hoodH * 0.5 + bounce, hoodH * 0.35, -1);
 
     // Side mirrors
     ctx.fillStyle = '#2d3436';
-    ctx.fillRect(w * 0.04 + laneShift, hoodY - hoodH * 0.3 + bounce, w * 0.065, hoodH * 0.5);
-    ctx.fillRect(w * 0.895 + laneShift, hoodY - hoodH * 0.3 + bounce, w * 0.065, hoodH * 0.5);
+    ctx.fillRect(w * 0.18 + laneShift, hoodY - hoodH * 0.3 + bounce, w * 0.05, hoodH * 0.5);
+    ctx.fillRect(w * 0.77 + laneShift, hoodY - hoodH * 0.3 + bounce, w * 0.05, hoodH * 0.5);
     ctx.fillStyle = '#a8d8ea';
-    ctx.fillRect(w * 0.045 + laneShift, hoodY - hoodH * 0.2 + bounce, w * 0.05, hoodH * 0.3);
-    ctx.fillRect(w * 0.905 + laneShift, hoodY - hoodH * 0.2 + bounce, w * 0.05, hoodH * 0.3);
+    ctx.fillRect(w * 0.185 + laneShift, hoodY - hoodH * 0.2 + bounce, w * 0.04, hoodH * 0.3);
+    ctx.fillRect(w * 0.775 + laneShift, hoodY - hoodH * 0.2 + bounce, w * 0.04, hoodH * 0.3);
 
     // Lane indicator (green arrow on road)
     var indZ = 0.78;
@@ -791,7 +791,7 @@ window.FPDriverGame = (function () {
   }
 
   function drawDashboard(ctx, w, h) {
-    var dashH = h * 0.17;
+    var dashH = h * 0.12;
     var dashY = h - dashH;
 
     // Dashboard horizontal shift to match cabin

@@ -831,26 +831,26 @@ window.FPDinoGame = (function () {
     }
 
     var bounce = Math.sin(dinoBounce) * 1.5;
-    var neckY = h * 0.64 - jumpOff;
+    var neckY = h * 0.72 - jumpOff;
     var laneShift = (lanePos - 1) * w * 0.12;
 
     // Dino neck and head — smaller so road is more visible
-    var neckW = w * 0.10;
-    var headY = neckY - h * 0.07;
+    var neckW = w * 0.07;
+    var headY = neckY - h * 0.05;
 
     // Neck (thinner)
     ctx.fillStyle = '#5b9e6f';
     ctx.beginPath();
-    ctx.moveTo(w * 0.45 + laneShift, h * 0.76 + bounce);
-    ctx.quadraticCurveTo(w * 0.47 + laneShift, neckY + bounce, w * 0.5 + laneShift, headY + bounce);
-    ctx.quadraticCurveTo(w * 0.53 + laneShift, neckY + bounce, w * 0.55 + laneShift, h * 0.76 + bounce);
+    ctx.moveTo(w * 0.47 + laneShift, h * 0.82 + bounce);
+    ctx.quadraticCurveTo(w * 0.48 + laneShift, neckY + bounce, w * 0.5 + laneShift, headY + bounce);
+    ctx.quadraticCurveTo(w * 0.52 + laneShift, neckY + bounce, w * 0.53 + laneShift, h * 0.82 + bounce);
     ctx.closePath();
     ctx.fill();
 
     // Neck scales
     ctx.fillStyle = '#4a8a5a';
     for (var si = 0; si < 3; si++) {
-      var sy = neckY + (h * 0.76 - neckY) * (si / 3) + bounce;
+      var sy = neckY + (h * 0.82 - neckY) * (si / 3) + bounce;
       var sw = neckW * 0.12 * (1 + si * 0.15);
       ctx.beginPath();
       ctx.arc(w * 0.5 + laneShift, sy, sw, 0, Math.PI);
@@ -860,43 +860,43 @@ window.FPDinoGame = (function () {
     // Head (smaller)
     ctx.fillStyle = '#5b9e6f';
     ctx.beginPath();
-    ctx.ellipse(w * 0.5 + laneShift, headY + bounce, w * 0.055, h * 0.03, 0, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.5 + laneShift, headY + bounce, w * 0.04, h * 0.022, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Head ridge/crest
     ctx.fillStyle = '#e67e22';
     ctx.beginPath();
-    ctx.moveTo(w * 0.48 + laneShift, headY - h * 0.025 + bounce);
-    ctx.lineTo(w * 0.5 + laneShift, headY - h * 0.038 + bounce);
-    ctx.lineTo(w * 0.52 + laneShift, headY - h * 0.025 + bounce);
-    ctx.lineTo(w * 0.5 + laneShift, headY - h * 0.012 + bounce);
+    ctx.moveTo(w * 0.485 + laneShift, headY - h * 0.018 + bounce);
+    ctx.lineTo(w * 0.5 + laneShift, headY - h * 0.028 + bounce);
+    ctx.lineTo(w * 0.515 + laneShift, headY - h * 0.018 + bounce);
+    ctx.lineTo(w * 0.5 + laneShift, headY - h * 0.008 + bounce);
     ctx.closePath();
     ctx.fill();
 
     // Eyes
     ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(w * 0.475 + laneShift, headY - h * 0.005 + bounce, w * 0.01, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(w * 0.525 + laneShift, headY - h * 0.005 + bounce, w * 0.01, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w * 0.483 + laneShift, headY - h * 0.003 + bounce, w * 0.007, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w * 0.517 + laneShift, headY - h * 0.003 + bounce, w * 0.007, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#222';
-    ctx.beginPath(); ctx.arc(w * 0.475 + laneShift, headY - h * 0.003 + bounce, w * 0.005, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(w * 0.525 + laneShift, headY - h * 0.003 + bounce, w * 0.005, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w * 0.483 + laneShift, headY - h * 0.002 + bounce, w * 0.004, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w * 0.517 + laneShift, headY - h * 0.002 + bounce, w * 0.004, 0, Math.PI * 2); ctx.fill();
 
     // Dino body visible on sides (smaller shoulders)
     ctx.fillStyle = '#4a8a5a';
     ctx.beginPath();
-    ctx.ellipse(w * 0.35 + laneShift, h * 0.76 + bounce, w * 0.12, h * 0.04, -0.2, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.40 + laneShift, h * 0.82 + bounce, w * 0.08, h * 0.03, -0.2, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(w * 0.65 + laneShift, h * 0.76 + bounce, w * 0.12, h * 0.04, 0.2, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.60 + laneShift, h * 0.82 + bounce, w * 0.08, h * 0.03, 0.2, 0, Math.PI * 2);
     ctx.fill();
 
     // Rider hands on neck
     ctx.fillStyle = '#e8b88a';
     ctx.beginPath();
-    ctx.arc(w * 0.46 + laneShift, neckY + h * 0.03 + bounce, w * 0.015, 0, Math.PI * 2);
+    ctx.arc(w * 0.48 + laneShift, neckY + h * 0.02 + bounce, w * 0.012, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(w * 0.54 + laneShift, neckY + h * 0.03 + bounce, w * 0.015, 0, Math.PI * 2);
+    ctx.arc(w * 0.52 + laneShift, neckY + h * 0.02 + bounce, w * 0.012, 0, Math.PI * 2);
     ctx.fill();
 
     // Lane indicator (green arrow)
@@ -915,7 +915,7 @@ window.FPDinoGame = (function () {
   }
 
   function drawDinoDashboard(ctx, w, h) {
-    var dashH = h * 0.13;
+    var dashH = h * 0.09;
     var dashY = h - dashH;
     var dashShift = (lanePos - 1) * w * 0.12;
 
