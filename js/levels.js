@@ -371,6 +371,25 @@ window.LevelData = {
         hasFallingHazards: true,
         hasComboObstacles: true
       }
+    },
+    {
+      id: 'dino-12',
+      name: { es: 'Jinete de Dinosaurio', en: 'Dino Rider', ca: 'Genet de Dinosaure' },
+      gameType: 'fpdino',
+      illustration: function () { return DinoSVG.velociraptor(); },
+      keyFact: { es: 'Los Velociraptors podian correr a 60 km/h — imagina montar uno!', en: 'Velociraptors could run at 40 mph — imagine riding one!', ca: 'Els Velociraptors podien correr a 60 km/h — imagina muntar-ne un!' },
+      learnFacts: [
+        { es: 'Los dinosaurios vivieron hace mas de 65 millones de anos!', en: 'Dinosaurs lived over 65 million years ago!', ca: 'Els dinosaures van viure fa mes de 65 milions d\'anys!' },
+        { es: 'Algunos dinosaurios eran tan rapidos como un coche!', en: 'Some dinosaurs were as fast as a car!', ca: 'Alguns dinosaures eren tan rapids com un cotxe!' },
+        { es: 'Los huevos de dinosaurio podian ser tan grandes como un balon de futbol!', en: 'Dinosaur eggs could be as big as a football!', ca: 'Els ous de dinosaure podien ser tan grans com una pilota de futbol!' }
+      ],
+      config: {
+        totalCollectibles: 10,
+        collectible: '🥚',
+        baseSpeed: 3,
+        maxSpeed: 6,
+        speedRamp: true
+      }
     }
   ],
 

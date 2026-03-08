@@ -13,6 +13,8 @@ window.AvatarDialog = (function () {
     'dino-8':  'cai',
     'dino-9':  'flor',
     'dino-10': 'yeray',
+    'dino-11': 'nonna',
+    'dino-12': 'titoTom',
     'truck-1':  'nonna',
     'truck-2':  'nonno',
     'truck-3':  'titoTom',
@@ -91,6 +93,16 @@ window.AvatarDialog = (function () {
       es: 'Clasifica cada dinosaurio en su grupo!',
       en: 'Sort each dinosaur into its group!',
       ca: 'Classifica cada dinosaure al seu grup!'
+    },
+    'dino-11': {
+      es: 'Salta y corre sin parar, campeona!',
+      en: 'Jump and run without stopping, champion!',
+      ca: 'Salta i corre sense parar, campiona!'
+    },
+    'dino-12': {
+      es: 'Esquiva los obstaculos y recoge todos los huevos de dino!',
+      en: 'Dodge the obstacles and collect all the dino eggs!',
+      ca: 'Esquiva els obstacles i recull tots els ous de dino!'
     },
     'truck-1': {
       es: 'Piensa bien antes de elegir tu respuesta!',
