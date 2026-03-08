@@ -186,7 +186,7 @@ window.FPDriverGame = (function () {
     }
 
     // Steering wheel drag — drag left/right on the dashboard to change lanes
-    var DRAG_THRESHOLD = 35; // pixels to trigger a lane change
+    var DRAG_THRESHOLD = 20; // pixels to trigger a lane change
     var lastLaneTriggered = 1; // track which lane was last triggered
 
     function onSteerStart(x) {
@@ -715,7 +715,7 @@ window.FPDriverGame = (function () {
     var hoodH = h * 0.09;
 
     // Horizontal offset — cabin shifts left/right based on lane
-    var laneShift = (lanePos - 1) * w * 0.12;
+    var laneShift = (lanePos - 1) * w * 0.22;
 
     // Shadow
     ctx.fillStyle = 'rgba(0,0,0,0.1)';
@@ -795,7 +795,7 @@ window.FPDriverGame = (function () {
     var dashY = h - dashH;
 
     // Dashboard horizontal shift to match cabin
-    var dashShift = (lanePos - 1) * w * 0.12;
+    var dashShift = (lanePos - 1) * w * 0.22;
 
     var dg = ctx.createLinearGradient(0, dashY, 0, h);
     dg.addColorStop(0, '#3a3a3a');

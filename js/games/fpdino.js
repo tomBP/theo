@@ -184,7 +184,7 @@ window.FPDinoGame = (function () {
       jumpBtn.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); doJump(); });
     }
 
-    var DRAG_THRESHOLD = 35;
+    var DRAG_THRESHOLD = 20;
     var lastLaneTriggered = 1;
 
     function onSteerStart(x) {
@@ -827,12 +827,13 @@ window.FPDinoGame = (function () {
   function drawDinoView(ctx, w, h) {
     var jumpOff = 0;
     if (isJumping) {
-      jumpOff = Math.sin((jumpTimer / jumpDuration) * Math.PI) * 55;
+      jumpOff = Math.sin((jumpTimer / jumpDuration) * Math.PI) * 80;
     }
 
     var bounce = Math.sin(dinoBounce) * 1.5;
+    var bodyY = h * 0.82 - jumpOff;
     var neckY = h * 0.72 - jumpOff;
-    var laneShift = (lanePos - 1) * w * 0.12;
+    var laneShift = (lanePos - 1) * w * 0.22;
 
     // Dino neck and head — smaller so road is more visible
     var neckW = w * 0.07;
@@ -841,16 +842,16 @@ window.FPDinoGame = (function () {
     // Neck (thinner)
     ctx.fillStyle = '#5b9e6f';
     ctx.beginPath();
-    ctx.moveTo(w * 0.47 + laneShift, h * 0.82 + bounce);
+    ctx.moveTo(w * 0.47 + laneShift, bodyY + bounce);
     ctx.quadraticCurveTo(w * 0.48 + laneShift, neckY + bounce, w * 0.5 + laneShift, headY + bounce);
-    ctx.quadraticCurveTo(w * 0.52 + laneShift, neckY + bounce, w * 0.53 + laneShift, h * 0.82 + bounce);
+    ctx.quadraticCurveTo(w * 0.52 + laneShift, neckY + bounce, w * 0.53 + laneShift, bodyY + bounce);
     ctx.closePath();
     ctx.fill();
 
     // Neck scales
     ctx.fillStyle = '#4a8a5a';
     for (var si = 0; si < 3; si++) {
-      var sy = neckY + (h * 0.82 - neckY) * (si / 3) + bounce;
+      var sy = neckY + (bodyY - neckY) * (si / 3) + bounce;
       var sw = neckW * 0.12 * (1 + si * 0.15);
       ctx.beginPath();
       ctx.arc(w * 0.5 + laneShift, sy, sw, 0, Math.PI);
@@ -884,10 +885,10 @@ window.FPDinoGame = (function () {
     // Dino body visible on sides (smaller shoulders)
     ctx.fillStyle = '#4a8a5a';
     ctx.beginPath();
-    ctx.ellipse(w * 0.40 + laneShift, h * 0.82 + bounce, w * 0.08, h * 0.03, -0.2, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.40 + laneShift, bodyY + bounce, w * 0.08, h * 0.03, -0.2, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(w * 0.60 + laneShift, h * 0.82 + bounce, w * 0.08, h * 0.03, 0.2, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.60 + laneShift, bodyY + bounce, w * 0.08, h * 0.03, 0.2, 0, Math.PI * 2);
     ctx.fill();
 
     // Rider hands on neck
@@ -915,9 +916,13 @@ window.FPDinoGame = (function () {
   }
 
   function drawDinoDashboard(ctx, w, h) {
+    var dashJump = 0;
+    if (isJumping) {
+      dashJump = Math.sin((jumpTimer / jumpDuration) * Math.PI) * 80;
+    }
     var dashH = h * 0.09;
-    var dashY = h - dashH;
-    var dashShift = (lanePos - 1) * w * 0.12;
+    var dashY = h - dashH - dashJump;
+    var dashShift = (lanePos - 1) * w * 0.22;
 
     // Dino back/saddle area
     var dg = ctx.createLinearGradient(0, dashY, 0, h);
