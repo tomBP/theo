@@ -31,10 +31,16 @@ window.FPDinoGame = (function () {
   var baseSpeed, maxSpeed;
 
   // Timing constants
-  var OBSTACLE_INTERVAL = 1.8;
+  // Steering wheel drag state
+  var steerDragging = false;
+  var steerStartX = 0;
+  var steerAngle = 0;
+  var boundSteerDown, boundSteerMove, boundSteerUp;
+
+  var OBSTACLE_INTERVAL = 2.0;
   var COLLECTIBLE_INTERVAL = 1.2;
   var GRACE_PERIOD = 2.5;
-  var Z_SPEED_BASE = 0.45;
+  var Z_SPEED_BASE = 0.32;
   var HIT_Z = 0.12;
 
   // Decorative trees scrolling
@@ -64,7 +70,7 @@ window.FPDinoGame = (function () {
     lanePos = 1;
     isJumping = false;
     jumpTimer = 0;
-    jumpDuration = 0.5;
+    jumpDuration = 0.65;
     collected = 0;
     isDead = false;
     speed = baseSpeed;
@@ -86,12 +92,11 @@ window.FPDinoGame = (function () {
     html += '.fpdn-score{position:absolute;top:8px;right:10px;font-family:var(--font-title);font-size:clamp(0.9rem,2.8vw,1.2rem);color:var(--color-text);z-index:30;background:rgba(255,255,255,0.88);padding:3px 10px;border-radius:var(--radius-small);box-shadow:var(--shadow-soft);}';
     html += '.fpdn-speed{position:absolute;top:8px;left:10px;font-family:var(--font-title);font-size:clamp(0.75rem,2.2vw,0.95rem);color:var(--color-text);z-index:30;background:rgba(255,255,255,0.88);padding:3px 10px;border-radius:var(--radius-small);}';
     html += '.fpdn-hint{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-body);font-weight:700;font-size:clamp(0.85rem,2.8vw,1.05rem);color:#fff;z-index:30;white-space:nowrap;background:rgba(0,0,0,0.6);padding:6px 14px;border-radius:var(--radius-small);pointer-events:none;transition:opacity 0.5s;}';
-    html += '.fpdn-controls{position:absolute;bottom:18%;left:0;right:0;z-index:25;display:flex;justify-content:space-between;align-items:center;padding:0 8px;pointer-events:none;}';
-    html += '.fpdn-ctrl{pointer-events:auto;border:none;outline:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;-webkit-user-select:none;user-select:none;touch-action:none;opacity:0.65;transition:opacity 0.15s,transform 0.1s;}';
-    html += '.fpdn-ctrl:active{opacity:1;transform:scale(1.1);}';
-    html += '.fpdn-ctrl-arrow{width:52px;height:52px;font-size:1.5rem;background:rgba(255,255,255,0.22);border:2px solid rgba(255,255,255,0.3);}';
-    html += '.fpdn-ctrl-jump{width:56px;height:56px;font-size:0.75rem;font-family:var(--font-title);font-weight:800;background:rgba(46,204,113,0.35);border:2px solid rgba(46,204,113,0.5);}';
-    html += '.fpdn-steer-group{display:flex;gap:6px;}';
+    html += '.fpdn-steer-zone{position:absolute;bottom:0;left:0;right:0;height:22%;z-index:25;touch-action:none;-webkit-user-select:none;user-select:none;cursor:grab;}';
+    html += '.fpdn-steer-zone:active{cursor:grabbing;}';
+    html += '.fpdn-steer-hint{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);font-family:var(--font-body);font-size:clamp(0.6rem,1.8vw,0.75rem);color:rgba(255,255,255,0.5);z-index:26;pointer-events:none;transition:opacity 0.5s;}';
+    html += '.fpdn-ctrl-jump{position:absolute;bottom:22%;right:10px;z-index:26;pointer-events:auto;border:none;outline:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;-webkit-user-select:none;user-select:none;touch-action:none;opacity:0.65;transition:opacity 0.15s,transform 0.1s;width:56px;height:56px;font-size:0.75rem;font-family:var(--font-title);font-weight:800;background:rgba(46,204,113,0.35);border:2px solid rgba(46,204,113,0.5);}';
+    html += '.fpdn-ctrl-jump:active{opacity:1;transform:scale(1.1);}';
     html += '.fpdn-flash{position:absolute;inset:0;background:rgba(255,0,0,0.3);z-index:35;pointer-events:none;animation:fpdn-flash-out 0.5s ease-out forwards;}';
     html += '@keyframes fpdn-flash-out{from{opacity:1;}to{opacity:0;}}';
     html += '.fpdn-ouch{position:absolute;left:50%;top:30%;transform:translateX(-50%);font-family:var(--font-title);font-size:2rem;color:#e74c3c;z-index:36;pointer-events:none;animation:fpdn-ouch-float 1s ease-out forwards;text-shadow:0 2px 6px rgba(0,0,0,0.4);}';
@@ -111,13 +116,13 @@ window.FPDinoGame = (function () {
       en: 'Dodge obstacles and collect dino eggs!',
       ca: 'Esquiva obstacles i recull ous de dino!'
     }) + '</div>';
-    html += '<div class="fpdn-controls">';
-    html += '<div class="fpdn-steer-group">';
-    html += '<button class="fpdn-ctrl fpdn-ctrl-arrow" id="fpdn-left" aria-label="Left">&larr;</button>';
-    html += '<button class="fpdn-ctrl fpdn-ctrl-arrow" id="fpdn-right" aria-label="Right">&rarr;</button>';
-    html += '</div>';
-    html += '<button class="fpdn-ctrl fpdn-ctrl-jump" id="fpdn-jump" aria-label="Jump">JUMP</button>';
-    html += '</div>';
+    html += '<div class="fpdn-steer-zone" id="fpdn-steer-zone"></div>';
+    html += '<div class="fpdn-steer-hint" id="fpdn-steer-hint">' + L({
+      es: 'Arrastra para girar',
+      en: 'Drag to steer',
+      ca: 'Arrossega per girar'
+    }) + '</div>';
+    html += '<button class="fpdn-ctrl-jump" id="fpdn-jump" aria-label="Jump">JUMP</button>';
     html += '</div>';
 
     container.innerHTML = html;
@@ -171,18 +176,67 @@ window.FPDinoGame = (function () {
   }
 
   function bindEvents() {
-    var leftBtn = document.getElementById('fpdn-left');
-    var rightBtn = document.getElementById('fpdn-right');
     var jumpBtn = document.getElementById('fpdn-jump');
+    var steerZone = document.getElementById('fpdn-steer-zone');
 
-    function addBtn(el, fn) {
-      if (!el) return;
-      el.addEventListener('touchstart', function (e) { e.preventDefault(); e.stopPropagation(); fn(); }, { passive: false });
-      el.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); fn(); });
+    if (jumpBtn) {
+      jumpBtn.addEventListener('touchstart', function (e) { e.preventDefault(); e.stopPropagation(); doJump(); }, { passive: false });
+      jumpBtn.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); doJump(); });
     }
-    addBtn(leftBtn, steerLeft);
-    addBtn(rightBtn, steerRight);
-    addBtn(jumpBtn, doJump);
+
+    var DRAG_THRESHOLD = 35;
+    var lastLaneTriggered = 1;
+
+    function onSteerStart(x) {
+      if (isDead) return;
+      steerDragging = true;
+      steerStartX = x;
+      lastLaneTriggered = playerLane;
+    }
+
+    function onSteerMove(x) {
+      if (!steerDragging || isDead) return;
+      var dx = x - steerStartX;
+      steerAngle = Math.max(-1, Math.min(1, dx / (DRAG_THRESHOLD * 2)));
+
+      var targetLane = lastLaneTriggered;
+      if (dx > DRAG_THRESHOLD) {
+        targetLane = Math.min(2, lastLaneTriggered + 1);
+      } else if (dx < -DRAG_THRESHOLD) {
+        targetLane = Math.max(0, lastLaneTriggered - 1);
+      }
+
+      if (targetLane !== playerLane) {
+        if (targetLane > playerLane) steerRight();
+        else steerLeft();
+        lastLaneTriggered = playerLane;
+        steerStartX = x;
+      }
+    }
+
+    function onSteerEnd() {
+      steerDragging = false;
+      steerAngle = 0;
+    }
+
+    if (steerZone) {
+      steerZone.addEventListener('touchstart', function (e) {
+        e.preventDefault();
+        onSteerStart(e.touches[0].clientX);
+      }, { passive: false });
+      steerZone.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+        onSteerMove(e.touches[0].clientX);
+      }, { passive: false });
+      steerZone.addEventListener('touchend', function (e) { e.preventDefault(); onSteerEnd(); }, { passive: false });
+      steerZone.addEventListener('touchcancel', function () { onSteerEnd(); });
+      steerZone.addEventListener('mousedown', function (e) { e.preventDefault(); onSteerStart(e.clientX); });
+    }
+
+    boundSteerMove = function (e) { onSteerMove(e.clientX); };
+    boundSteerUp = function () { onSteerEnd(); };
+    document.addEventListener('mousemove', boundSteerMove);
+    document.addEventListener('mouseup', boundSteerUp);
 
     boundKeyDown = function (e) {
       if (isDead) return;
@@ -193,6 +247,14 @@ window.FPDinoGame = (function () {
     boundKeyUp = function () {};
     document.addEventListener('keydown', boundKeyDown);
     document.addEventListener('keyup', boundKeyUp);
+
+    setTimeout(function () {
+      var hint = document.getElementById('fpdn-steer-hint');
+      if (hint) {
+        hint.style.opacity = '0';
+        setTimeout(function () { if (hint.parentNode) hint.parentNode.removeChild(hint); }, 600);
+      }
+    }, 3000);
   }
 
   // --- Spawning ---
@@ -601,11 +663,18 @@ window.FPDinoGame = (function () {
     var sc = proj.scale;
     if (sc < 0.006) return;
 
-    var sz = 90 * sc;
+    var sz = 110 * sc;
     if (sz < 2) return;
 
     ctx.save();
     ctx.translate(x, y);
+
+    // Warning glow when obstacle is getting close
+    if (obs.z < 0.4 && obs.z > 0.05) {
+      var glowAlpha = (0.4 - obs.z) / 0.35 * 0.4;
+      ctx.fillStyle = 'rgba(231,76,60,' + glowAlpha + ')';
+      ctx.beginPath(); ctx.arc(0, -sz * 0.3, sz * 0.7, 0, Math.PI * 2); ctx.fill();
+    }
 
     switch (obs.type) {
       case 'rock':
@@ -758,76 +827,76 @@ window.FPDinoGame = (function () {
   function drawDinoView(ctx, w, h) {
     var jumpOff = 0;
     if (isJumping) {
-      jumpOff = Math.sin((jumpTimer / jumpDuration) * Math.PI) * 35;
+      jumpOff = Math.sin((jumpTimer / jumpDuration) * Math.PI) * 55;
     }
 
-    var bounce = Math.sin(dinoBounce) * 2.0;
-    var neckY = h * 0.55 - jumpOff;
+    var bounce = Math.sin(dinoBounce) * 1.5;
+    var neckY = h * 0.64 - jumpOff;
     var laneShift = (lanePos - 1) * w * 0.12;
 
-    // Dino neck and head from rider perspective
-    var neckW = w * 0.14;
-    var headY = neckY - h * 0.12;
+    // Dino neck and head — smaller so road is more visible
+    var neckW = w * 0.10;
+    var headY = neckY - h * 0.07;
 
-    // Neck
+    // Neck (thinner)
     ctx.fillStyle = '#5b9e6f';
     ctx.beginPath();
-    ctx.moveTo(w * 0.42 + laneShift, h * 0.72 + bounce);
-    ctx.quadraticCurveTo(w * 0.45 + laneShift, neckY + bounce, w * 0.5 + laneShift, headY + bounce);
-    ctx.quadraticCurveTo(w * 0.55 + laneShift, neckY + bounce, w * 0.58 + laneShift, h * 0.72 + bounce);
+    ctx.moveTo(w * 0.45 + laneShift, h * 0.76 + bounce);
+    ctx.quadraticCurveTo(w * 0.47 + laneShift, neckY + bounce, w * 0.5 + laneShift, headY + bounce);
+    ctx.quadraticCurveTo(w * 0.53 + laneShift, neckY + bounce, w * 0.55 + laneShift, h * 0.76 + bounce);
     ctx.closePath();
     ctx.fill();
 
     // Neck scales
     ctx.fillStyle = '#4a8a5a';
-    for (var si = 0; si < 4; si++) {
-      var sy = neckY + (h * 0.72 - neckY) * (si / 4) + bounce;
-      var sw = neckW * 0.15 * (1 + si * 0.15);
+    for (var si = 0; si < 3; si++) {
+      var sy = neckY + (h * 0.76 - neckY) * (si / 3) + bounce;
+      var sw = neckW * 0.12 * (1 + si * 0.15);
       ctx.beginPath();
       ctx.arc(w * 0.5 + laneShift, sy, sw, 0, Math.PI);
       ctx.fill();
     }
 
-    // Head
+    // Head (smaller)
     ctx.fillStyle = '#5b9e6f';
     ctx.beginPath();
-    ctx.ellipse(w * 0.5 + laneShift, headY + bounce, w * 0.08, h * 0.045, 0, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.5 + laneShift, headY + bounce, w * 0.055, h * 0.03, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Head ridge/crest
     ctx.fillStyle = '#e67e22';
     ctx.beginPath();
-    ctx.moveTo(w * 0.47 + laneShift, headY - h * 0.04 + bounce);
-    ctx.lineTo(w * 0.5 + laneShift, headY - h * 0.055 + bounce);
-    ctx.lineTo(w * 0.53 + laneShift, headY - h * 0.04 + bounce);
-    ctx.lineTo(w * 0.5 + laneShift, headY - h * 0.02 + bounce);
+    ctx.moveTo(w * 0.48 + laneShift, headY - h * 0.025 + bounce);
+    ctx.lineTo(w * 0.5 + laneShift, headY - h * 0.038 + bounce);
+    ctx.lineTo(w * 0.52 + laneShift, headY - h * 0.025 + bounce);
+    ctx.lineTo(w * 0.5 + laneShift, headY - h * 0.012 + bounce);
     ctx.closePath();
     ctx.fill();
 
     // Eyes
     ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(w * 0.46 + laneShift, headY - h * 0.01 + bounce, w * 0.015, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(w * 0.54 + laneShift, headY - h * 0.01 + bounce, w * 0.015, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w * 0.475 + laneShift, headY - h * 0.005 + bounce, w * 0.01, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w * 0.525 + laneShift, headY - h * 0.005 + bounce, w * 0.01, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#222';
-    ctx.beginPath(); ctx.arc(w * 0.46 + laneShift, headY - h * 0.008 + bounce, w * 0.007, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(w * 0.54 + laneShift, headY - h * 0.008 + bounce, w * 0.007, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w * 0.475 + laneShift, headY - h * 0.003 + bounce, w * 0.005, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w * 0.525 + laneShift, headY - h * 0.003 + bounce, w * 0.005, 0, Math.PI * 2); ctx.fill();
 
-    // Dino body visible on sides (shoulders)
+    // Dino body visible on sides (smaller shoulders)
     ctx.fillStyle = '#4a8a5a';
     ctx.beginPath();
-    ctx.ellipse(w * 0.3 + laneShift, h * 0.72 + bounce, w * 0.18, h * 0.06, -0.2, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.35 + laneShift, h * 0.76 + bounce, w * 0.12, h * 0.04, -0.2, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(w * 0.7 + laneShift, h * 0.72 + bounce, w * 0.18, h * 0.06, 0.2, 0, Math.PI * 2);
+    ctx.ellipse(w * 0.65 + laneShift, h * 0.76 + bounce, w * 0.12, h * 0.04, 0.2, 0, Math.PI * 2);
     ctx.fill();
 
     // Rider hands on neck
     ctx.fillStyle = '#e8b88a';
     ctx.beginPath();
-    ctx.arc(w * 0.44 + laneShift, neckY + h * 0.04 + bounce, w * 0.02, 0, Math.PI * 2);
+    ctx.arc(w * 0.46 + laneShift, neckY + h * 0.03 + bounce, w * 0.015, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(w * 0.56 + laneShift, neckY + h * 0.04 + bounce, w * 0.02, 0, Math.PI * 2);
+    ctx.arc(w * 0.54 + laneShift, neckY + h * 0.03 + bounce, w * 0.015, 0, Math.PI * 2);
     ctx.fill();
 
     // Lane indicator (green arrow)
@@ -846,7 +915,7 @@ window.FPDinoGame = (function () {
   }
 
   function drawDinoDashboard(ctx, w, h) {
-    var dashH = h * 0.17;
+    var dashH = h * 0.13;
     var dashY = h - dashH;
     var dashShift = (lanePos - 1) * w * 0.12;
 
@@ -1024,6 +1093,8 @@ window.FPDinoGame = (function () {
     clearTimeout(deathTimer);
     document.removeEventListener('keydown', boundKeyDown);
     if (boundKeyUp) document.removeEventListener('keyup', boundKeyUp);
+    if (boundSteerMove) document.removeEventListener('mousemove', boundSteerMove);
+    if (boundSteerUp) document.removeEventListener('mouseup', boundSteerUp);
     obstacles = [];
     collectibles = [];
     trees = [];
