@@ -30,11 +30,17 @@ window.FPDriverGame = (function () {
   var collectibleEmoji, speedRamp;
   var baseSpeed, maxSpeed;
 
+  // Steering wheel drag state
+  var steerDragging = false;
+  var steerStartX = 0;
+  var steerAngle = 0; // -1 to 1
+  var boundSteerDown, boundSteerMove, boundSteerUp;
+
   // Timing constants
-  var OBSTACLE_INTERVAL = 1.8; // seconds between obstacles
+  var OBSTACLE_INTERVAL = 2.0; // seconds between obstacles (was 1.8)
   var COLLECTIBLE_INTERVAL = 1.2; // seconds between collectibles
   var GRACE_PERIOD = 2.5; // seconds of invincibility at start
-  var Z_SPEED_BASE = 0.45; // z units per second at base speed
+  var Z_SPEED_BASE = 0.32; // z units per second at base speed (was 0.45)
   var HIT_Z = 0.12; // z threshold for collision (how close to player)
 
   function start(config, gameArea, onComplete) {
@@ -60,7 +66,7 @@ window.FPDriverGame = (function () {
     lanePos = 1;
     isJumping = false;
     jumpTimer = 0;
-    jumpDuration = 0.5;
+    jumpDuration = 0.65;
     collected = 0;
     isDead = false;
     speed = baseSpeed;
@@ -80,13 +86,13 @@ window.FPDriverGame = (function () {
     html += '.fpd-score{position:absolute;top:8px;right:10px;font-family:var(--font-title);font-size:clamp(0.9rem,2.8vw,1.2rem);color:var(--color-text);z-index:30;background:rgba(255,255,255,0.88);padding:3px 10px;border-radius:var(--radius-small);box-shadow:var(--shadow-soft);}';
     html += '.fpd-speed{position:absolute;top:8px;left:10px;font-family:var(--font-title);font-size:clamp(0.75rem,2.2vw,0.95rem);color:var(--color-text);z-index:30;background:rgba(255,255,255,0.88);padding:3px 10px;border-radius:var(--radius-small);}';
     html += '.fpd-hint{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-body);font-weight:700;font-size:clamp(0.85rem,2.8vw,1.05rem);color:#fff;z-index:30;white-space:nowrap;background:rgba(0,0,0,0.6);padding:6px 14px;border-radius:var(--radius-small);pointer-events:none;transition:opacity 0.5s;}';
-    // Control buttons — positioned above the dashboard
-    html += '.fpd-controls{position:absolute;bottom:18%;left:0;right:0;z-index:25;display:flex;justify-content:space-between;align-items:center;padding:0 8px;pointer-events:none;}';
-    html += '.fpd-ctrl{pointer-events:auto;border:none;outline:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;-webkit-user-select:none;user-select:none;touch-action:none;opacity:0.65;transition:opacity 0.15s,transform 0.1s;}';
-    html += '.fpd-ctrl:active{opacity:1;transform:scale(1.1);}';
-    html += '.fpd-ctrl-arrow{width:52px;height:52px;font-size:1.5rem;background:rgba(255,255,255,0.22);border:2px solid rgba(255,255,255,0.3);}';
-    html += '.fpd-ctrl-jump{width:56px;height:56px;font-size:0.75rem;font-family:var(--font-title);font-weight:800;background:rgba(46,204,113,0.35);border:2px solid rgba(46,204,113,0.5);}';
-    html += '.fpd-steer-group{display:flex;gap:6px;}';
+    // Steering wheel touch zone — covers the dashboard area
+    html += '.fpd-steer-zone{position:absolute;bottom:0;left:0;right:0;height:22%;z-index:25;touch-action:none;-webkit-user-select:none;user-select:none;cursor:grab;}';
+    html += '.fpd-steer-zone:active{cursor:grabbing;}';
+    html += '.fpd-steer-hint{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);font-family:var(--font-body);font-size:clamp(0.6rem,1.8vw,0.75rem);color:rgba(255,255,255,0.5);z-index:26;pointer-events:none;transition:opacity 0.5s;}';
+    // Jump button on the right
+    html += '.fpd-ctrl-jump{position:absolute;bottom:22%;right:10px;z-index:26;pointer-events:auto;border:none;outline:none;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;-webkit-user-select:none;user-select:none;touch-action:none;opacity:0.65;transition:opacity 0.15s,transform 0.1s;width:56px;height:56px;font-size:0.75rem;font-family:var(--font-title);font-weight:800;background:rgba(46,204,113,0.35);border:2px solid rgba(46,204,113,0.5);}';
+    html += '.fpd-ctrl-jump:active{opacity:1;transform:scale(1.1);}';
     // Overlays
     html += '.fpd-flash{position:absolute;inset:0;background:rgba(255,0,0,0.3);z-index:35;pointer-events:none;animation:fpd-flash-out 0.5s ease-out forwards;}';
     html += '@keyframes fpd-flash-out{from{opacity:1;}to{opacity:0;}}';
@@ -107,14 +113,14 @@ window.FPDriverGame = (function () {
       en: 'Dodge obstacles and collect stars!',
       ca: 'Esquiva obstacles i recull estrelles!'
     }) + '</div>';
-    // Controls row
-    html += '<div class="fpd-controls">';
-    html += '<div class="fpd-steer-group">';
-    html += '<button class="fpd-ctrl fpd-ctrl-arrow" id="fpd-left" aria-label="Left">&larr;</button>';
-    html += '<button class="fpd-ctrl fpd-ctrl-arrow" id="fpd-right" aria-label="Right">&rarr;</button>';
-    html += '</div>';
-    html += '<button class="fpd-ctrl fpd-ctrl-jump" id="fpd-jump" aria-label="Jump">JUMP</button>';
-    html += '</div>';
+    // Steering wheel touch zone (drag left/right on dashboard to steer)
+    html += '<div class="fpd-steer-zone" id="fpd-steer-zone"></div>';
+    html += '<div class="fpd-steer-hint" id="fpd-steer-hint">' + L({
+      es: 'Arrastra el volante para girar',
+      en: 'Drag steering wheel to turn',
+      ca: 'Arrossega el volant per girar'
+    }) + '</div>';
+    html += '<button class="fpd-ctrl-jump" id="fpd-jump" aria-label="Jump">JUMP</button>';
     html += '</div>';
 
     container.innerHTML = html;
@@ -170,19 +176,73 @@ window.FPDriverGame = (function () {
   }
 
   function bindEvents() {
-    var leftBtn = document.getElementById('fpd-left');
-    var rightBtn = document.getElementById('fpd-right');
     var jumpBtn = document.getElementById('fpd-jump');
+    var steerZone = document.getElementById('fpd-steer-zone');
 
-    function addBtn(el, fn) {
-      if (!el) return;
-      el.addEventListener('touchstart', function (e) { e.preventDefault(); e.stopPropagation(); fn(); }, { passive: false });
-      el.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); fn(); });
+    // Jump button
+    if (jumpBtn) {
+      jumpBtn.addEventListener('touchstart', function (e) { e.preventDefault(); e.stopPropagation(); doJump(); }, { passive: false });
+      jumpBtn.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); doJump(); });
     }
-    addBtn(leftBtn, steerLeft);
-    addBtn(rightBtn, steerRight);
-    addBtn(jumpBtn, doJump);
 
+    // Steering wheel drag — drag left/right on the dashboard to change lanes
+    var DRAG_THRESHOLD = 35; // pixels to trigger a lane change
+    var lastLaneTriggered = 1; // track which lane was last triggered
+
+    function onSteerStart(x) {
+      if (isDead) return;
+      steerDragging = true;
+      steerStartX = x;
+      lastLaneTriggered = playerLane;
+    }
+
+    function onSteerMove(x) {
+      if (!steerDragging || isDead) return;
+      var dx = x - steerStartX;
+      steerAngle = Math.max(-1, Math.min(1, dx / (DRAG_THRESHOLD * 2)));
+
+      // Trigger lane changes based on drag distance
+      var targetLane = lastLaneTriggered;
+      if (dx > DRAG_THRESHOLD) {
+        targetLane = Math.min(2, lastLaneTriggered + 1);
+      } else if (dx < -DRAG_THRESHOLD) {
+        targetLane = Math.max(0, lastLaneTriggered - 1);
+      }
+
+      if (targetLane !== playerLane) {
+        if (targetLane > playerLane) steerRight();
+        else steerLeft();
+        lastLaneTriggered = playerLane;
+        steerStartX = x; // reset origin for continued drag
+      }
+    }
+
+    function onSteerEnd() {
+      steerDragging = false;
+      steerAngle = 0;
+    }
+
+    if (steerZone) {
+      steerZone.addEventListener('touchstart', function (e) {
+        e.preventDefault();
+        onSteerStart(e.touches[0].clientX);
+      }, { passive: false });
+      steerZone.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+        onSteerMove(e.touches[0].clientX);
+      }, { passive: false });
+      steerZone.addEventListener('touchend', function (e) { e.preventDefault(); onSteerEnd(); }, { passive: false });
+      steerZone.addEventListener('touchcancel', function () { onSteerEnd(); });
+
+      steerZone.addEventListener('mousedown', function (e) { e.preventDefault(); onSteerStart(e.clientX); });
+    }
+
+    boundSteerMove = function (e) { onSteerMove(e.clientX); };
+    boundSteerUp = function () { onSteerEnd(); };
+    document.addEventListener('mousemove', boundSteerMove);
+    document.addEventListener('mouseup', boundSteerUp);
+
+    // Keyboard still works
     boundKeyDown = function (e) {
       if (isDead) return;
       if (e.key === 'ArrowLeft' || e.key === 'a') { e.preventDefault(); steerLeft(); }
@@ -192,6 +252,15 @@ window.FPDriverGame = (function () {
     boundKeyUp = function () {};
     document.addEventListener('keydown', boundKeyDown);
     document.addEventListener('keyup', boundKeyUp);
+
+    // Fade steer hint after 3s
+    setTimeout(function () {
+      var hint = document.getElementById('fpd-steer-hint');
+      if (hint) {
+        hint.style.opacity = '0';
+        setTimeout(function () { if (hint.parentNode) hint.parentNode.removeChild(hint); }, 600);
+      }
+    }, 3000);
   }
 
   // --- Spawning ---
@@ -741,7 +810,7 @@ window.FPDriverGame = (function () {
     var cx = w * 0.5 + dashShift;
     var cy = dashY + dashH * 0.55;
     var wr = Math.min(dashH * 0.38, w * 0.10);
-    var tilt = (lanePos - 1) * 30;
+    var tilt = (lanePos - 1) * 30 + steerAngle * 20;
 
     ctx.save();
     ctx.translate(cx, cy);
@@ -905,6 +974,8 @@ window.FPDriverGame = (function () {
     clearTimeout(deathTimer);
     document.removeEventListener('keydown', boundKeyDown);
     if (boundKeyUp) document.removeEventListener('keyup', boundKeyUp);
+    if (boundSteerMove) document.removeEventListener('mousemove', boundSteerMove);
+    if (boundSteerUp) document.removeEventListener('mouseup', boundSteerUp);
     obstacles = [];
     collectibles = [];
     if (container) container.innerHTML = '';

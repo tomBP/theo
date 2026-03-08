@@ -386,8 +386,8 @@ window.LevelData = {
       config: {
         totalCollectibles: 10,
         collectible: '🥚',
-        baseSpeed: 3,
-        maxSpeed: 6,
+        baseSpeed: 2,
+        maxSpeed: 4,
         speedRamp: true
       }
     }
@@ -590,8 +590,8 @@ window.LevelData = {
       config: {
         totalCollectibles: 10,
         collectible: '⭐',
-        baseSpeed: 3,
-        maxSpeed: 6,
+        baseSpeed: 2,
+        maxSpeed: 4,
         speedRamp: true
       }
     },
